@@ -164,6 +164,7 @@ const ReportingScreen = () => {
           style={styles.map}
           styleURL="mapbox://styles/mapbox/streets-v12"
           logoEnabled={false}
+          scaleBarEnabled={false}
         >
           <Camera ref={cameraRef} zoomLevel={16} pitch={45} />
 

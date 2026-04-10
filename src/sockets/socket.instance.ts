@@ -1,10 +1,11 @@
+import { SOCKET_URL } from '@env';
 import { io, Socket } from 'socket.io-client';
 
 let socket: Socket | null = null;
 
 export const createSocket = (): Socket => {
   if (!socket) {
-    socket = io('http://192.168.2.8:9090', {
+    socket = io(SOCKET_URL, {
       transports: ['websocket'],
       autoConnect: false,
       reconnection: true,

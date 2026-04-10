@@ -7,7 +7,13 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "start:dev": "set APP_ENV=development && react-native start",
+    "start:staging": "set APP_ENV=staging && react-native start",
+    "start:prod": "set APP_ENV=production && react-native start",
+    "android:dev": "set APP_ENV=development && react-native run-android",
+    "android:staging": "set APP_ENV=staging && react-native run-android",
+    "android:prod": "set APP_ENV=production && react-native run-android"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^3.0.2",

@@ -3,6 +3,7 @@
     "C:\\Users\\cs\\Desktop\\jotiba\\moto_customer\\node_modules\\@react-native-async-storage\\async-storage\\android\\build\\generated\\source\\codegen\\jni\\CMakeLists.txt",
     "C:\\Users\\cs\\Desktop\\jotiba\\moto_customer\\node_modules\\@react-native-community\\geolocation\\android\\build\\generated\\source\\codegen\\jni\\CMakeLists.txt",
     "C:\\Users\\cs\\Desktop\\jotiba\\moto_customer\\node_modules\\@rnmapbox\\maps\\android\\build\\generated\\source\\codegen\\jni\\CMakeLists.txt",
+    "C:\\Users\\cs\\Desktop\\jotiba\\moto_customer\\node_modules\\react-native-config\\android\\build\\generated\\source\\codegen\\jni\\CMakeLists.txt",
     "C:\\Users\\cs\\Desktop\\jotiba\\moto_customer\\node_modules\\react-native-keychain\\android\\build\\generated\\source\\codegen\\jni\\CMakeLists.txt",
     "C:\\Users\\cs\\Desktop\\jotiba\\moto_customer\\node_modules\\react-native-localize\\android\\build\\generated\\source\\codegen\\jni\\CMakeLists.txt",
     "C:\\Users\\cs\\Desktop\\jotiba\\moto_customer\\node_modules\\react-native-reanimated\\android\\build\\generated\\source\\codegen\\jni\\CMakeLists.txt",
@@ -46,6 +47,11 @@
         "C:\\Users\\cs\\.gradle\\caches\\9.0.0\\transforms\\df62f4a3c6818dc3cc09553936c6f2fd\\transformed\\react-android-0.84.1-debug\\prefab\\modules\\jsi\\libs\\android.armeabi-v7a\\libjsi.so",
         "C:\\Users\\cs\\.gradle\\caches\\9.0.0\\transforms\\df62f4a3c6818dc3cc09553936c6f2fd\\transformed\\react-android-0.84.1-debug\\prefab\\modules\\reactnative\\libs\\android.armeabi-v7a\\libreactnative.so"
       ]
+    },
+    "react_codegen_RNCConfigSpec::@89f1b79ed4954e2f2cff": {
+      "artifactName": "react_codegen_RNCConfigSpec",
+      "abi": "armeabi-v7a",
+      "runtimeFiles": []
     },
     "react_codegen_rnscreens::@25bcbd507e98d3a854ad": {
       "artifactName": "react_codegen_rnscreens",

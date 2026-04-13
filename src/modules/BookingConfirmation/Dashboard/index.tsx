@@ -13,7 +13,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { MAPBOX_ACCESS_TOKEN } from '@env';
 import { RootState } from '@store/rootReducer';
 import { useSelector } from 'react-redux';
 
@@ -23,6 +22,7 @@ import WeightModal from './components/WeightModal';
 
 import { useCurrentLocation } from '@hooks/useCurrentLocation';
 import { isValidLocation } from '@utils/location.utils';
+import Config from 'react-native-config';
 import { styles } from './Dashboard.style';
 
 const DashboardScreen = () => {
@@ -52,7 +52,7 @@ const DashboardScreen = () => {
   const getRoute = async () => {
     try {
       const res = await fetch(
-        `https://api.mapbox.com/directions/v5/mapbox/driving/${booking?.pickup?.coordinates?.lng},${booking?.pickup?.coordinates?.lat};${booking?.delivery?.coordinates?.lng},${booking?.delivery?.coordinates?.lat}?geometries=geojson&overview=full&access_token=${MAPBOX_ACCESS_TOKEN}`,
+        `https://api.mapbox.com/directions/v5/mapbox/driving/${booking?.pickup?.coordinates?.lng},${booking?.pickup?.coordinates?.lat};${booking?.delivery?.coordinates?.lng},${booking?.delivery?.coordinates?.lat}?geometries=geojson&overview=full&access_token=${Config.MAPBOX_ACCESS_TOKEN}`,
       );
 
       const json = await res.json();

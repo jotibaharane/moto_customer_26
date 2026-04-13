@@ -1,7 +1,7 @@
-import { MAPBOX_ACCESS_TOKEN } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MapboxGL from '@rnmapbox/maps';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import Config from 'react-native-config';
 
 const HISTORY_KEY = 'LOCATION_HISTORY';
 
@@ -40,7 +40,7 @@ export const useLocation = () => {
         const { latitude, longitude } = location.coords;
 
         const res = await fetch(
-          `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${MAPBOX_ACCESS_TOKEN}`,
+          `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${Config.MAPBOX_ACCESS_TOKEN}`,
         );
 
         const data = await res.json();
@@ -89,7 +89,7 @@ export const useLocation = () => {
             search,
           )}&limit=10&language=en&session_token=${
             sessionToken.current
-          }&country=IN&access_token=${MAPBOX_ACCESS_TOKEN}`,
+          }&country=IN&access_token=${Config.MAPBOX_ACCESS_TOKEN}`,
         );
 
         const data = await res.json();
@@ -117,7 +117,7 @@ export const useLocation = () => {
   const getPlaceDetails = async (mapboxId: string) => {
     try {
       const res = await fetch(
-        `https://api.mapbox.com/search/searchbox/v1/retrieve/${mapboxId}?session_token=${sessionToken.current}&access_token=${MAPBOX_ACCESS_TOKEN}`,
+        `https://api.mapbox.com/search/searchbox/v1/retrieve/${mapboxId}?session_token=${sessionToken.current}&access_token=${Config.MAPBOX_ACCESS_TOKEN}`,
       );
 
       const data = await res.json();

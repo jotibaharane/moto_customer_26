@@ -1,5 +1,5 @@
 import { useGetLoadPostsQuery } from '@api/Mutations';
-import { MAPBOX_ACCESS_TOKEN } from '@env';
+
 import MapboxGL, {
   Camera,
   LineLayer,
@@ -13,6 +13,7 @@ import { RootState } from '@store/rootReducer';
 import { isValidLocation } from '@utils/location.utils';
 import React, { useEffect, useRef, useState } from 'react';
 import { View } from 'react-native';
+import Config from 'react-native-config';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import BottomCard from './components/BottomCard';
@@ -133,7 +134,7 @@ const ReportingScreen = () => {
 
     const fetchRoute = async () => {
       try {
-        const url = `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${driver.lng},${driver.lat};${pickup.lng},${pickup.lat}?access_token=${MAPBOX_ACCESS_TOKEN}&geometries=geojson&overview=full&steps=true`;
+        const url = `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${driver.lng},${driver.lat};${pickup.lng},${pickup.lat}?access_token=${Config.MAPBOX_ACCESS_TOKEN}&geometries=geojson&overview=full&steps=true`;
 
         const res = await fetch(url);
         const data = await res.json();

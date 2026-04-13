@@ -1,4 +1,0 @@
-C:/Users/cs/Desktop/jotiba/moto_customer/android/app/.cxx/RelWithDebInfo/6z6v1zex/x86/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/foo.dir
-C:/Users/cs/Desktop/jotiba/moto_customer/android/app/.cxx/RelWithDebInfo/6z6v1zex/x86/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/boo.dir
-C:/Users/cs/Desktop/jotiba/moto_customer/android/app/.cxx/RelWithDebInfo/6z6v1zex/x86/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/edit_cache.dir
-C:/Users/cs/Desktop/jotiba/moto_customer/android/app/.cxx/RelWithDebInfo/6z6v1zex/x86/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/rebuild_cache.dir

@@ -1,8 +1,8 @@
 import { fetchClient } from '@api/client';
-import { MAPBOX_ACCESS_TOKEN } from '@env';
+import Config from 'react-native-config';
 
 export const reverseGeocode = async (lat: number, lng: number) => {
-  const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${MAPBOX_ACCESS_TOKEN}&limit=1&language=en`;
+  const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${Config.MAPBOX_ACCESS_TOKEN}&limit=1&language=en`;
 
   return fetchClient(url);
 };
@@ -12,7 +12,7 @@ export const getDirections = async (pickup: number[], dest: number[]) => {
     pickup[0]
   },${pickup[1]};${dest[0]},${
     dest[1]
-  }?geometries=geojson&overview=full&access_token=${MAPBOX_ACCESS_TOKEN!}`;
+  }?geometries=geojson&overview=full&access_token=${Config.MAPBOX_ACCESS_TOKEN!}`;
 
   const json = await fetchClient(url);
 

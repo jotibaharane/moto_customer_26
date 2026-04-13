@@ -1,11 +1,11 @@
-import { SOCKET_URL } from '@env';
+import Config from 'react-native-config';
 import { io, Socket } from 'socket.io-client';
 
 let socket: Socket | null = null;
 
 export const createSocket = (): Socket => {
   if (!socket) {
-    socket = io(SOCKET_URL, {
+    socket = io(Config.SOCKET_URL, {
       transports: ['websocket'],
       autoConnect: false,
       reconnection: true,

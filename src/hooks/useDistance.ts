@@ -1,5 +1,5 @@
-import { MAPBOX_ACCESS_TOKEN } from '@env';
 import { useEffect, useRef, useState } from 'react';
+import Config from 'react-native-config';
 
 export interface Coordinates {
   lat: number;
@@ -46,7 +46,7 @@ export const useDistance = (pickup?: Coordinates, drop?: Coordinates) => {
 
     try {
       setLoading(true);
-      const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${pickup?.lng},${pickup?.lat};${drop?.lng},${drop?.lat}?access_token=${MAPBOX_ACCESS_TOKEN}&overview=false`;
+      const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${pickup?.lng},${pickup?.lat};${drop?.lng},${drop?.lat}?access_token=${Config.MAPBOX_ACCESS_TOKEN}&overview=false`;
 
       const res = await fetch(url);
       const json = await res.json();

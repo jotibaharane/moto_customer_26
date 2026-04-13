@@ -106,3 +106,5 @@ ios/DerivedData/
 # ================================
 
 *.hprof
+# react-native-config codegen
+ios/tmp.xcconfig

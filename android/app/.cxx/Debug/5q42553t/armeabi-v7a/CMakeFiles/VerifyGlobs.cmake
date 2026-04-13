@@ -84,6 +84,30 @@ if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   file(TOUCH_NOCREATE "C:/Users/cs/Desktop/jotiba/moto_customer/android/app/.cxx/Debug/5q42553t/armeabi-v7a/CMakeFiles/cmake.verify_globs")
 endif()
 
+# react_codegen_SRCS at C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/react-native-config/android/build/generated/source/codegen/jni/CMakeLists.txt:9 (file)
+file(GLOB NEW_GLOB LIST_DIRECTORIES true "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/react-native-config/android/build/generated/source/codegen/jni/*.cpp")
+set(OLD_GLOB
+  "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/react-native-config/android/build/generated/source/codegen/jni/RNCConfigSpec-generated.cpp"
+  )
+if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
+  message("-- GLOB mismatch!")
+  file(TOUCH_NOCREATE "C:/Users/cs/Desktop/jotiba/moto_customer/android/app/.cxx/Debug/5q42553t/armeabi-v7a/CMakeFiles/cmake.verify_globs")
+endif()
+
+# react_codegen_SRCS at C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/react-native-config/android/build/generated/source/codegen/jni/CMakeLists.txt:9 (file)
+file(GLOB NEW_GLOB LIST_DIRECTORIES true "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/react-native-config/android/build/generated/source/codegen/jni/react/renderer/components/RNCConfigSpec/*.cpp")
+set(OLD_GLOB
+  "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/react-native-config/android/build/generated/source/codegen/jni/react/renderer/components/RNCConfigSpec/ComponentDescriptors.cpp"
+  "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/react-native-config/android/build/generated/source/codegen/jni/react/renderer/components/RNCConfigSpec/EventEmitters.cpp"
+  "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/react-native-config/android/build/generated/source/codegen/jni/react/renderer/components/RNCConfigSpec/Props.cpp"
+  "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/react-native-config/android/build/generated/source/codegen/jni/react/renderer/components/RNCConfigSpec/ShadowNodes.cpp"
+  "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/react-native-config/android/build/generated/source/codegen/jni/react/renderer/components/RNCConfigSpec/States.cpp"
+  )
+if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
+  message("-- GLOB mismatch!")
+  file(TOUCH_NOCREATE "C:/Users/cs/Desktop/jotiba/moto_customer/android/app/.cxx/Debug/5q42553t/armeabi-v7a/CMakeFiles/cmake.verify_globs")
+endif()
+
 # react_codegen_SRCS at C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/react-native-keychain/android/build/generated/source/codegen/jni/CMakeLists.txt:9 (file)
 file(GLOB NEW_GLOB LIST_DIRECTORIES true "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/react-native-keychain/android/build/generated/source/codegen/jni/*.cpp")
 set(OLD_GLOB

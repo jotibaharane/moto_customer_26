@@ -7,7 +7,7 @@ import { styles } from '../reporting.style';
 
 const Header = () => {
   const { message } = useSelector((state: RootState) => state.tracking);
-  console.log({ message });
+
   return (
     <>
       <View style={styles.header}>
@@ -16,7 +16,6 @@ const Header = () => {
         </View>
 
         <View style={styles.headerCenter}>
-          <Text style={styles.headerText}>{message}</Text>
           {/* <SlidingHeader
             text={message || '🚚 Live navigation to pickup location'}
           /> */}
@@ -29,6 +28,21 @@ const Header = () => {
           <Text style={styles.trackingText}> + Tracking</Text>
         </TouchableOpacity>
       </View>
+      {message && (
+        <View
+          style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'absolute',
+            top: 150,
+            zIndex: 999,
+            left: '12%',
+            right: '12%',
+          }}
+        >
+          <Text style={styles.headerText}>{message}</Text>
+        </View>
+      )}
     </>
   );
 };

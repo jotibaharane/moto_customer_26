@@ -107,23 +107,26 @@ const SignUpScreen = () => {
               error={errors?.email}
             />
 
+            <View style={styles.toggleContainer}>
+              <CustomButton
+                title="Individual"
+                style={styles.flexBtn}
+                variant={
+                  values.customer_type === 'individual' ? 'filled' : 'outline'
+                }
+                onPress={() => setFieldValue('customer_type', 'individual')}
+              />
+              <CustomButton
+                title="Organization"
+                variant={
+                  values.customer_type !== 'individual' ? 'filled' : 'outline'
+                }
+                style={styles.flexBtn}
+                onPress={() => setFieldValue('customer_type', 'organization')}
+              />
+            </View>
             {/* Toggle */}
-            {values.customer_type === 'individual' ? (
-              <View style={styles.toggleContainer}>
-                <CustomButton
-                  title="Individual"
-                  style={styles.flexBtn}
-                  variant="outline"
-                  onPress={() => setFieldValue('customer_type', 'individual')}
-                />
-                <CustomButton
-                  title="Organization"
-                  style={styles.flexBtn}
-                  variant="filled"
-                  onPress={() => setFieldValue('customer_type', 'organization')}
-                />
-              </View>
-            ) : (
+            {values.customer_type !== 'individual' && (
               <>
                 <InputOutline
                   placeholder="Your Organization Name"
@@ -141,6 +144,7 @@ const SignUpScreen = () => {
                 />
               </>
             )}
+            <View style={{ flex: 1 }} />
 
             {/* Continue */}
             <CustomButton

@@ -4,6 +4,7 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
+    position: 'relative',
   },
 
   header: {
@@ -83,5 +84,10 @@ export const styles = StyleSheet.create({
   headerText: {
     fontSize: fp(14),
     fontFamily: FONT_FAMILIES.semiBold,
+    textAlign: 'center',
+    backgroundColor: COLORS.white[100],
+    paddingVertical: hp(5),
+    paddingHorizontal: wp(15),
+    borderWidth: 0.5,
   },
 });

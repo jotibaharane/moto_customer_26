@@ -35,6 +35,7 @@ export const styles = StyleSheet.create({
 
   map: {
     flex: 1,
+    marginBottom: -hp(50),
   },
 
   marker: {

@@ -8,20 +8,22 @@ import MapboxGL, {
   SymbolLayer,
 } from '@rnmapbox/maps';
 
-import { Bell } from 'lucide-react-native';
 import React, { useEffect, useRef, useState } from 'react';
-import { View } from 'react-native';
+import { Alert, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { RootState } from '@store/rootReducer';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import DropModal from './components/DropModal';
 import PickupModal from './components/PickupModal';
-import WeightModal from './components/WeightModal';
 
 import { useCurrentLocation } from '@hooks/useCurrentLocation';
+import { navigate } from '@navigation/NavigationService';
+import { setWeight } from '@store/slices/Booking/bookingSlice';
+import { COLORS, FONT_FAMILIES, fp, hp, wp } from '@theme/index';
 import { isValidLocation } from '@utils/location.utils';
+import { ArrowRight } from 'lucide-react-native';
 import Config from 'react-native-config';
 import { styles } from './Dashboard.style';
 
@@ -29,11 +31,12 @@ const DashboardScreen = () => {
   const { booking } = useSelector((state: RootState) => state.booking);
   const cameraRef = useRef<any>(null);
 
+  const dispatch = useDispatch();
+
   useCurrentLocation(cameraRef);
 
   const [pickupModalVisible, setPickupModalVisible] = useState(false);
   const [dropModalVisible, setDropModalVisible] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
 
   const [routeGeoJSON, setRouteGeoJSON] = useState<any>(null);
 
@@ -124,20 +127,86 @@ const DashboardScreen = () => {
               value={booking?.pickup?.name}
               iconType="location"
             />
-            <Bell size={30} />
+            {/* <Bell size={30} /> */}
           </View>
 
           <View style={styles.row}>
             <SearchField
               placeholder="Delivery Address"
-              onPress={() => setDropModalVisible(true)}
+              onPress={() => {
+                booking?.pickup?.name
+                  ? setDropModalVisible(true)
+                  : Alert.alert('Select pickup first');
+              }}
               iconColor="#FF0A0A"
               editable={false}
               value={booking?.delivery?.name}
               iconType="location"
             />
-            <View style={styles.emptyBox} />
+            {/* <View style={styles.emptyBox} /> */}
           </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: wp(10),
+            }}
+          >
+            <Text
+              style={{ fontSize: fp(18), fontFamily: FONT_FAMILIES.medium }}
+            >
+              Declare Weight
+            </Text>
+            <TextInput
+              placeholder="eg. 1000"
+              style={{
+                backgroundColor: COLORS.white[100],
+                height: hp(42),
+                padding: fp(7),
+                fontFamily: FONT_FAMILIES.extraBold,
+                fontSize: 20,
+                width: wp(103),
+                borderRadius: fp(8),
+              }}
+              value={booking?.vehicle?.approximateWeightKg}
+              keyboardType="number-pad"
+              onChangeText={i =>
+                dispatch(setWeight({ approximateWeightKg: i }))
+              }
+            />
+
+            <Text
+              style={{ fontFamily: FONT_FAMILIES.semiBold, fontSize: fp(16) }}
+            >
+              Kg
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={{ flexDirection: 'row', alignSelf: 'flex-end' }}
+            onPress={() => {
+              if (
+                booking?.pickup &&
+                booking?.delivery &&
+                booking?.vehicle?.approximateWeightKg
+              ) {
+                navigate('SelectVehicleScreen');
+              } else {
+                Alert.alert('Pickup,Drop and weight required');
+              }
+            }}
+          >
+            <Text
+              style={{
+                fontSize: fp(18),
+                fontFamily: FONT_FAMILIES.bold,
+                color: COLORS.primary[500],
+              }}
+            >
+              Next
+            </Text>
+            <ArrowRight size={30} color={COLORS.primary[500]} />
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -149,15 +218,20 @@ const DashboardScreen = () => {
           scaleBarEnabled={false}
           logoEnabled={false}
         >
-          <Camera ref={cameraRef} zoomLevel={16} pitch={45} />
+          {/* ✅ AUTO FOLLOW CURRENT LOCATION */}
+          <Camera
+            ref={cameraRef}
+            followUserLocation={true}
+            followZoomLevel={17}
+            followPitch={40}
+          />
 
-          {/* 🚗 USER LOCATION */}
+          {/* ✅ USER LOCATION (BLUE DOT / PUCK) */}
           <LocationPuck
             puckBearingEnabled
             puckBearing="heading"
             pulsing={{ isEnabled: true }}
           />
-
           {/* 🔥 IMAGES */}
           <MapboxGL.Images
             images={{
@@ -239,15 +313,11 @@ const DashboardScreen = () => {
 
       {/* ================= MODALS ================= */}
       <PickupModal open={pickupModalVisible} onOpen={setPickupModalVisible} />
-      <DropModal
-        open={dropModalVisible}
-        onOpen={setDropModalVisible}
-        setModalVisible={setModalVisible}
-      />
-      <WeightModal
+      <DropModal open={dropModalVisible} onOpen={setDropModalVisible} />
+      {/* <WeightModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
-      />
+      /> */}
     </SafeAreaView>
   );
 };

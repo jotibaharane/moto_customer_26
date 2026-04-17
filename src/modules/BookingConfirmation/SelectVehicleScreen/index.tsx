@@ -9,7 +9,14 @@ import {
 } from '@store/slices/Booking/bookingSlice';
 import { MapPin } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
-import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Alert,
+  FlatList,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import DropModal from '../Dashboard/components/DropModal';
 import PickupModal from '../Dashboard/components/PickupModal';
@@ -38,7 +45,11 @@ const SelectVehicleScreen = () => {
       CustomerID,
     );
   }, [booking?.pickup, booking.vehicle?.approximateWeightKg]);
-
+  const isFormValid =
+    booking?.pickup &&
+    booking?.delivery &&
+    booking?.vehicle?.vehicleNo &&
+    booking?.vehicle?.approximateWeightKg;
   return (
     <View style={styles.container}>
       {/* Pickup */}
@@ -127,7 +138,13 @@ const SelectVehicleScreen = () => {
         title="Confirm & Proceed"
         variant="filled"
         style={styles.button}
-        onPress={() => navigate('ReviewBookingScreen')}
+        onPress={() => {
+          if (!isFormValid) {
+            Alert.alert('All Fields Mandetory');
+            return;
+          } // extra safety
+          navigate('ReviewBookingScreen');
+        }}
       />
 
       <PickupModal open={pickupModalVisible} onOpen={setPickupModalVisible} />

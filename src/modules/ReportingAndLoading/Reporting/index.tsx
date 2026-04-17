@@ -5,24 +5,32 @@ import MapboxGL, {
   LineLayer,
   LocationPuck,
   MapView,
+  MarkerView,
   ShapeSource,
   SymbolLayer,
 } from '@rnmapbox/maps';
 import { emitJoinRoom } from '@socket/socket.emitters';
 import { RootState } from '@store/rootReducer';
+import { COLORS, FONT_FAMILIES, fp, hp, wp } from '@theme/index';
 import { isValidLocation } from '@utils/location.utils';
+import { Phone, User } from 'lucide-react-native';
 import React, { useEffect, useRef, useState } from 'react';
-import { View } from 'react-native';
+import { Image, Linking, Text, TouchableOpacity, View } from 'react-native';
 import Config from 'react-native-config';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
-import BottomCard from './components/BottomCard';
 import Header from './components/Header';
 import { styles } from './reporting.style';
 
 const ReportingScreen = () => {
   const cameraRef = useRef<any>(null);
-
+  const { driverMobile, distance_km, eta_minutes, loadId } = useSelector(
+    (state: RootState) => state.tracking,
+  );
+  const handleCall = () => {
+    if (!driverMobile) return;
+    Linking.openURL(`tel:${driverMobile}`);
+  };
   const { driver, pickup, destination } = useSelector(
     (state: RootState) => state.map,
   );
@@ -167,9 +175,15 @@ const ReportingScreen = () => {
           logoEnabled={false}
           scaleBarEnabled={false}
         >
-          <Camera ref={cameraRef} zoomLevel={16} pitch={45} />
+          {/* ✅ AUTO FOLLOW CURRENT LOCATION */}
+          <Camera
+            ref={cameraRef}
+            followUserLocation={true}
+            followZoomLevel={17}
+            followPitch={40}
+          />
 
-          {/* USER LOCATION */}
+          {/* ✅ USER LOCATION (BLUE DOT / PUCK) */}
           <LocationPuck
             puckBearingEnabled
             puckBearing="heading"
@@ -201,7 +215,7 @@ const ReportingScreen = () => {
           )}
 
           {/* 🚗 DRIVER */}
-          {animatedCoords && (
+          {/* {animatedCoords && (
             <ShapeSource
               id="driverSource"
               shape={{
@@ -235,6 +249,45 @@ const ReportingScreen = () => {
                 }}
               />
             </ShapeSource>
+          )} */}
+
+          {animatedCoords && (
+            <MarkerView coordinate={animatedCoords}>
+              <View style={{ alignItems: 'center' }}>
+                {/* 🔴 POPOVER */}
+                <View
+                  style={{
+                    backgroundColor: '#fff',
+                    paddingVertical: 6,
+                    paddingHorizontal: 10,
+                    borderRadius: 8,
+                    marginBottom: 5,
+                    shadowColor: '#000',
+                    shadowOpacity: 0.2,
+                    shadowRadius: 4,
+                    elevation: 5,
+                  }}
+                >
+                  <Text style={{ fontSize: 12, fontWeight: '600' }}>
+                    Distance {distance_km || 0} Km
+                  </Text>
+                  <Text style={{ fontSize: 12 }}>
+                    Time {eta_minutes || 0} min
+                  </Text>
+                </View>
+
+                {/* 🚗 VEHICLE ICON */}
+                <Image
+                  source={require('@assets/images/carIcon.png')}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    transform: [{ rotate: `${prevHeading.current}deg` }],
+                  }}
+                  resizeMode="contain"
+                />
+              </View>
+            </MarkerView>
           )}
 
           {/* PICKUP */}
@@ -287,7 +340,48 @@ const ReportingScreen = () => {
         </MapView>
       </View>
 
-      <BottomCard />
+      {/* <BottomCard /> */}
+      {loadId && (
+        <TouchableOpacity
+          style={{
+            padding: fp(5),
+            backgroundColor: COLORS.white[100],
+            borderRadius: fp(50),
+            height: hp(80),
+            width: wp(80),
+            position: 'absolute',
+            bottom: hp(20),
+            left: 10,
+            borderWidth: 2,
+            borderColor: COLORS.primary[500],
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'hidden',
+          }}
+          onPress={handleCall}
+        >
+          <View style={{ flexDirection: 'row', marginBottom: 5 }}>
+            <View style={{ transform: [{ rotate: '45deg' }] }}>
+              <Phone size={36} color={COLORS.primary[500]} />
+            </View>
+            <View
+              style={{
+                height: 26,
+                width: 26,
+                backgroundColor: COLORS.gray[100],
+                borderRadius: fp(50),
+                padding: 2,
+              }}
+            >
+              <User />
+            </View>
+          </View>
+
+          <Text style={{ fontSize: fp(8), fontFamily: FONT_FAMILIES.semiBold }}>
+            Post id {loadId || 'N/A'}
+          </Text>
+        </TouchableOpacity>
+      )}
     </SafeAreaView>
   );
 };

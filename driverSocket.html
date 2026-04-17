@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket Test</title>
+  </head>
+  <body>
+    <h2>Socket Test Page</h2>
+
+    <button onclick="connectSocket()">Connect</button>
+    <button onclick="joinDriver()">Driver Join</button>
+    <button onclick="sendLocation()">Send Location</button>
+    <button onclick="acceptLoad()">Accept Load</button>
+
+    <pre id="logs"></pre>
+
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+    <script>
+      let socket;
+      const driver_id = 'HAK-8991';
+      const vendor_id = 'SHR2026040002';
+      const SOCKET_URL = 'https://prod.motohelpindia.com';
+      const load_id = '';
+      function log(msg) {
+        document.getElementById('logs').innerText += msg + '\n';
+        console.log(msg);
+      }
+
+      function connectSocket() {
+        socket = io(SOCKET_URL, {
+          transports: ['websocket'],
+        });
+
+        socket.on('connect', () => {
+          log('✅ Connected: ' + socket.id);
+        });
+
+        socket.on('disconnect', reason => {
+          log('❌ Disconnected: ' + reason);
+        });
+
+        socket.on('connect_error', err => {
+          log('⚠️ Error: ' + err.message);
+        });
+
+        // 👇 LISTEN EVENTS (same as your app)
+        socket.on('driver:available_loads', data => {
+          log('📦 AVAILABLE_LOADS: ' + JSON.stringify(data));
+        });
+
+        socket.on('driver:trip_details', data => {
+          log('🚚 TRIP_DETAILS: ' + JSON.stringify(data));
+        });
+
+        socket.on('driver:lp_status_updated', data => {
+          log('🔔 DRIVER_STATUS: ' + JSON.stringify(data));
+        });
+
+        socket.on('driver:driver_nearby', data => {
+          log('📍 DRIVER_NEARBY: ' + JSON.stringify(data));
+        });
+      }
+
+      function joinDriver() {
+        socket.emit('driver_join', {
+          userId: driver_id,
+          role: 'driver',
+          VendorID: vendor_id,
+        });
+        log('📤 driver_join sent');
+      }
+
+      function sendLocation() {
+        socket.emit('driver:location', {
+          DriverID: driver_id,
+          lat: 19.076,
+          lng: 72.8777,
+        });
+        log('📤 driver:location sent');
+      }
+
+      function acceptLoad() {
+        socket.emit('driver:accept_load', {
+          loadId: load_id,
+          DriverID: driver_id,
+        });
+        log('📤 accept_load sent');
+      }
+    </script>
+  </body>
+</html>

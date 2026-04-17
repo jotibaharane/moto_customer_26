@@ -76,7 +76,7 @@ const DropModal: React.FC<Props> = ({ onOpen, open, setModalVisible }) => {
         }),
       );
       dispatch(setDestination(finalData?.coordinates));
-      setModalVisible?.(true);
+      // setModalVisible?.(true);
       onOpen?.(false);
     },
   });

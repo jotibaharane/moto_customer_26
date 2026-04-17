@@ -37,7 +37,7 @@ export const styles = StyleSheet.create({
   },
 
   toggleContainer: {
-    marginBottom: hp(110),
+    // marginBottom: hp(110),
     flexDirection: 'row',
     gap: wp(12),
     justifyContent: 'center',
@@ -48,6 +48,6 @@ export const styles = StyleSheet.create({
   },
 
   continueBtn: {
-    marginTop: hp(24),
+    marginBottom: hp(24),
   },
 });

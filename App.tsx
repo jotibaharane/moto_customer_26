@@ -15,8 +15,6 @@ function App() {
     Appearance.setColorScheme('light');
   }, []);
 
-  console.log('ENV:', Config.ENV);
-  console.log('TOKEN:', Config.MAPBOX_ACCESS_TOKEN);
   return (
     <ErrorBoundary>
       <ReduxProvider store={store}>

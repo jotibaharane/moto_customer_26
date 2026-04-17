@@ -7,6 +7,7 @@ const HISTORY_KEY = 'LOCATION_HISTORY';
 
 export const useLocation = () => {
   const [search, setSearch] = useState('');
+  const [current, setCurrent] = useState<any>('');
   const [results, setResults] = useState<any[]>([]);
   const [recent, setRecent] = useState<any[]>([]);
   const [selected, setSelected] = useState<any>(null);
@@ -48,7 +49,7 @@ export const useLocation = () => {
 
         if (place) {
           initialSetRef.current = true;
-          setSearch(place.place_name);
+          setCurrent(place);
         }
       } catch (e) {
         console.log('Location error', e);
@@ -198,5 +199,6 @@ export const useLocation = () => {
     handleSelect,
     clearHistory,
     loading,
+    current,
   };
 };

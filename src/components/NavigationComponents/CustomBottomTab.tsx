@@ -1,6 +1,6 @@
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { COLORS, FONT_FAMILIES, fp, hp, wp } from '@theme/index';
-import { Clock, Home, Package, Plus, Target, User } from 'lucide-react-native';
+import { Clock, Home, Package, Target, User } from 'lucide-react-native';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -26,6 +26,8 @@ const MyTabBar: React.FC<BottomTabBarProps> = ({
           return <Home size={24} color={color} />;
         case 'OPS':
           return <Target size={24} color={color} />;
+        case 'New Load':
+          return <Package size={35} color={COLORS.white[100]} />;
         case 'History':
           return <Clock size={24} color={color} />;
         case 'Profile':
@@ -35,12 +37,11 @@ const MyTabBar: React.FC<BottomTabBarProps> = ({
       }
     };
 
-    // ❌ Skip center tab from normal rendering
-    if (route.name === 'New Load') return null;
-
     return (
       <TouchableOpacity key={route.key} style={styles.tab} onPress={onPress}>
-        {getIcon()}
+        <View style={[route?.name === 'New Load' && styles.centerButton]}>
+          {getIcon()}
+        </View>
         <Text
           style={[
             styles.label,
@@ -58,31 +59,7 @@ const MyTabBar: React.FC<BottomTabBarProps> = ({
     );
   };
 
-  return (
-    <View style={styles.container}>
-      {/* LEFT TABS */}
-      <View style={styles.side}>{state.routes.slice(0, 2).map(renderTab)}</View>
-
-      {/* FLOATING BUTTON */}
-      <TouchableOpacity
-        style={styles.centerWrapper}
-        onPress={() => navigation.navigate('New Load')}
-      >
-        <View style={styles.centerButton}>
-          <View style={styles.innerContent}>
-            <Package size={32} color="#fff" />
-            <Plus size={14} color="#fff" style={{ marginTop: 2 }} />
-            <Text style={styles.centerText} numberOfLines={1}>
-              New Load
-            </Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-
-      {/* RIGHT TABS */}
-      <View style={styles.side}>{state.routes.slice(3).map(renderTab)}</View>
-    </View>
-  );
+  return <View style={styles.container}>{state.routes.map(renderTab)}</View>;
 };
 
 export default MyTabBar;
@@ -123,15 +100,17 @@ const styles = StyleSheet.create({
 
   /* 🔷 Diamond Button */
   centerButton: {
-    width: wp(90),
-    height: wp(90),
+    width: wp(70),
+    height: wp(70),
     backgroundColor: COLORS.primary[500],
     borderRadius: fp(18),
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 8,
+
     transform: [{ rotate: '45deg' }],
     padding: 10,
+    marginTop: -hp(50),
+    marginBottom: hp(5),
   },
 
   /* 🔁 Fix content rotation */

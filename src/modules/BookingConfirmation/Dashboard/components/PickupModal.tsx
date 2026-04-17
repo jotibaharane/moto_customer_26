@@ -3,7 +3,7 @@ import CustomButton from '@components/Button';
 import { InputOutline } from '@components/Input';
 import SearchField from '@components/SearchField';
 import { COLORS, FONT_FAMILIES, fp, hp, wp } from '@theme/index';
-import { Bookmark, Edit, MapPin, Timer } from 'lucide-react-native';
+import { Bookmark, Edit, Locate, MapPin, Timer } from 'lucide-react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   FlatList,
@@ -54,6 +54,7 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
     setSelected,
     handleSelect,
     clearHistory,
+    current,
   } = useLocation();
   const [isCustomBookmark, setIsCustomBookmark] = useState(false);
   const [customBookmark, setCustomBookmark] = useState(
@@ -161,8 +162,23 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
       }))
     : [];
 
+  const currentLocationItem = current
+    ? [
+        {
+          type: 'current',
+          name: current?.text,
+          fullAddress: current?.place_name || 'Fetching location...',
+          coordinates: current?.geometry?.coordinates,
+          id: current?.properties.mapbox_id,
+          mapboxId: current?.properties.mapbox_id,
+        },
+      ]
+    : [];
+  console.log({ current, currentLocationItem });
   /* ---------------- DATA ---------------- */
-  const dataToShow = search ? results : [...formattedBookmarks, ...recent];
+  const dataToShow = search
+    ? [...currentLocationItem, ...results]
+    : [...currentLocationItem, ...formattedBookmarks, ...recent];
 
   return (
     <RBSheet
@@ -198,19 +214,54 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
               containerStyle={{ borderWidth: 1 }}
             />
 
-            {!search && recent.length > 0 && (
+            {/* {!search && recent.length > 0 && (
               <Text
                 onPress={clearHistory}
                 style={{ color: COLORS.primary[500], marginTop: hp(10) }}
               >
                 Clear History
               </Text>
-            )}
-
+            )} */}
+            <View style={{ height: hp(10) }} />
             <FlatList
               data={dataToShow}
               keyExtractor={(item, index) => item?.mapboxId || index.toString()}
               renderItem={({ item }) => {
+                if (item.type === 'current') {
+                  return (
+                    <Pressable
+                      onPress={() => handleSelect(item)}
+                      style={{
+                        borderBottomWidth: 1,
+                        marginBottom: hp(16),
+                        paddingBottom: hp(7),
+                        alignItems: 'flex-start',
+                        gap: wp(10),
+                        flexDirection: 'column',
+                      }}
+                    >
+                      <Text style={styles.listLabel}>Current Location</Text>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          gap: wp(16),
+                        }}
+                      >
+                        <Locate size={20} />
+
+                        <View style={{ flex: 1 }}>
+                          <Text style={styles.title}>
+                            {item.name || item.city}
+                          </Text>
+                          <Text style={styles.subtitle}>
+                            {item.fullAddress || item.googleAddress}
+                          </Text>
+                        </View>
+                      </View>
+                    </Pressable>
+                  );
+                }
                 /* ✅ BOOKMARK ITEM (NEW) */
                 if (item.type === 'bookmark') {
                   return (

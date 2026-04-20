@@ -46,7 +46,7 @@ const SignUpScreen = () => {
     <Formik
       initialValues={{
         full_name: '',
-        mobile_number: route.params?.mobile || '',
+        ContactNo: route.params?.mobile || '',
         email: '',
         customer_type: 'individual',
         organization_name: '',
@@ -93,9 +93,9 @@ const SignUpScreen = () => {
             {/* Mobile */}
             <InputOutline
               placeholder="Your Mobile Number"
-              value={values.mobile_number}
+              value={values.ContactNo}
               keyboardType="numeric"
-              onChangeText={handleChange('mobile_number')}
+              onChangeText={handleChange('ContactNo')}
               editable={false}
             />
 

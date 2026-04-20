@@ -5,6 +5,7 @@ import ReportingScreen from '@modules/ReportingAndLoading/Reporting';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useNavigation } from '@react-navigation/native';
 import { RootState } from '@store/rootReducer';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 const Tab = createBottomTabNavigator();
@@ -21,11 +22,11 @@ function BottomNavigation() {
   );
 
   const trips = data?.data ?? [];
-  // useEffect(() => {
-  //   if (trips.length > 0 && !DriverID) {
-  //     navigation.navigate('BottomNavigation', { screen: 'New Load' });
-  //   }
-  // }, [trips]);
+  useEffect(() => {
+    if (trips.length > 0 && !DriverID) {
+      navigation.navigate('BottomNavigation', { screen: 'New Load' });
+    }
+  }, [trips]);
 
   return (
     <Tab.Navigator tabBar={props => <MyTabBar {...props} />}>

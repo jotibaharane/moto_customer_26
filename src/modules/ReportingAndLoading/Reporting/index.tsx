@@ -176,14 +176,8 @@ const ReportingScreen = () => {
           scaleBarEnabled={false}
         >
           {/* ✅ AUTO FOLLOW CURRENT LOCATION */}
-          <Camera
-            ref={cameraRef}
-            followUserLocation={true}
-            followZoomLevel={17}
-            followPitch={40}
-          />
+          <Camera ref={cameraRef} />
 
-          {/* ✅ USER LOCATION (BLUE DOT / PUCK) */}
           <LocationPuck
             puckBearingEnabled
             puckBearing="heading"
@@ -199,23 +193,11 @@ const ReportingScreen = () => {
             }}
           />
 
-          {/* ROUTE */}
-          {routeGeoJSON && (
-            <ShapeSource id="routeSource" shape={routeGeoJSON}>
-              <LineLayer
-                id="routeLine"
-                style={{
-                  lineColor: '#2563eb',
-                  lineWidth: 6,
-                  lineCap: 'round',
-                  lineJoin: 'round',
-                }}
-              />
-            </ShapeSource>
-          )}
+        
 
           {/* 🚗 DRIVER */}
-          {/* {animatedCoords && (
+          {/* 🚗 DRIVER ICON */}
+          {animatedCoords && (
             <ShapeSource
               id="driverSource"
               shape={{
@@ -224,7 +206,7 @@ const ReportingScreen = () => {
                   type: 'Point',
                   coordinates: animatedCoords,
                 },
-                properties: {},
+                properties: {}
               }}
             >
               <SymbolLayer
@@ -249,43 +231,29 @@ const ReportingScreen = () => {
                 }}
               />
             </ShapeSource>
-          )} */}
+          )}
 
+          {/* 🔥 TOOLTIP (SEPARATE) */}
           {animatedCoords && (
-            <MarkerView coordinate={animatedCoords}>
-              <View style={{ alignItems: 'center' }}>
-                {/* 🔴 POPOVER */}
-                <View
-                  style={{
-                    backgroundColor: '#fff',
-                    paddingVertical: 6,
-                    paddingHorizontal: 10,
-                    borderRadius: 8,
-                    marginBottom: 5,
-                    shadowColor: '#000',
-                    shadowOpacity: 0.2,
-                    shadowRadius: 4,
-                    elevation: 5,
-                  }}
-                >
-                  <Text style={{ fontSize: 12, fontWeight: '600' }}>
-                    Distance {distance_km || 0} Km
-                  </Text>
-                  <Text style={{ fontSize: 12 }}>
-                    Time {eta_minutes || 0} min
-                  </Text>
-                </View>
-
-                {/* 🚗 VEHICLE ICON */}
-                <Image
-                  source={require('@assets/images/carIcon.png')}
-                  style={{
-                    width: 40,
-                    height: 40,
-                    transform: [{ rotate: `${prevHeading.current}deg` }],
-                  }}
-                  resizeMode="contain"
-                />
+            <MarkerView coordinate={animatedCoords} anchor={{ x: 0.5, y: 1.8 }}>
+              <View
+                style={{
+                  backgroundColor: '#fff',
+                  paddingVertical: 6,
+                  paddingHorizontal: 10,
+                  borderRadius: 8,
+                  shadowColor: '#000',
+                  shadowOpacity: 0.2,
+                  shadowRadius: 4,
+                  elevation: 5,
+                }}
+              >
+                <Text style={{ fontSize: 12, fontWeight: '600' }}>
+                  Distance {distance_km || 0} Km
+                </Text>
+                <Text style={{ fontSize: 12 }}>
+                  Time {eta_minutes || 0} min
+                </Text>
               </View>
             </MarkerView>
           )}
@@ -333,6 +301,20 @@ const ReportingScreen = () => {
                   iconImage: 'dropIcon',
                   iconSize: 0.4,
                   iconAnchor: 'bottom',
+                }}
+              />
+            </ShapeSource>
+          )}
+            {/* ROUTE */}
+          {routeGeoJSON && (
+            <ShapeSource id="routeSource" shape={routeGeoJSON}>
+              <LineLayer
+                id="routeLine"
+                style={{
+                  lineColor: '#2563eb',
+                  lineWidth: 6,
+                  lineCap: 'round',
+                  lineJoin: 'round',
                 }}
               />
             </ShapeSource>

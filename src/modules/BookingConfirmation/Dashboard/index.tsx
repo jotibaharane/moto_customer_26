@@ -7,9 +7,9 @@ import MapboxGL, {
   ShapeSource,
   SymbolLayer,
 } from '@rnmapbox/maps';
-
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import RazorpayCheckout, { CheckoutOptions } from 'react-native-razorpay';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { RootState } from '@store/rootReducer';
@@ -28,12 +28,15 @@ import Config from 'react-native-config';
 import { styles } from './Dashboard.style';
 
 const DashboardScreen = () => {
+  const { ContactNo, EmailID, full_name } = useSelector(
+    (state: RootState) => state.auth,
+  );
   const { booking } = useSelector((state: RootState) => state.booking);
   const cameraRef = useRef<any>(null);
 
   const dispatch = useDispatch();
 
-  useCurrentLocation(cameraRef);
+  const userLocation = useCurrentLocation();
 
   const [pickupModalVisible, setPickupModalVisible] = useState(false);
   const [dropModalVisible, setDropModalVisible] = useState(false);
@@ -86,21 +89,25 @@ const DashboardScreen = () => {
 
   /* ================= CAMERA ================= */
   useEffect(() => {
+    if (!cameraRef.current) return;
+
     const hasPickup = isValidLocation(booking?.pickup?.coordinates);
     const hasDrop = isValidLocation(booking?.delivery?.coordinates);
 
+    // ✅ BOTH → FIT ROUTE
     if (hasPickup && hasDrop) {
-      cameraRef.current?.fitBounds(
+      cameraRef.current.fitBounds(
         [booking.pickup.coordinates.lng, booking.pickup.coordinates.lat],
         [booking.delivery.coordinates.lng, booking.delivery.coordinates.lat],
         80,
-        1500,
+        1200,
       );
       return;
     }
 
+    // ✅ ONLY PICKUP
     if (hasPickup) {
-      cameraRef.current?.setCamera({
+      cameraRef.current.setCamera({
         centerCoordinate: [
           booking.pickup.coordinates.lng,
           booking.pickup.coordinates.lat,
@@ -108,14 +115,75 @@ const DashboardScreen = () => {
         zoomLevel: 16,
         pitch: 45,
         animationMode: 'easeTo',
-        animationDuration: 1200,
+        animationDuration: 1000,
+      });
+      return;
+    }
+
+    // ✅ ONLY DROP
+    if (hasDrop) {
+      cameraRef.current.setCamera({
+        centerCoordinate: [
+          booking.delivery.coordinates.lng,
+          booking.delivery.coordinates.lat,
+        ],
+        zoomLevel: 16,
+        pitch: 45,
+        animationMode: 'easeTo',
+        animationDuration: 1000,
+      });
+      return;
+    }
+
+    // 🔥 INITIAL CURRENT LOCATION (FIXED)
+    if (userLocation) {
+      cameraRef.current.setCamera({
+        centerCoordinate: [userLocation.lng, userLocation.lat],
+        zoomLevel: 17,
+        pitch: 40,
+        animationMode: 'easeTo',
+        animationDuration: 1000,
       });
     }
-  }, [booking?.pickup?.coordinates, booking?.delivery?.coordinates]);
+  }, [
+    booking?.pickup?.coordinates,
+    booking?.delivery?.coordinates,
+    userLocation,
+  ]);
+  const handlePayment = async () => {
+    try {
+      const options: CheckoutOptions = {
+        description: 'Ride Payment',
+        image: 'https://i.imgur.com/3g7nmJC.jpg',
+        currency: 'INR',
+        key: 'rzp_test_SaFPYEwt9QmzYx',
+        amount: 5000,
+        name: 'MotoHelp',
+        order_id: 'order_SfcK48vOPIuma4', // ✅ dynamic
+        prefill: {
+          email: EmailID,
+          contact: ContactNo,
+          name: full_name,
+        },
+        theme: { color: COLORS.primary[500] },
+      };
 
+      RazorpayCheckout.open(options)
+        .then(data => {
+          console.log(data); // 🔥 VERY IMPORTANT
+        })
+        .catch(error => {
+          Alert.alert(`Error: ${error.code} | ${error.description}`);
+        });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  console.log({ userLocation });
   return (
     <SafeAreaView style={styles.container}>
       {/* ================= TOP ================= */}
+
       <View style={styles.topWrapper}>
         <View style={styles.card}>
           <View style={styles.row}>
@@ -124,7 +192,7 @@ const DashboardScreen = () => {
               onPress={() => setPickupModalVisible(true)}
               iconColor="#4CAF50"
               editable={false}
-              value={booking?.pickup?.name}
+              value={booking?.pickup?.fullAddress}
               iconType="location"
             />
             {/* <Bell size={30} /> */}
@@ -140,7 +208,7 @@ const DashboardScreen = () => {
               }}
               iconColor="#FF0A0A"
               editable={false}
-              value={booking?.delivery?.name}
+              value={booking?.delivery?.fullAddress}
               iconType="location"
             />
             {/* <View style={styles.emptyBox} /> */}
@@ -209,7 +277,9 @@ const DashboardScreen = () => {
           </TouchableOpacity>
         </View>
       </View>
-
+      {/* <TouchableHighlight onPress={handlePayment}>
+        <Text>Pay Now</Text>
+      </TouchableHighlight> */}
       {/* ================= MAP ================= */}
       <View style={styles.mapContainer}>
         <MapView
@@ -218,15 +288,8 @@ const DashboardScreen = () => {
           scaleBarEnabled={false}
           logoEnabled={false}
         >
-          {/* ✅ AUTO FOLLOW CURRENT LOCATION */}
-          <Camera
-            ref={cameraRef}
-            followUserLocation={true}
-            followZoomLevel={17}
-            followPitch={40}
-          />
+          <Camera ref={cameraRef} />
 
-          {/* ✅ USER LOCATION (BLUE DOT / PUCK) */}
           <LocationPuck
             puckBearingEnabled
             puckBearing="heading"
@@ -314,10 +377,6 @@ const DashboardScreen = () => {
       {/* ================= MODALS ================= */}
       <PickupModal open={pickupModalVisible} onOpen={setPickupModalVisible} />
       <DropModal open={dropModalVisible} onOpen={setDropModalVisible} />
-      {/* <WeightModal
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-      /> */}
     </SafeAreaView>
   );
 };

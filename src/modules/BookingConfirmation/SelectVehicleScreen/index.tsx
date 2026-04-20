@@ -142,7 +142,7 @@ const SelectVehicleScreen = () => {
           if (!isFormValid) {
             Alert.alert('All Fields Mandetory');
             return;
-          } // extra safety
+          }
           navigate('ReviewBookingScreen');
         }}
       />

@@ -3,6 +3,7 @@ import {
   useUpdateLoadPostMutation,
 } from '@api/Mutations';
 import CustomButton from '@components/Button';
+import OverlayLoader from '@components/OverlayLoader';
 import { useDistance } from '@hooks/useDistance';
 import { goBack, navigate } from '@navigation/NavigationService';
 import { emitCreateCustomerLoad } from '@socket/socket.emitters';
@@ -13,7 +14,6 @@ import {
   setLoadPost,
 } from '@store/slices/Booking/bookingSlice';
 import { hp, wp } from '@theme/index';
-import { formatTime } from '@utils/datetime.utils';
 import {
   transformBookingPayload,
   transformSocketLocation,
@@ -22,12 +22,11 @@ import { MapPin } from 'lucide-react-native';
 import React, { useEffect } from 'react';
 import { Alert, Image, ScrollView, Text, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import WaitingDriver from './components/WaitingDriver';
 import { styles } from './ReviewBooking.style';
 
 const ReviewBookingScreen = () => {
   const [watingDriver, setWaitingDriver] = React.useState(false);
-  const [timeLeft, setTimeLeft] = React.useState(30);
+  const [timeLeft, setTimeLeft] = React.useState(150);
   const dispatch = useDispatch();
   const { booking, bookingVehicle, isConfirmed, DriverID } = useSelector(
     (state: RootState) => state.booking,
@@ -104,7 +103,7 @@ const ReviewBookingScreen = () => {
         );
         emitCreateCustomerLoad(socketPayload);
         setWaitingDriver(true);
-        setTimeLeft(30);
+        setTimeLeft(150);
       } else {
         Alert.alert(resp?.message);
       }
@@ -175,7 +174,17 @@ const ReviewBookingScreen = () => {
             `${Math.round(distance?.durationMin! / 60)} hr`}{' '}
           {`${distance?.durationMin! % 60} min`}
         </Text>
-        {watingDriver && <WaitingDriver timer={formatTime(timeLeft)} />}
+        <OverlayLoader
+          visible={watingDriver}
+          duration={timeLeft}
+          showTimer={true}
+          text={`Waiting for Driver’s Confirmation`}
+          onClose={() => {
+            setWaitingDriver(false); // ✅ close modal
+            setTimeLeft(150);
+          }}
+        />
+        {/* {watingDriver && <WaitingDriver timer={formatTime(timeLeft)} />} */}
         <CustomButton
           title="Confirm Booking"
           variant="filled"

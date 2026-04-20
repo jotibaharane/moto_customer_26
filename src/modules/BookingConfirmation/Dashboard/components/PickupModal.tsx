@@ -122,6 +122,8 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
             SenderName: '',
           });
           refetch();
+          setCustomBookmark('');
+          setSelectedBookmark('');
         } catch (e) {
           console.log('Bookmark error', e);
         }
@@ -161,25 +163,14 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
         original: item,
       }))
     : [];
+  console.log({ current });
+  const currentLocationItem = current ? [current] : [];
 
-  const currentLocationItem = current
-    ? [
-        {
-          type: 'current',
-          name: current?.text,
-          fullAddress: current?.place_name || 'Fetching location...',
-          coordinates: current?.geometry?.coordinates,
-          id: current?.properties.mapbox_id,
-          mapboxId: current?.properties.mapbox_id,
-        },
-      ]
-    : [];
-  console.log({ current, currentLocationItem });
   /* ---------------- DATA ---------------- */
   const dataToShow = search
     ? [...currentLocationItem, ...results]
     : [...currentLocationItem, ...formattedBookmarks, ...recent];
-
+  console.log({ selected });
   return (
     <RBSheet
       ref={refScrollable}
@@ -348,7 +339,7 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
 
               <View style={{ flex: 1 }}>
                 <Text style={styles.title}>
-                  {selected?.city || 'No location'}
+                  {selected?.name || selected?.city || 'No location'}
                 </Text>
                 <Text style={styles.subtitle}>
                   {selected?.googleAddress || 'No address'}

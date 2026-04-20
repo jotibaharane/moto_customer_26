@@ -1,13 +1,16 @@
+import { reverseGeocode } from '@api/mapbox/mapbox.api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Geolocation from '@react-native-community/geolocation';
 import MapboxGL from '@rnmapbox/maps';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { PermissionsAndroid, Platform } from 'react-native';
 import Config from 'react-native-config';
 
 const HISTORY_KEY = 'LOCATION_HISTORY';
 
 export const useLocation = () => {
   const [search, setSearch] = useState('');
-  const [current, setCurrent] = useState<any>('');
+  const [current, setCurrent] = useState<any>(null);
   const [results, setResults] = useState<any[]>([]);
   const [recent, setRecent] = useState<any[]>([]);
   const [selected, setSelected] = useState<any>(null);
@@ -25,41 +28,74 @@ export const useLocation = () => {
     sessionToken.current = generateSessionToken();
   };
 
-  /* ---------------- INIT LOCATION ---------------- */
+  /* ---------------- PERMISSION ---------------- */
+  const requestLocationPermission = async () => {
+    if (Platform.OS === 'android') {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
+    }
+    return true;
+  };
+
+  /* ---------------- INIT ---------------- */
   useEffect(() => {
-    MapboxGL.locationManager.start();
-  }, []);
-
-  /* ---------------- CURRENT LOCATION ---------------- */
-  useEffect(() => {
-    const loadCurrentLocation = async () => {
-      try {
-        const location = await MapboxGL.locationManager.getLastKnownLocation();
-
-        if (!location || initialSetRef.current) return;
-
-        const { latitude, longitude } = location.coords;
-
-        const res = await fetch(
-          `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${Config.MAPBOX_ACCESS_TOKEN}`,
-        );
-
-        const data = await res.json();
-        const place = data.features?.[0];
-
-        if (place) {
-          initialSetRef.current = true;
-          setCurrent(place);
-        }
-      } catch (e) {
-        console.log('Location error', e);
+    const init = async () => {
+      const granted = await requestLocationPermission();
+      if (granted) {
+        MapboxGL.locationManager.start();
+        getCurrentLocation();
+      } else {
+        console.log('Location permission denied');
       }
     };
 
-    loadCurrentLocation();
+    init();
   }, []);
 
-  /* ---------------- LOAD HISTORY (AsyncStorage) ---------------- */
+  /* ---------------- GET CURRENT LOCATION ---------------- */
+  const getCurrentLocation = () => {
+    Geolocation.getCurrentPosition(
+      async position => {
+        try {
+          if (!position) return;
+
+          const { latitude, longitude } = position.coords;
+
+          const res = await reverseGeocode(latitude, longitude);
+
+          const place = res?.features?.[0];
+          console.log({ place });
+          if (place) {
+            const formatted = {
+              id: place?.properties?.mapbox_id,
+              type: 'current',
+              name: place?.text,
+              fullAddress: place?.place_name,
+              mapboxId: place?.properties?.mapbox_id,
+              coordinates: {
+                lat: latitude,
+                lng: longitude,
+              },
+            };
+
+            setCurrent(formatted);
+          }
+        } catch (e) {
+          console.log('Geocode error', e);
+        }
+      },
+      err => console.log('Fast error', err),
+      {
+        enableHighAccuracy: false, // 🔥 FAST
+        timeout: 5000,
+        maximumAge: 20000,
+      },
+    );
+  };
+
+  /* ---------------- LOAD HISTORY ---------------- */
   useEffect(() => {
     const loadHistory = async () => {
       try {
@@ -149,7 +185,7 @@ export const useLocation = () => {
       try {
         const details = await getPlaceDetails(item.mapboxId);
 
-        const final = {
+        let final = {
           ...item,
           googleAddress: details?.address,
           city: details?.city,
@@ -164,16 +200,16 @@ export const useLocation = () => {
         setSelected(final);
         setSearch('');
 
-        /* SAVE HISTORY (AsyncStorage) */
-        const existing = recent.filter(
-          (r: any) => r.mapboxId !== final.mapboxId,
-        );
+        if (item?.type !== 'current') {
+          const existing = recent.filter(
+            (r: any) => r.mapboxId !== final.mapboxId,
+          );
 
-        const updated = [final, ...existing].slice(0, 10);
+          const updated = [final, ...existing].slice(0, 10);
 
-        await AsyncStorage.setItem(HISTORY_KEY, JSON.stringify(updated));
-
-        setRecent(updated);
+          await AsyncStorage.setItem(HISTORY_KEY, JSON.stringify(updated));
+          setRecent(updated);
+        }
 
         resetSession();
       } catch (e) {
@@ -183,7 +219,6 @@ export const useLocation = () => {
     [recent],
   );
 
-  /* ---------------- CLEAR HISTORY ---------------- */
   const clearHistory = async () => {
     await AsyncStorage.removeItem(HISTORY_KEY);
     setRecent([]);
@@ -200,5 +235,6 @@ export const useLocation = () => {
     clearHistory,
     loading,
     current,
+    getCurrentLocation,
   };
 };

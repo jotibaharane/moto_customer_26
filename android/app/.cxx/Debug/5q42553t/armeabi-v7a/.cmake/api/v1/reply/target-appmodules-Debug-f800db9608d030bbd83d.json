@@ -360,11 +360,11 @@
 		},
 		{
 			"backtrace" : 4,
-			"id" : "react_codegen_RNLocalizeSpec::@f3ba5298aff84514e205"
+			"id" : "react_codegen_RNKeychainSpec::@f9a2cb36ebca2de4baf9"
 		},
 		{
 			"backtrace" : 4,
-			"id" : "react_codegen_RNKeychainSpec::@f9a2cb36ebca2de4baf9"
+			"id" : "react_codegen_RNLocalizeSpec::@f3ba5298aff84514e205"
 		},
 		{
 			"backtrace" : 4,
@@ -376,15 +376,15 @@
 		},
 		{
 			"backtrace" : 4,
+			"id" : "react_codegen_rnworklets::@68f58d84d4754f193387"
+		},
+		{
+			"backtrace" : 4,
 			"id" : "react_codegen_safeareacontext::@7984cd80db47aa7b952a"
 		},
 		{
 			"backtrace" : 4,
 			"id" : "react_codegen_rnscreens::@25bcbd507e98d3a854ad"
-		},
-		{
-			"backtrace" : 4,
-			"id" : "react_codegen_rnworklets::@68f58d84d4754f193387"
 		}
 	],
 	"id" : "appmodules::@6890427a1f51a3e7e1df",

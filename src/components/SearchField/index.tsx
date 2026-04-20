@@ -1,5 +1,5 @@
 import { COLORS, FONT_FAMILIES, fp, wp } from '@theme/index';
-import { MapPin, Search, X } from 'lucide-react-native';
+import { MapPin, Search } from 'lucide-react-native';
 import React from 'react';
 import {
   StyleProp,
@@ -43,14 +43,14 @@ const SearchField: React.FC<Props> = ({
         placeholderTextColor="#4C002E"
         style={styles.input}
       />
-      {value ? (
+      {/* {value ? (
         <TouchableOpacity
           onPress={() => props.onChangeText?.('')}
           style={styles.clearBtn}
         >
           <X size={24} color="#999" />
         </TouchableOpacity>
-      ) : null}
+      ) : null} */}
     </TouchableOpacity>
   );
 };

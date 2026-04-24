@@ -13,6 +13,7 @@ import LiveTrackingScreen from '@modules/LiveTracking/LiveTrackingScreen';
 import ConfirmMPINScreen from '@modules/Mpin/ConfirmMPIN';
 import MpinLogin from '@modules/Mpin/MpinLogin';
 import SetMPINScreen from '@modules/Mpin/SetMPIN';
+import FrightPayment from '@modules/Payment';
 import { RootState } from '@store/rootReducer';
 import { useSelector } from 'react-redux';
 import BottomNavigation from './BottomNavigation';
@@ -66,6 +67,14 @@ const UserNavigation = () => {
           component={VehicleDhalaSizeScreen}
           options={{
             headerTitle: () => <HeaderTitle title="Vehicle Dhala Size" />,
+          }}
+        />
+
+        <Stack.Screen
+          name="FrightPayment"
+          component={FrightPayment}
+          options={{
+            headerTitle: () => <HeaderTitle title="Fright Payment" />,
           }}
         />
 

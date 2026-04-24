@@ -9,7 +9,7 @@ const CircularLoader = ({
   duration = 150,
   showTimer = true,
   loading = true,
-  autoProgress = true, // 🔥 control slice animation
+  autoProgress = true,
 }: {
   duration?: number;
   showTimer?: boolean;

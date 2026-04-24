@@ -103,6 +103,16 @@ const SelectVehicleScreen = () => {
       <FlatList
         data={avilableVehicles}
         keyExtractor={(item, index) => item?.DriverID + index}
+        ListEmptyComponent={() => (
+          <View style={styles.emptyContainer}>
+            <View style={styles.emptyCard}>
+              <Text style={styles.emptyTitle}>No Vehicles Available 🚚</Text>
+              <Text style={styles.emptySubText}>
+                Try changing pickup location or weight to see available vehicles
+              </Text>
+            </View>
+          </View>
+        )}
         renderItem={({ item }) => {
           const isSelected =
             booking?.vehicle?.vehicleNo === item?.registration_no;

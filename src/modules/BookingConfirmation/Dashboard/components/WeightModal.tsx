@@ -4,8 +4,8 @@ import { setWeight } from '@store/slices/Booking/bookingSlice';
 import { COLORS, FONT_FAMILIES, fp, hp, wp } from '@theme/index';
 import React, { useEffect, useState } from 'react';
 import {
-  Alert,
   Modal,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
@@ -36,70 +36,23 @@ const WeightModal: React.FC<WeightModalProps> = ({
     setWeightValue(approximateWeightKg);
   }, []);
   return (
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={modalVisible}
-      onRequestClose={() => {
-        Alert.alert('Modal has been closed.');
-        setModalVisible(!modalVisible);
-      }}
-    >
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          // alignItems: 'center',
-        }}
-      >
-        <View
-          style={{
-            margin: wp(16),
-            backgroundColor: COLORS.white[100],
-            borderRadius: 16,
-            shadowColor: '#000',
-            elevation: 5,
-            paddingVertical: hp(20),
-            paddingHorizontal: wp(14),
-          }}
-        >
-          <Text
-            style={{
-              fontSize: fp(20),
-              fontFamily: FONT_FAMILIES.semiBold,
-              color: COLORS.primary[500],
-            }}
-          >
-            Approx Weight
-          </Text>
+    <Modal animationType="fade" transparent visible={modalVisible}>
+      <View style={styles.overlay} />
+      <View style={styles.container}>
+        <View style={styles.card}>
+          <Text style={styles.title}>Approx Weight (KG)</Text>
+
           <TextInput
-            placeholder="Approx Weight"
-            style={{
-              borderWidth: 2,
-              paddingHorizontal: wp(25),
-              borderRadius: fp(8),
-              marginTop: hp(15),
-              borderColor: COLORS.gray[75],
-              height: hp(38),
-            }}
+            placeholder="Enter weight"
+            style={styles.input}
             value={weight}
             onChangeText={setWeightValue}
-            placeholderTextColor={COLORS.gray[500]}
+            placeholderTextColor="#999"
             keyboardType="number-pad"
           />
-          <TouchableOpacity
-            style={{ marginTop: hp(20), alignSelf: 'flex-end' }}
-            onPress={handleSubmit}
-          >
-            <Text
-              style={{
-                fontSize: fp(16),
-                color: COLORS.primary[500],
-                fontFamily: FONT_FAMILIES.bold,
-              }}
-            >
-              Next →
-            </Text>
+
+          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+            <Text style={styles.buttonText}>Next →</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -108,3 +61,52 @@ const WeightModal: React.FC<WeightModalProps> = ({
 };
 
 export default WeightModal;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+  },
+
+  card: {
+    width: '85%',
+    backgroundColor: COLORS.white[100],
+    borderRadius: 16,
+    paddingVertical: hp(20),
+    paddingHorizontal: wp(16),
+    elevation: 6,
+  },
+
+  title: {
+    fontSize: fp(20),
+    fontFamily: FONT_FAMILIES.semiBold,
+    color: COLORS.primary[500],
+  },
+
+  input: {
+    borderWidth: 1.5,
+    paddingHorizontal: wp(12),
+    borderRadius: fp(8),
+    marginTop: hp(15),
+    borderColor: COLORS.gray[200],
+    height: hp(42),
+    fontFamily: FONT_FAMILIES.regular,
+    color: COLORS.black[500],
+  },
+
+  button: {
+    marginTop: hp(20),
+    alignSelf: 'flex-end',
+  },
+
+  buttonText: {
+    fontSize: fp(16),
+    color: COLORS.primary[500],
+    fontFamily: FONT_FAMILIES.bold,
+  },
+});

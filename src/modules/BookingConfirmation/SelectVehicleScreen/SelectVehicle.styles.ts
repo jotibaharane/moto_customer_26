@@ -100,4 +100,37 @@ export const styles = StyleSheet.create({
   button: {
     marginTop: hp(24),
   },
+
+  /* ================= EMPTY STATE ================= */
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: hp(40),
+  },
+
+  emptyCard: {
+    width: '100%',
+    padding: fp(20),
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: COLORS.gray[250],
+    backgroundColor: COLORS.white[100],
+    alignItems: 'center',
+  },
+
+  emptyTitle: {
+    fontSize: fp(16),
+    fontFamily: FONT_FAMILIES.semiBold,
+    color: COLORS.black[500],
+    marginTop: hp(10),
+  },
+
+  emptySubText: {
+    fontSize: fp(14),
+    fontFamily: FONT_FAMILIES.regular,
+    color: COLORS.gray[500],
+    textAlign: 'center',
+    marginTop: hp(4),
+  },
 });

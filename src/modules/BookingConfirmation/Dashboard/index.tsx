@@ -8,8 +8,14 @@ import MapboxGL, {
   SymbolLayer,
 } from '@rnmapbox/maps';
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import RazorpayCheckout, { CheckoutOptions } from 'react-native-razorpay';
+import {
+  Alert,
+  Text,
+  TextInput,
+  TouchableHighlight,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { RootState } from '@store/rootReducer';
@@ -150,35 +156,35 @@ const DashboardScreen = () => {
     booking?.delivery?.coordinates,
     userLocation,
   ]);
-  const handlePayment = async () => {
-    try {
-      const options: CheckoutOptions = {
-        description: 'Ride Payment',
-        image: 'https://i.imgur.com/3g7nmJC.jpg',
-        currency: 'INR',
-        key: 'rzp_test_SaFPYEwt9QmzYx',
-        amount: 5000,
-        name: 'MotoHelp',
-        order_id: 'order_SfcK48vOPIuma4', // ✅ dynamic
-        prefill: {
-          email: EmailID,
-          contact: ContactNo,
-          name: full_name,
-        },
-        theme: { color: COLORS.primary[500] },
-      };
+  // const handlePayment = async () => {
+  //   try {
+  //     const options: CheckoutOptions = {
+  //       description: 'Ride Payment',
+  //       image: 'https://i.imgur.com/3g7nmJC.jpg',
+  //       currency: 'INR',
+  //       key: 'rzp_test_SaFPYEwt9QmzYx',
+  //       amount: 5000,
+  //       name: 'MotoHelp',
+  //       order_id: 'order_SfcK48vOPIuma4', // ✅ dynamic
+  //       prefill: {
+  //         email: EmailID,
+  //         contact: ContactNo,
+  //         name: full_name,
+  //       },
+  //       theme: { color: COLORS.primary[500] },
+  //     };
 
-      RazorpayCheckout.open(options)
-        .then(data => {
-          console.log(data); // 🔥 VERY IMPORTANT
-        })
-        .catch(error => {
-          Alert.alert(`Error: ${error.code} | ${error.description}`);
-        });
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  //     RazorpayCheckout.open(options)
+  //       .then(data => {
+  //         console.log(data); // 🔥 VERY IMPORTANT
+  //       })
+  //       .catch(error => {
+  //         Alert.alert(`Error: ${error.code} | ${error.description}`);
+  //       });
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
   console.log({ userLocation });
   return (
     <SafeAreaView style={styles.container}>
@@ -280,6 +286,9 @@ const DashboardScreen = () => {
       {/* <TouchableHighlight onPress={handlePayment}>
         <Text>Pay Now</Text>
       </TouchableHighlight> */}
+      <TouchableHighlight onPress={() => navigate('FrightPayment')}>
+        <Text>Pay Now</Text>
+      </TouchableHighlight>
       {/* ================= MAP ================= */}
       <View style={styles.mapContainer}>
         <MapView

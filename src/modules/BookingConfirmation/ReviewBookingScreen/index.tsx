@@ -184,7 +184,6 @@ const ReviewBookingScreen = () => {
             setTimeLeft(150);
           }}
         />
-        {/* {watingDriver && <WaitingDriver timer={formatTime(timeLeft)} />} */}
         <CustomButton
           title="Confirm Booking"
           variant="filled"

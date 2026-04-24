@@ -5,20 +5,14 @@ import SearchField from '@components/SearchField';
 import { COLORS, FONT_FAMILIES, fp, hp, wp } from '@theme/index';
 import { Edit, MapPin, Timer } from 'lucide-react-native';
 import React, { useEffect, useRef } from 'react';
-import {
-  FlatList,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useLocation } from '@hooks/useLocation';
 import { RootState } from '@store/rootReducer';
 import { setBookingDetails } from '@store/slices/Booking/bookingSlice';
 import { setDestination } from '@store/slices/map/mapSlice';
 import { useFormik } from 'formik';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useDispatch, useSelector } from 'react-redux';
 
 interface Props {
@@ -112,65 +106,65 @@ const DropModal: React.FC<Props> = ({ onOpen, open, setModalVisible }) => {
       onOpen={() => onOpen?.(true)}
       onClose={() => onOpen?.(false)}
     >
-      <ScrollView keyboardShouldPersistTaps="handled">
-        {!selected ? (
-          /* 🔍 SEARCH SCREEN */
-          <View style={styles.gridContainer}>
-            <SearchField
-              iconType="location"
-              placeholder="Delivery Address"
-              value={search}
-              onChangeText={setSearch}
-              iconColor="#FF0A0A"
-              containerStyle={{ borderWidth: 1 }}
-            />
+      {!selected ? (
+        /* 🔍 SEARCH SCREEN */
+        <View style={styles.gridContainer}>
+          <SearchField
+            iconType="location"
+            placeholder="Delivery Address"
+            value={search}
+            onChangeText={setSearch}
+            iconColor="#FF0A0A"
+            containerStyle={{ borderWidth: 1 }}
+          />
 
-            {!search && recent.length > 0 && (
-              <Text
-                onPress={clearHistory}
-                style={{ color: COLORS.primary[500], marginTop: hp(10) }}
+          {!search && recent.length > 0 && (
+            <Text
+              onPress={clearHistory}
+              style={{ color: COLORS.primary[500], marginTop: hp(10) }}
+            >
+              Clear History
+            </Text>
+          )}
+
+          <FlatList
+            data={dataToShow}
+            keyExtractor={(item, index) => item?.mapboxId || index.toString()}
+            renderItem={({ item }) => (
+              <Pressable
+                onPress={() => handleSelect(item)}
+                style={styles.listItem}
               >
-                Clear History
-              </Text>
-            )}
+                {search ? <MapPin size={20} /> : <Timer size={20} />}
 
-            <FlatList
-              data={dataToShow}
-              keyExtractor={(item, index) => item?.mapboxId || index.toString()}
-              renderItem={({ item }) => (
-                <Pressable
-                  onPress={() => handleSelect(item)}
-                  style={styles.listItem}
-                >
-                  {search ? <MapPin size={20} /> : <Timer size={20} />}
-
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.title}>{item.name || item.city}</Text>
-                    <Text style={styles.subtitle}>
-                      {item.fullAddress || item.googleAddress}
-                    </Text>
-                  </View>
-                </Pressable>
-              )}
-            />
-          </View>
-        ) : (
-          /* 📍 SELECTED SCREEN */
-          <View style={styles.gridContainer}>
-            <View style={styles.headerRow}>
-              <MapPin size={32} fill={'#FF0A0A'} />
-
-              <View style={{ flex: 1 }}>
-                <Text style={styles.title}>{selected?.name}</Text>
-                <Text style={styles.subtitle}>{selected?.googleAddress}</Text>
-              </View>
-
-              <Pressable onPress={() => setSelected(null)}>
-                <Edit size={24} />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.title}>{item.name || item.city}</Text>
+                  <Text style={styles.subtitle}>
+                    {item.fullAddress || item.googleAddress}
+                  </Text>
+                </View>
               </Pressable>
+            )}
+          />
+        </View>
+      ) : (
+        /* 📍 SELECTED SCREEN */
+        <View style={styles.gridContainer}>
+          <View style={styles.headerRow}>
+            <MapPin size={32} fill={'#FF0A0A'} />
+
+            <View style={{ flex: 1 }}>
+              <Text style={styles.title}>{selected?.name}</Text>
+              <Text style={styles.subtitle}>{selected?.googleAddress}</Text>
             </View>
 
-            {/* FORM */}
+            <Pressable onPress={() => setSelected(null)}>
+              <Edit size={24} />
+            </Pressable>
+          </View>
+
+          {/* FORM */}
+          <KeyboardAwareScrollView scrollEnabled>
             <View style={{ marginTop: hp(32), gap: hp(24) }}>
               <InputOutline
                 placeholder="Plot / unit / Building"
@@ -204,9 +198,9 @@ const DropModal: React.FC<Props> = ({ onOpen, open, setModalVisible }) => {
                 style={{ marginTop: hp(24) }}
               />
             </View>
-          </View>
-        )}
-      </ScrollView>
+          </KeyboardAwareScrollView>
+        </View>
+      )}
     </RBSheet>
   );
 };

@@ -1,3 +1,4 @@
+import { navigate } from '@navigation/NavigationService';
 import { RootState } from '@store/rootReducer';
 import { Bell, Menu } from 'lucide-react-native';
 import React from 'react';
@@ -14,32 +15,19 @@ const Header = () => {
         <View>
           <Menu size={24} />
         </View>
-
-        <View style={styles.headerCenter}>
-          {/* <SlidingHeader
-            text={message || '🚚 Live navigation to pickup location'}
-          /> */}
-        </View>
-
+        <View style={styles.headerCenter} />
         <Bell size={24} />
       </View>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.trackingBtn}>
+        <TouchableOpacity
+          style={styles.trackingBtn}
+          onPress={() => navigate('LiveTrackingScreen')}
+        >
           <Text style={styles.trackingText}> + Tracking</Text>
         </TouchableOpacity>
       </View>
       {message && (
-        <View
-          style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-            position: 'absolute',
-            top: 150,
-            zIndex: 999,
-            left: '12%',
-            right: '12%',
-          }}
-        >
+        <View style={styles.messageContainer}>
           <Text style={styles.headerText}>{message}</Text>
         </View>
       )}

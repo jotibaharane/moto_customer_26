@@ -1,5 +1,6 @@
 import { useGetLoadPostsQuery } from '@api/Mutations';
 
+import { getDirections } from '@api/mapbox/mapbox.api';
 import MapboxGL, {
   Camera,
   LineLayer,
@@ -11,12 +12,13 @@ import MapboxGL, {
 } from '@rnmapbox/maps';
 import { emitJoinRoom } from '@socket/socket.emitters';
 import { RootState } from '@store/rootReducer';
-import { COLORS, FONT_FAMILIES, fp, hp, wp } from '@theme/index';
+import { COLORS } from '@theme/index';
+import { animateMarker, getSmoothHeading } from '@utils/animation.utils';
+import { handleCall } from '@utils/helperfunctions.utils';
 import { isValidLocation } from '@utils/location.utils';
 import { Phone, User } from 'lucide-react-native';
 import React, { useEffect, useRef, useState } from 'react';
-import { Image, Linking, Text, TouchableOpacity, View } from 'react-native';
-import Config from 'react-native-config';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import Header from './components/Header';
@@ -27,10 +29,7 @@ const ReportingScreen = () => {
   const { driverMobile, distance_km, eta_minutes, loadId } = useSelector(
     (state: RootState) => state.tracking,
   );
-  const handleCall = () => {
-    if (!driverMobile) return;
-    Linking.openURL(`tel:${driverMobile}`);
-  };
+
   const { driver, pickup, destination } = useSelector(
     (state: RootState) => state.map,
   );
@@ -57,53 +56,13 @@ const ReportingScreen = () => {
     }
   }, [trips]);
 
-  // 🔥 Smooth easing
-  const easeInOut = (t: number) => {
-    return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-  };
-
-  // 🔥 Smooth marker animation
-  const animateMarker = (from: [number, number], to: [number, number]) => {
-    const distance = Math.sqrt(
-      Math.pow(to[0] - from[0], 2) + Math.pow(to[1] - from[1], 2),
-    );
-
-    const duration = Math.min(Math.max(distance * 50000, 500), 1500);
-
-    const start = Date.now();
-
-    const animate = () => {
-      const now = Date.now();
-      const progress = easeInOut(Math.min((now - start) / duration, 1));
-
-      const lng = from[0] + (to[0] - from[0]) * progress;
-      const lat = from[1] + (to[1] - from[1]) * progress;
-
-      setAnimatedCoords([lng, lat]);
-
-      if (progress < 1) requestAnimationFrame(animate);
-    };
-
-    animate();
-  };
-
-  // 🔥 Smooth heading (fix reverse rotation)
-  const getSmoothHeading = (prev: number, next: number) => {
-    let diff = next - prev;
-
-    if (diff > 180) diff -= 360;
-    if (diff < -180) diff += 360;
-
-    return prev + diff;
-  };
-
   // 🚗 DRIVER UPDATE
   useEffect(() => {
     if (!driver) return;
 
     const newCoords: [number, number] = [
-      Number(driver.lng),
-      Number(driver.lat),
+      Number(driver?.lng!),
+      Number(driver?.lat!),
     ];
 
     // First time
@@ -114,7 +73,7 @@ const ReportingScreen = () => {
     }
 
     // Animate marker
-    animateMarker(prevCoords.current, newCoords);
+    animateMarker(prevCoords.current, newCoords, setAnimatedCoords);
     prevCoords.current = newCoords;
 
     // Smooth heading
@@ -140,28 +99,19 @@ const ReportingScreen = () => {
   useEffect(() => {
     if (!pickup || !driver) return;
 
-    const fetchRoute = async () => {
+    const loadRoute = async () => {
       try {
-        const url = `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${driver.lng},${driver.lat};${pickup.lng},${pickup.lat}?access_token=${Config.MAPBOX_ACCESS_TOKEN}&geometries=geojson&overview=full&steps=true`;
-
-        const res = await fetch(url);
-        const data = await res.json();
-
-        const coords = data.routes[0].geometry.coordinates;
-
-        setRouteGeoJSON({
-          type: 'Feature',
-          geometry: {
-            type: 'LineString',
-            coordinates: coords,
-          },
-        });
+        const from = [Number(driver?.lng!), Number(driver?.lat!)];
+        const to = [Number(pickup?.lng!), Number(pickup?.lat!)];
+        const res = await getDirections(from, to);
+        if (!res) return;
+        setRouteGeoJSON(res);
       } catch (e) {
         console.log('Route error', e);
       }
     };
 
-    fetchRoute();
+    loadRoute();
   }, [pickup, driver]);
 
   return (
@@ -193,8 +143,6 @@ const ReportingScreen = () => {
             }}
           />
 
-        
-
           {/* 🚗 DRIVER */}
           {/* 🚗 DRIVER ICON */}
           {animatedCoords && (
@@ -206,7 +154,7 @@ const ReportingScreen = () => {
                   type: 'Point',
                   coordinates: animatedCoords,
                 },
-                properties: {}
+                properties: {},
               }}
             >
               <SymbolLayer
@@ -227,7 +175,7 @@ const ReportingScreen = () => {
                   iconAnchor: 'center',
                   iconRotationAlignment: 'map',
                   iconAllowOverlap: true,
-                  iconRotate: prevHeading.current,
+                  iconRotate: prevHeading?.current,
                 }}
               />
             </ShapeSource>
@@ -236,22 +184,11 @@ const ReportingScreen = () => {
           {/* 🔥 TOOLTIP (SEPARATE) */}
           {animatedCoords && (
             <MarkerView coordinate={animatedCoords} anchor={{ x: 0.5, y: 1.8 }}>
-              <View
-                style={{
-                  backgroundColor: '#fff',
-                  paddingVertical: 6,
-                  paddingHorizontal: 10,
-                  borderRadius: 8,
-                  shadowColor: '#000',
-                  shadowOpacity: 0.2,
-                  shadowRadius: 4,
-                  elevation: 5,
-                }}
-              >
-                <Text style={{ fontSize: 12, fontWeight: '600' }}>
+              <View style={styles.tooltipContainer}>
+                <Text style={styles.tooltipTitle}>
                   Distance {distance_km || 0} Km
                 </Text>
-                <Text style={{ fontSize: 12 }}>
+                <Text style={styles.tooltipText}>
                   Time {eta_minutes || 0} min
                 </Text>
               </View>
@@ -305,7 +242,7 @@ const ReportingScreen = () => {
               />
             </ShapeSource>
           )}
-            {/* ROUTE */}
+          {/* ROUTE */}
           {routeGeoJSON && (
             <ShapeSource id="routeSource" shape={routeGeoJSON}>
               <LineLayer
@@ -325,41 +262,19 @@ const ReportingScreen = () => {
       {/* <BottomCard /> */}
       {loadId && (
         <TouchableOpacity
-          style={{
-            padding: fp(5),
-            backgroundColor: COLORS.white[100],
-            borderRadius: fp(50),
-            height: hp(80),
-            width: wp(80),
-            position: 'absolute',
-            bottom: hp(20),
-            left: 10,
-            borderWidth: 2,
-            borderColor: COLORS.primary[500],
-            alignItems: 'center',
-            justifyContent: 'center',
-            overflow: 'hidden',
-          }}
-          onPress={handleCall}
+          style={styles.callButton}
+          onPress={() => handleCall(driverMobile)}
         >
-          <View style={{ flexDirection: 'row', marginBottom: 5 }}>
-            <View style={{ transform: [{ rotate: '45deg' }] }}>
+          <View style={styles.callRows}>
+            <View style={styles.phoneRotate}>
               <Phone size={36} color={COLORS.primary[500]} />
             </View>
-            <View
-              style={{
-                height: 26,
-                width: 26,
-                backgroundColor: COLORS.gray[100],
-                borderRadius: fp(50),
-                padding: 2,
-              }}
-            >
+            <View style={styles.userIconWrapper}>
               <User />
             </View>
           </View>
 
-          <Text style={{ fontSize: fp(8), fontFamily: FONT_FAMILIES.semiBold }}>
+          <Text style={styles.postIdText} numberOfLines={1}>
             Post id {loadId || 'N/A'}
           </Text>
         </TouchableOpacity>

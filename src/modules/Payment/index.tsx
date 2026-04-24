@@ -1,10 +1,11 @@
 import CustomCheckbox from '@components/CustomCheckbox';
 import { COLORS, FONT_FAMILIES, fp, hp, wp } from '@theme/index';
 import React, { useState } from 'react';
-import { Text, TextInput, View } from 'react-native';
+import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const FrightPayment = () => {
   const [checked, setChecked] = useState(false);
+  const [payAnother, setPayAnother] = useState(false);
   const [tab, setTab] = useState<'Cash' | 'UPI' | 'Scaner'>('Cash');
   return (
     <View
@@ -86,24 +87,26 @@ const FrightPayment = () => {
         <Text style={{ fontFamily: FONT_FAMILIES.medium, fontSize: fp(16) }}>
           Pay Another Amount
         </Text>
-        <CustomCheckbox value={checked} onValueChange={setChecked} />
+        <CustomCheckbox value={payAnother} onValueChange={setPayAnother} />
       </View>
-      <TextInput
-        placeholder="Enter Amount You Want To Pay"
-        style={{
-          marginHorizontal: wp(40),
-          borderWidth: 1,
-          borderRadius: 8,
-          paddingHorizontal: 15,
-          paddingVertical: 10,
-          height: 56,
-          fontSize: 16,
-          color: '#000', // 👈 make sure visible
-        }}
-        placeholderTextColor={'#999'}
-      />
+      {payAnother && (
+        <TextInput
+          placeholder="Enter Amount You Want To Pay"
+          style={{
+            marginHorizontal: wp(40),
+            borderWidth: 1,
+            borderRadius: 8,
+            paddingHorizontal: 15,
+            paddingVertical: 10,
+            height: 56,
+            fontSize: 16,
+            color: '#000', // 👈 make sure visible
+          }}
+          placeholderTextColor={'#999'}
+        />
+      )}
       <View style={{ flexDirection: 'row', gap: wp(16) }}>
-        <View
+        <TouchableOpacity
           style={{
             height: hp(28.65),
             borderWidth: 1,
@@ -111,6 +114,7 @@ const FrightPayment = () => {
             flex: 1,
             borderRadius: 8,
           }}
+          onPress={() => setTab('Cash')}
         >
           <Text
             style={{
@@ -122,8 +126,8 @@ const FrightPayment = () => {
           >
             Cash
           </Text>
-        </View>
-        <View
+        </TouchableOpacity>
+        <TouchableOpacity
           style={{
             height: hp(28.65),
             borderWidth: 1,
@@ -131,6 +135,7 @@ const FrightPayment = () => {
             flex: 1,
             borderRadius: 8,
           }}
+          onPress={() => setTab('UPI')}
         >
           <Text
             style={{
@@ -142,8 +147,8 @@ const FrightPayment = () => {
           >
             UPI
           </Text>
-        </View>
-        <View
+        </TouchableOpacity>
+        <TouchableOpacity
           style={{
             height: hp(28.65),
             borderWidth: 1,
@@ -151,6 +156,7 @@ const FrightPayment = () => {
             flex: 1,
             borderRadius: 8,
           }}
+          onPress={() => setTab('Scaner')}
         >
           <Text
             style={{
@@ -161,6 +167,50 @@ const FrightPayment = () => {
             }}
           >
             Scaner
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <View style={{ flex: 1 }}>
+        {tab === 'UPI' && (
+          <TextInput
+            placeholder="Enter UPI ID"
+            style={{
+              borderWidth: 0.5,
+              borderRadius: 8,
+              paddingHorizontal: 15,
+              paddingVertical: 10,
+              height: 56,
+              fontSize: 16,
+              color: '#000', // 👈 make sure visible
+            }}
+            placeholderTextColor={'#999'}
+          />
+        )}
+        {tab === 'Scaner' && <Text>Scanner</Text>}
+        <View
+          style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+        >
+          <Image
+            source={require('@assets/images/paymentdone.png')}
+            width={94}
+            height={96}
+          />
+          <Text
+            style={{
+              fontFamily: FONT_FAMILIES.semiBold,
+              fontSize: fp(16),
+              color: COLORS.primary[600],
+            }}
+          >
+            Payment has been done successfully.
+          </Text>
+          <Text
+            style={{
+              fontFamily: FONT_FAMILIES.semiBold,
+              fontSize: fp(16),
+            }}
+          >
+            Fright Payment Receipt
           </Text>
         </View>
       </View>

@@ -1,8 +1,11 @@
 import { baseApi } from './baseApi';
 import {
   DriverPhotosResponse,
+  MakePaymentResponse,
   OnboardingRequest,
   OnboardingResponse,
+  PaymentResponse,
+  PaymentTransaction,
   PickupAddress,
   PincodeDataRequest,
   PincodeDataResponse,
@@ -10,6 +13,7 @@ import {
   SendOtpResponse,
   ValidateOtpRequest,
   ValidateOtpResponse,
+  VerifyPaymentPayload,
 } from './type';
 
 export const authApi = baseApi.injectEndpoints({
@@ -151,6 +155,20 @@ export const authApi = baseApi.injectEndpoints({
         body: queryArg,
       }),
     }),
+    makePayment: builder.mutation<MakePaymentResponse, PaymentTransaction>({
+      query: queryArg => ({
+        url: `/Payment_pay`,
+        method: 'POST',
+        body: queryArg,
+      }),
+    }),
+    getLoadPayment: builder.query<PaymentResponse, VerifyPaymentPayload>({
+      query: queryArg => ({
+        url: `/get_load_Payment`,
+        method: 'POST',
+        body: queryArg,
+      }),
+    }),
   }),
 });
 
@@ -169,4 +187,6 @@ export const {
   useGetVehicleListsQuery,
   usePostBookmarkMutation,
   useUpdateLoadPostMutation,
+  useMakePaymentMutation,
+  useGetLoadPaymentQuery,
 } = authApi;

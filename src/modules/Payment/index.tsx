@@ -1,217 +1,149 @@
+import { useGetLoadPaymentQuery, useMakePaymentMutation } from '@api/Mutations';
+import CustomButton from '@components/Button';
 import CustomCheckbox from '@components/CustomCheckbox';
-import { COLORS, FONT_FAMILIES, fp, hp, wp } from '@theme/index';
+import QRScanner from '@components/QRScanner';
+import { useNetInfo } from '@react-native-community/netinfo';
+import { wp } from '@theme/index';
 import React, { useState } from 'react';
 import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
-
+import { styles } from './FrightPayment.style';
 const FrightPayment = () => {
-  const [checked, setChecked] = useState(false);
+  const netInfo = useNetInfo();
+  console.log({ netInfo });
+  const [success, setSuccess] = useState(false);
+  const [paymentAt, setPaymentAt] = useState<'Paid' | 'ToPay'>('Paid');
+  const { data } = useGetLoadPaymentQuery(
+    {
+      DriverID: 'REH-1178',
+      CustomerID: 'RAM001',
+      LoadpostID: 'LP046114',
+    },
+    {
+      skip: false, // or condition
+    },
+  );
+  console.log({ data });
+  const load = data?.data?.[0];
+  const [makePayment] = useMakePaymentMutation();
+  const [partialAmount, setPartialAmount] = useState('');
+  const [upiId, setUpiId] = useState('');
   const [payAnother, setPayAnother] = useState(false);
   const [tab, setTab] = useState<'Cash' | 'UPI' | 'Scaner'>('Cash');
+  const handlePayment = async () => {
+    try {
+      const resp = await makePayment({
+        Currency: 'INR',
+        CustomerID: load?.CustomerID!,
+        DriverID: load?.driver_id!,
+        TotalAmount: Number(load?.freight_amount),
+        UPI_ID: upiId,
+        TransactionType: payAnother ? 'PARTIAL' : 'FULL',
+        TransactionAmt: Number(load?.freight_amount),
+        PaidAmount: payAnother
+          ? Number(partialAmount)
+          : Number(load?.freight_amount),
+        LoadpostID: load?.LoadPostID!,
+        TransactionMode: tab as any,
+        IPAddress: '',
+        DeviceInfo: '',
+      });
+      console.log({ resp });
+
+      if (resp?.data?.status === '00') {
+        setSuccess(true);
+      }
+    } catch (error) {}
+  };
   return (
-    <View
-      style={{
-        backgroundColor: COLORS.white[100],
-        flex: 1,
-        padding: fp(16),
-        gap: hp(24),
-      }}
-    >
-      <View
-        style={{
-          flexDirection: 'row',
-          height: hp(50),
-          borderWidth: 0.5,
-          borderRadius: 8,
-          borderColor: COLORS.gray[200],
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          paddingHorizontal: wp(16),
-        }}
-      >
-        <Text style={{ fontFamily: FONT_FAMILIES.medium, fontSize: fp(16) }}>
-          Paid
-        </Text>
-        <CustomCheckbox value={checked} onValueChange={setChecked} />
+    <View style={styles.container}>
+      <View style={styles.rowBox}>
+        <Text style={styles.label}>Paid(at pickup)</Text>
+        <CustomCheckbox
+          value={paymentAt === 'Paid'}
+          onValueChange={val => setPaymentAt(val ? 'Paid' : 'ToPay')}
+        />
       </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          height: hp(50),
-          borderWidth: 0.5,
-          borderRadius: 8,
-          borderColor: COLORS.gray[200],
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          paddingHorizontal: wp(16),
-        }}
-      >
-        <Text style={{ fontFamily: FONT_FAMILIES.medium, fontSize: fp(16) }}>
-          To Pay
-        </Text>
-        <CustomCheckbox value={checked} onValueChange={setChecked} />
+
+      <View style={styles.rowBox}>
+        <Text style={styles.label}>To Pay</Text>
+        <CustomCheckbox
+          value={paymentAt === 'ToPay'}
+          onValueChange={val => setPaymentAt(val ? 'ToPay' : 'Paid')}
+        />
       </View>
-      <View
-        style={{
-          backgroundColor: COLORS.primary[300],
-          height: hp(56),
-          borderRadius: 8,
-          alignItems: 'center',
-          justifyContent: 'center',
-          alignSelf: 'center',
-        }}
-      >
-        <Text
-          style={{
-            fontFamily: FONT_FAMILIES.medium,
-            color: COLORS.white[100],
-            fontSize: fp(16),
-            paddingHorizontal: wp(22),
-            paddingVertical: hp(18),
-          }}
-        >
-          Total Amount To Be Paid - ₹ 500
+
+      <View style={styles.totalBox}>
+        <Text style={styles.totalText}>
+          Total Amount To Be Paid - ₹ {load?.freight_amount || 0}
         </Text>
       </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          height: hp(50),
-          borderWidth: 0.5,
-          borderRadius: 8,
-          borderColor: COLORS.gray[200],
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          paddingHorizontal: wp(16),
-        }}
-      >
-        <Text style={{ fontFamily: FONT_FAMILIES.medium, fontSize: fp(16) }}>
-          Pay Another Amount
-        </Text>
-        <CustomCheckbox value={payAnother} onValueChange={setPayAnother} />
-      </View>
+
+      {paymentAt === 'Paid' && (
+        <View style={styles.rowBox}>
+          <Text style={styles.label}>Pay Another Amount</Text>
+          <CustomCheckbox value={payAnother} onValueChange={setPayAnother} />
+        </View>
+      )}
+
       {payAnother && (
         <TextInput
+          value={partialAmount}
           placeholder="Enter Amount You Want To Pay"
-          style={{
-            marginHorizontal: wp(40),
-            borderWidth: 1,
-            borderRadius: 8,
-            paddingHorizontal: 15,
-            paddingVertical: 10,
-            height: 56,
-            fontSize: 16,
-            color: '#000', // 👈 make sure visible
-          }}
-          placeholderTextColor={'#999'}
+          style={styles.input}
+          placeholderTextColor="#999"
+          onChangeText={t => setPartialAmount(t)}
         />
       )}
-      <View style={{ flexDirection: 'row', gap: wp(16) }}>
-        <TouchableOpacity
-          style={{
-            height: hp(28.65),
-            borderWidth: 1,
-            backgroundColor: tab === 'Cash' ? COLORS.primary[600] : undefined,
-            flex: 1,
-            borderRadius: 8,
-          }}
-          onPress={() => setTab('Cash')}
-        >
-          <Text
-            style={{
-              fontFamily: FONT_FAMILIES.bold,
-              fontSize: fp(16),
-              color: tab === 'Cash' ? COLORS.white[100] : COLORS.primary[600],
-              textAlign: 'center',
-            }}
+
+      <View style={styles.tabContainer}>
+        {['Cash', 'UPI', 'Scaner'].map(item => (
+          <TouchableOpacity
+            key={item}
+            style={[styles.tab, tab === item && styles.activeTab]}
+            onPress={() => setTab(item as any)}
           >
-            Cash
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            height: hp(28.65),
-            borderWidth: 1,
-            backgroundColor: tab === 'UPI' ? COLORS.primary[600] : undefined,
-            flex: 1,
-            borderRadius: 8,
-          }}
-          onPress={() => setTab('UPI')}
-        >
-          <Text
-            style={{
-              fontFamily: FONT_FAMILIES.bold,
-              fontSize: fp(16),
-              color: tab === 'UPI' ? COLORS.white[100] : COLORS.primary[600],
-              textAlign: 'center',
-            }}
-          >
-            UPI
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            height: hp(28.65),
-            borderWidth: 1,
-            backgroundColor: tab === 'Scaner' ? COLORS.primary[600] : undefined,
-            flex: 1,
-            borderRadius: 8,
-          }}
-          onPress={() => setTab('Scaner')}
-        >
-          <Text
-            style={{
-              fontFamily: FONT_FAMILIES.bold,
-              fontSize: fp(16),
-              color: tab === 'Scaner' ? COLORS.white[100] : COLORS.primary[600],
-              textAlign: 'center',
-            }}
-          >
-            Scaner
-          </Text>
-        </TouchableOpacity>
+            <Text
+              style={[styles.tabText, tab === item && styles.activeTabText]}
+            >
+              {item}
+            </Text>
+          </TouchableOpacity>
+        ))}
       </View>
-      <View style={{ flex: 1 }}>
+
+      <View style={styles.bottomContainer}>
         {tab === 'UPI' && (
           <TextInput
             placeholder="Enter UPI ID"
-            style={{
-              borderWidth: 0.5,
-              borderRadius: 8,
-              paddingHorizontal: 15,
-              paddingVertical: 10,
-              height: 56,
-              fontSize: 16,
-              color: '#000', // 👈 make sure visible
-            }}
-            placeholderTextColor={'#999'}
+            style={styles.input}
+            placeholderTextColor="#999"
+            onChangeText={txt => setUpiId(txt)}
+            value={upiId}
           />
         )}
-        {tab === 'Scaner' && <Text>Scanner</Text>}
+
+        {tab === 'Scaner' && <QRScanner />}
         <View
           style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
         >
-          <Image
-            source={require('@assets/images/paymentdone.png')}
-            width={94}
-            height={96}
-          />
-          <Text
-            style={{
-              fontFamily: FONT_FAMILIES.semiBold,
-              fontSize: fp(16),
-              color: COLORS.primary[600],
-            }}
-          >
-            Payment has been done successfully.
-          </Text>
-          <Text
-            style={{
-              fontFamily: FONT_FAMILIES.semiBold,
-              fontSize: fp(16),
-            }}
-          >
-            Fright Payment Receipt
-          </Text>
+          {!success ? (
+            <CustomButton
+              title="Submit"
+              style={{ alignSelf: 'center', paddingHorizontal: wp(24) }}
+              onPress={() => handlePayment()}
+            />
+          ) : (
+            <View style={styles.successContainer}>
+              <Image
+                source={require('@assets/images/paymentdone.png')}
+                style={styles.image}
+              />
+              <Text style={styles.successText}>
+                Payment has been done successfully.
+              </Text>
+              <Text style={styles.receiptText}>Fright Payment Receipt</Text>
+            </View>
+          )}
         </View>
       </View>
     </View>

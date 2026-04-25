@@ -60,6 +60,30 @@ if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   file(TOUCH_NOCREATE "C:/Users/cs/Desktop/jotiba/moto_customer/android/app/.cxx/Debug/5q42553t/arm64-v8a/CMakeFiles/cmake.verify_globs")
 endif()
 
+# react_codegen_SRCS at C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/@react-native-community/netinfo/android/build/generated/source/codegen/jni/CMakeLists.txt:9 (file)
+file(GLOB NEW_GLOB LIST_DIRECTORIES true "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/@react-native-community/netinfo/android/build/generated/source/codegen/jni/*.cpp")
+set(OLD_GLOB
+  "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/@react-native-community/netinfo/android/build/generated/source/codegen/jni/RNCNetInfoSpec-generated.cpp"
+  )
+if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
+  message("-- GLOB mismatch!")
+  file(TOUCH_NOCREATE "C:/Users/cs/Desktop/jotiba/moto_customer/android/app/.cxx/Debug/5q42553t/arm64-v8a/CMakeFiles/cmake.verify_globs")
+endif()
+
+# react_codegen_SRCS at C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/@react-native-community/netinfo/android/build/generated/source/codegen/jni/CMakeLists.txt:9 (file)
+file(GLOB NEW_GLOB LIST_DIRECTORIES true "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/@react-native-community/netinfo/android/build/generated/source/codegen/jni/react/renderer/components/RNCNetInfoSpec/*.cpp")
+set(OLD_GLOB
+  "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/@react-native-community/netinfo/android/build/generated/source/codegen/jni/react/renderer/components/RNCNetInfoSpec/ComponentDescriptors.cpp"
+  "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/@react-native-community/netinfo/android/build/generated/source/codegen/jni/react/renderer/components/RNCNetInfoSpec/EventEmitters.cpp"
+  "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/@react-native-community/netinfo/android/build/generated/source/codegen/jni/react/renderer/components/RNCNetInfoSpec/Props.cpp"
+  "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/@react-native-community/netinfo/android/build/generated/source/codegen/jni/react/renderer/components/RNCNetInfoSpec/ShadowNodes.cpp"
+  "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/@react-native-community/netinfo/android/build/generated/source/codegen/jni/react/renderer/components/RNCNetInfoSpec/States.cpp"
+  )
+if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
+  message("-- GLOB mismatch!")
+  file(TOUCH_NOCREATE "C:/Users/cs/Desktop/jotiba/moto_customer/android/app/.cxx/Debug/5q42553t/arm64-v8a/CMakeFiles/cmake.verify_globs")
+endif()
+
 # react_codegen_SRCS at C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/@rnmapbox/maps/android/build/generated/source/codegen/jni/CMakeLists.txt:9 (file)
 file(GLOB NEW_GLOB LIST_DIRECTORIES true "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/@rnmapbox/maps/android/build/generated/source/codegen/jni/*.cpp")
 set(OLD_GLOB
@@ -200,6 +224,30 @@ set(OLD_GLOB
   "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/react-native-localize/android/build/generated/source/codegen/jni/react/renderer/components/RNLocalizeSpec/Props.cpp"
   "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/react-native-localize/android/build/generated/source/codegen/jni/react/renderer/components/RNLocalizeSpec/ShadowNodes.cpp"
   "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/react-native-localize/android/build/generated/source/codegen/jni/react/renderer/components/RNLocalizeSpec/States.cpp"
+  )
+if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
+  message("-- GLOB mismatch!")
+  file(TOUCH_NOCREATE "C:/Users/cs/Desktop/jotiba/moto_customer/android/app/.cxx/Debug/5q42553t/arm64-v8a/CMakeFiles/cmake.verify_globs")
+endif()
+
+# react_codegen_SRCS at C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/react-native-nitro-modules/android/build/generated/source/codegen/jni/CMakeLists.txt:9 (file)
+file(GLOB NEW_GLOB LIST_DIRECTORIES true "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/react-native-nitro-modules/android/build/generated/source/codegen/jni/*.cpp")
+set(OLD_GLOB
+  "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/react-native-nitro-modules/android/build/generated/source/codegen/jni/NitroModulesSpec-generated.cpp"
+  )
+if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
+  message("-- GLOB mismatch!")
+  file(TOUCH_NOCREATE "C:/Users/cs/Desktop/jotiba/moto_customer/android/app/.cxx/Debug/5q42553t/arm64-v8a/CMakeFiles/cmake.verify_globs")
+endif()
+
+# react_codegen_SRCS at C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/react-native-nitro-modules/android/build/generated/source/codegen/jni/CMakeLists.txt:9 (file)
+file(GLOB NEW_GLOB LIST_DIRECTORIES true "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/react-native-nitro-modules/android/build/generated/source/codegen/jni/react/renderer/components/NitroModulesSpec/*.cpp")
+set(OLD_GLOB
+  "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/react-native-nitro-modules/android/build/generated/source/codegen/jni/react/renderer/components/NitroModulesSpec/ComponentDescriptors.cpp"
+  "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/react-native-nitro-modules/android/build/generated/source/codegen/jni/react/renderer/components/NitroModulesSpec/EventEmitters.cpp"
+  "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/react-native-nitro-modules/android/build/generated/source/codegen/jni/react/renderer/components/NitroModulesSpec/Props.cpp"
+  "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/react-native-nitro-modules/android/build/generated/source/codegen/jni/react/renderer/components/NitroModulesSpec/ShadowNodes.cpp"
+  "C:/Users/cs/Desktop/jotiba/moto_customer/node_modules/react-native-nitro-modules/android/build/generated/source/codegen/jni/react/renderer/components/NitroModulesSpec/States.cpp"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   message("-- GLOB mismatch!")

@@ -102,3 +102,117 @@ export interface DriverPhotosResponse {
   message: string;
   data: DriverPhoto[];
 }
+
+export interface PaymentTransaction {
+  TransactionAmt: number;
+  DeviceInfo: string;
+  IPAddress: string;
+  UPI_ID: string;
+  VPA?: string;
+  CustomerID: string;
+  LoadpostID: string;
+  OrderNo?: string;
+  RideID?: string;
+  TransactionType: 'FULL' | 'PARTIAL';
+  TransactionMode: 'CARD' | 'UPI' | 'NETBANKING' | 'CASH';
+  TotalAmount: number;
+  PaidAmount: number;
+  Currency: 'INR' | 'USD' | 'EUR'; // extend if needed
+  DriverID: string;
+  PaymentStage?: 'PAY' | 'REFUND' | 'PENDING';
+  GatewayResponse?: 'SUCCESS' | 'FAILED' | 'PENDING';
+}
+
+export interface PaymentData {
+  LoadPostID: string;
+  CustomerID: string;
+  PickupContactNumber: string;
+  DeliveryContactPerson: string;
+  DeliveryContactNumber: string;
+  freight_amount: string; // comes as string from API
+  paymentMode: string;
+  expectedVehicleAvailability: string; // ISO Date string
+  Approximate_weight: number;
+  VehicleType: string;
+  VehicleNo: string;
+  master_status: string; // "N" | "Y"
+  verification_code: string;
+  verify_flag: string; // "N" | "Y"
+  insert_date: string;
+  update_date: string;
+  driver_id: string;
+}
+
+export interface PaymentResponse {
+  status: string; // "00"
+  message: string;
+  data: PaymentData[];
+}
+
+export interface VerifyPaymentPayload {
+  DriverID: string;
+  CustomerID: string;
+  LoadpostID: string;
+}
+
+export type StatusCode = '00' | '01';
+
+export type TransactionType = 'FULL' | 'PARTIAL';
+
+export type TransactionMode = 'Cash' | 'UPI' | 'Card' | 'Online';
+
+export type Currency = 'INR';
+
+export type RefundStatus = 'NA' | 'PENDING' | 'DONE';
+
+export type PaymentStatus = 'PENDING' | 'SUCCESS' | 'FAILED';
+
+export type TransactionStatus = 'PENDING' | 'SUCCESS' | 'FAILED';
+
+export interface PaymentTransactionData {
+  CustomerID: string;
+  LoadpostID: string;
+
+  TransactionType: TransactionType;
+  TransactionMode: TransactionMode;
+
+  TransactionAmt: number;
+  TotalAmount: number;
+  PaidAmount: number;
+  BalanceAmount: number;
+
+  Currency: Currency;
+
+  DriverID: string;
+
+  TransactionDate: string; // ISO
+  insert_date: string;
+  update_date: string;
+
+  RefundStatus: RefundStatus;
+  RefundAmt: number;
+
+  IsActive: number; // 1 | 0
+  IsDeleted: number; // 1 | 0
+
+  PaymentGateway: string;
+  TransactionID: string;
+
+  PaymentStatus: PaymentStatus;
+  TransactionStatus: TransactionStatus;
+
+  UPI_ID: string | null;
+  QRCode: string | null;
+  VPA: string | null;
+
+  GatewayResponse: string;
+
+  CommissionAmt: number;
+  NetAmtToDriver: number;
+}
+
+export interface MakePaymentResponse {
+  status: StatusCode;
+  message: string;
+  data: PaymentTransactionData;
+}

@@ -15,8 +15,8 @@ import { styles } from './SignIn.style';
 
 const SignInScreen = () => {
   const dispatch = useDispatch();
-  const [sendOtp] = useSendOtpMutation();
-  const [validateOtp] = useValidateOtpMutation();
+  const [sendOtp, { isLoading: isSendingOtp }] = useSendOtpMutation();
+  const [validateOtp, { isLoading: isVerifyingOtp }] = useValidateOtpMutation();
 
   const [mobileNumber, setMobileNumber] = useState('');
   const [otp, setOtp] = useState('');
@@ -110,7 +110,13 @@ const SignInScreen = () => {
 
         <TextInput
           value={mobileNumber}
-          onChangeText={setMobileNumber}
+          onChangeText={text => {
+            if (isTimerRunning || isOtpSent) {
+              setIsOtpSent(false);
+              setIsTimerRunning(false);
+            }
+            setMobileNumber(text);
+          }}
           style={styles.input}
           placeholder="Enter mobile number"
           keyboardType="phone-pad"
@@ -118,7 +124,14 @@ const SignInScreen = () => {
           placeholderTextColor={COLORS.gray[500]}
         />
       </View>
-
+      <CustomButton
+        title={'Send OTP'}
+        variant="filled"
+        style={styles.button}
+        onPress={handleSendOtp}
+        disbled={isTimerRunning}
+        loading={isSendingOtp}
+      />
       {isOtpSent && (
         <>
           <Text style={styles.subtitle}>Enter OTP</Text>
@@ -135,24 +148,24 @@ const SignInScreen = () => {
             />
           </View>
 
-          <Text style={styles.expiryText}>
-            OTP expires in {formatTime(timer)}
-          </Text>
-
-          {!isTimerRunning && (
+          {isTimerRunning ? (
+            <Text style={styles.expiryText}>
+              Your OTP will expire in {formatTime(timer)} seconds.
+            </Text>
+          ) : (
             <Text style={styles.resendText} onPress={handleSendOtp}>
               Resend OTP
             </Text>
           )}
+          <CustomButton
+            title={'Verify OTP'}
+            variant="filled"
+            style={styles.button}
+            onPress={handleVerifyOtp}
+            loading={isVerifyingOtp}
+          />
         </>
       )}
-
-      <CustomButton
-        title={isOtpSent ? 'Verify OTP' : 'Send OTP'}
-        variant="filled"
-        style={styles.button}
-        onPress={isOtpSent ? handleVerifyOtp : handleSendOtp}
-      />
     </SafeAreaView>
   );
 };

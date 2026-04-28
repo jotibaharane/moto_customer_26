@@ -91,6 +91,7 @@ const ConfirmMPINScreen = () => {
           style={styles.button}
           variant="filled"
           onPress={handleSubmit}
+          loading={isLoading}
         />
       </View>
     </View>

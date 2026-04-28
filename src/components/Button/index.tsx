@@ -18,6 +18,7 @@ interface ButtonProps {
   loading?: boolean; // 👈 add this
   style?: ViewStyle;
   textStyle?: TextStyle;
+  disbled?: boolean; // 👈 add this
 }
 
 const CustomButton: React.FC<ButtonProps> = ({
@@ -27,6 +28,7 @@ const CustomButton: React.FC<ButtonProps> = ({
   loading = false,
   style,
   textStyle,
+  disbled,
 }) => {
   const isOutline = variant === 'outline';
 
@@ -34,11 +36,11 @@ const CustomButton: React.FC<ButtonProps> = ({
     <TouchableOpacity
       activeOpacity={0.8}
       onPress={onPress}
-      disabled={loading} // 👈 disable when loading
+      disabled={loading || disbled} // 👈 disable when loading
       style={[
         styles.button,
         isOutline ? styles.outline : styles.filled,
-        loading && styles.disabled, // 👈 optional opacity
+        loading || disbled ? styles.disabled : null, // 👈 optional opacity
         style,
       ]}
     >

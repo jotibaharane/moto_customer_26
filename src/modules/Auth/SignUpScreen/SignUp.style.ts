@@ -49,5 +49,7 @@ export const styles = StyleSheet.create({
 
   continueBtn: {
     marginBottom: hp(24),
+    minWidth: wp(200),
+    alignSelf: 'center',
   },
 });

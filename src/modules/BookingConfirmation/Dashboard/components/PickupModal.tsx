@@ -2,7 +2,7 @@ import RBSheet from '@components/BottomUpModal';
 import CustomButton from '@components/Button';
 import { InputOutline } from '@components/Input';
 import SearchField from '@components/SearchField';
-import { COLORS, hp } from '@theme/index';
+import { COLORS, hp, wp } from '@theme/index';
 import { Bookmark, Edit, Locate, MapPin, Timer } from 'lucide-react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
@@ -193,8 +193,12 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
             value={search}
             onChangeText={setSearch}
             iconColor="#4CAF50"
-            containerStyle={{ borderWidth: 1 }}
+            containerStyle={{
+              borderWidth: 1,
+              marginBottom: hp(16),
+            }}
           />
+
           <View style={{ height: hp(10) }} />
           <FlatList
             data={dataToShow}
@@ -290,6 +294,8 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
                 </Pressable>
               );
             }}
+            style={{ flex: 1 }}
+            contentContainerStyle={{ paddingBottom: hp(100) }}
           />
         </View>
       ) : (
@@ -413,7 +419,11 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
               <CustomButton
                 title="Confirm Pickup Address"
                 variant="filled"
-                style={{ marginTop: hp(24) }}
+                style={{
+                  marginTop: hp(24),
+                  alignSelf: 'center',
+                  paddingHorizontal: wp(24),
+                }}
                 onPress={formik.handleSubmit}
               />
             </View>

@@ -101,6 +101,8 @@ export const styles = StyleSheet.create({
   /* ================= BUTTON ================= */
   button: {
     marginTop: hp(24),
+    alignSelf: 'center',
+    minWidth: wp(200),
   },
   resendText: {
     textAlign: 'center',

@@ -61,13 +61,13 @@ const styles = StyleSheet.create({
   wrapper: { flex: 1 },
 
   container: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: wp(16),
     padding: wp(8),
     backgroundColor: COLORS.white[100],
     overflow: 'hidden',
+    width: '100%',
   },
 
   input: {

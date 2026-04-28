@@ -187,7 +187,11 @@ const ReviewBookingScreen = () => {
         <CustomButton
           title="Confirm Booking"
           variant="filled"
-          style={{ marginTop: hp(49) }}
+          style={{
+            marginTop: hp(49),
+            alignSelf: 'center',
+            paddingHorizontal: wp(40),
+          }}
           onPress={handleBook}
           loading={isLoading || updateLoading}
         />

@@ -5,7 +5,12 @@ export const styles = StyleSheet.create({
   container: {
     width: '100%',
     flexDirection: 'row',
-    gap: wp(24),
+    justifyContent: 'center',
+    gap: wp(16),
+  },
+  inputsContainer: {
+    flexDirection: 'row',
+    gap: wp(8),
   },
   codeContainer: {
     borderWidth: 1,

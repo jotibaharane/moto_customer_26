@@ -99,6 +99,8 @@ export const styles = StyleSheet.create({
 
   button: {
     marginTop: hp(24),
+    alignSelf: 'center',
+    paddingHorizontal: wp(40),
   },
 
   /* ================= EMPTY STATE ================= */

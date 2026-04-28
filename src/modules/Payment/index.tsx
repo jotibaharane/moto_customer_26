@@ -5,7 +5,7 @@ import QRScanner from '@components/QRScanner';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { wp } from '@theme/index';
 import React, { useState } from 'react';
-import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { styles } from './FrightPayment.style';
 const FrightPayment = () => {
   const netInfo = useNetInfo();
@@ -134,14 +134,14 @@ const FrightPayment = () => {
             />
           ) : (
             <View style={styles.successContainer}>
-              <Image
+              {/* <Image
                 source={require('@assets/images/paymentdone.png')}
                 style={styles.image}
               />
               <Text style={styles.successText}>
                 Payment has been done successfully.
               </Text>
-              <Text style={styles.receiptText}>Fright Payment Receipt</Text>
+              <Text style={styles.receiptText}>Fright Payment Receipt</Text> */}
             </View>
           )}
         </View>

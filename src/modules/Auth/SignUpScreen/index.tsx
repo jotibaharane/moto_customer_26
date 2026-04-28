@@ -18,7 +18,7 @@ import { SignUpSchema } from './SignUp.validation';
 const SignUpScreen = () => {
   const dispatch = useDispatch();
   const route = useRoute<any>();
-  const [signUp] = useOnboardingMutation();
+  const [signUp, { isLoading }] = useOnboardingMutation();
   const handleSubmit = async (values: any) => {
     try {
       const payload = {
@@ -155,6 +155,7 @@ const SignUpScreen = () => {
                 variant="filled"
                 style={styles.continueBtn}
                 onPress={handleSubmit as any}
+                loading={isLoading}
               />
             </View>
           </View>

@@ -4,6 +4,7 @@ export const SOCKET_EVENTS = {
   JOIN: 'join',
   CUSTOMER_LOCATION: 'customer:nearby_vehicle',
   JOIN_ROOM: 'join_room',
+  PAYMENT_STATUS_UPDATE: 'customer:payment_update',
 
   //************** ON *****************//
   GET_NEARBY_DRIVERS: 'customer:nearby_vehicle_result',

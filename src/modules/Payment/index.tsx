@@ -1,22 +1,35 @@
-import { useGetLoadPaymentQuery, useMakePaymentMutation } from '@api/Mutations';
+import {  useMakePaymentMutation } from '@api/Mutations';
 import CustomButton from '@components/Button';
 import CustomCheckbox from '@components/CustomCheckbox';
 import QRScanner from '@components/QRScanner';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { wp } from '@theme/index';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { styles } from './FrightPayment.style';
+import { emitPaymentStatusUpdate } from '@socket/socket.emitters';
+import { useGetLoadPaymentQuery } from '@api/PaymentMutations';
+import { useSelector } from 'react-redux';
+import { RootState } from '@store/rootReducer';
+import { navigate } from '@navigation/NavigationService';
 const FrightPayment = () => {
+ 
   const netInfo = useNetInfo();
   console.log({ netInfo });
+    const {DriverID,loadId} = useSelector(
+      (state: RootState) => state.tracking,
+    );
+      const {CustomerID} = useSelector(
+      (state: RootState) => state.auth,
+    );
   const [success, setSuccess] = useState(false);
   const [paymentAt, setPaymentAt] = useState<'Paid' | 'ToPay'>('Paid');
+  
   const { data } = useGetLoadPaymentQuery(
     {
-      DriverID: 'REH-1178',
-      CustomerID: 'RAM001',
-      LoadpostID: 'LP046114',
+      DriverID: DriverID,
+      CustomerID: CustomerID,
+      LoadpostID: loadId,
     },
     {
       skip: false, // or condition
@@ -24,6 +37,8 @@ const FrightPayment = () => {
   );
   console.log({ data });
   const load = data?.data?.[0];
+
+  console.log({ load });
   const [makePayment] = useMakePaymentMutation();
   const [partialAmount, setPartialAmount] = useState('');
   const [upiId, setUpiId] = useState('');
@@ -50,10 +65,14 @@ const FrightPayment = () => {
       console.log({ resp });
 
       if (resp?.data?.status === '00') {
+        emitPaymentStatusUpdate(load?.driver_id!);
         setSuccess(true);
       }
     } catch (error) {}
   };
+
+
+  
   return (
     <View style={styles.container}>
       <View style={styles.rowBox}>
@@ -74,7 +93,7 @@ const FrightPayment = () => {
 
       <View style={styles.totalBox}>
         <Text style={styles.totalText}>
-          Total Amount To Be Paid - ₹ {load?.freight_amount || 0}
+          Total Amount To Be Paid - ₹ {load?.ShowAmount || 0}
         </Text>
       </View>
 

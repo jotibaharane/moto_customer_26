@@ -7,6 +7,7 @@ export interface BookingState {
   distance_km: string;
   eta_minutes: number;
   message: string;
+  status?: string;
 }
 
 /* ================= INITIAL ================= */
@@ -18,6 +19,7 @@ const initialState: BookingState = {
   distance_km: '',
   eta_minutes: 0,
   message: '',
+  status: '',
 };
 
 /* ================= SLICE ================= */
@@ -55,6 +57,10 @@ const trackingSlice = createSlice({
       Object.assign(state, action.payload);
     },
 
+setStatus: (state, action: PayloadAction<string>) => {
+      state.status = action.payload;
+    },
+
     /* ✅ RESET */
     resetBooking: () => initialState,
   },
@@ -66,6 +72,7 @@ export const {
   updateTripDetails,
   setMessageAndDistance,
   setFromDriver,
+  setStatus
 } = trackingSlice.actions;
 
 export default trackingSlice.reducer;

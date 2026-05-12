@@ -6,6 +6,7 @@ import authReducer from './slices/Auth/authSlice';
 import bookingSlice from './slices/Booking/bookingSlice';
 import mapSlice from './slices/map/mapSlice';
 import trackingSlice from './slices/tracking/trackingSlice';
+import { paymentApi } from '@api/paymentApi';
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
@@ -17,7 +18,8 @@ const rootReducer = combineReducers({
   tracking: trackingSlice,
   booking: bookingSlice,
   map: mapSlice,
-  [baseApi.reducerPath]: baseApi.reducer,
+ [baseApi.reducerPath]: baseApi.reducer,
+  [paymentApi.reducerPath]: paymentApi.reducer,
 });
 
 export default persistReducer(persistConfig, rootReducer);

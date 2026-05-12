@@ -7,6 +7,7 @@ import { setDrivers, setPickup } from '@store/slices/map/mapSlice';
 import {
   setFromDriver,
   setMessageAndDistance,
+  setStatus,
   setTripDetails,
 } from '@store/slices/tracking/trackingSlice';
 import { SOCKET_EVENTS } from './socket.events';
@@ -68,5 +69,10 @@ export const registerSocketListeners = () => {
   socket.on(SOCKET_EVENTS.CUSTOMER_DRIVER_UPDATE, data => {
     // store.dispatch(setTripDetails(data));
     console.log('customer:drivers_update', data);
+  });
+   socket.on("customer:status_update", data => {
+    // store.dispatch(setTripDetails(data));
+    store.dispatch(setStatus(data?.result));
+    console.log('customer:status_update', data);
   });
 };

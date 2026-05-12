@@ -23,10 +23,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import Header from './components/Header';
 import { styles } from './reporting.style';
+import { navigate } from '@navigation/NavigationService';
 
 const ReportingScreen = () => {
   const cameraRef = useRef<any>(null);
-  const { driverMobile, distance_km, eta_minutes, loadId } = useSelector(
+  const { driverMobile, distance_km, eta_minutes, loadId ,status} = useSelector(
     (state: RootState) => state.tracking,
   );
 
@@ -114,6 +115,12 @@ const ReportingScreen = () => {
     loadRoute();
   }, [pickup, driver]);
 
+
+  useEffect(() => {
+  if (status === "Loaded") {
+        navigate('FrightPayment');
+      }
+    }, [status]);
   return (
     <SafeAreaView style={styles.container}>
       <Header />

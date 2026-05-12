@@ -7,6 +7,7 @@ declare module 'react-native-config' {
     APP_NAME?: string;
     SERVICE_TOKEN?: string;
     MAPBOX_ACCESS_TOKEN?: string;
+    PAYMENT_API_URL?: string;
   }
 
   export const Config: NativeConfig;

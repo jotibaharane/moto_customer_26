@@ -162,13 +162,7 @@ export const authApi = baseApi.injectEndpoints({
         body: queryArg,
       }),
     }),
-    getLoadPayment: builder.query<PaymentResponse, VerifyPaymentPayload>({
-      query: queryArg => ({
-        url: `/get_load_Payment`,
-        method: 'POST',
-        body: queryArg,
-      }),
-    }),
+   
   }),
 });
 
@@ -188,5 +182,4 @@ export const {
   usePostBookmarkMutation,
   useUpdateLoadPostMutation,
   useMakePaymentMutation,
-  useGetLoadPaymentQuery,
 } = authApi;

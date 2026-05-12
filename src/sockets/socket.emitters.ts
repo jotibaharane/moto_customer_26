@@ -63,3 +63,12 @@ export const emitJoinRoom = (loadId: string) => {
     socket.emit(SOCKET_EVENTS.JOIN_ROOM, { loadId });
   });
 };
+
+
+export const emitPaymentStatusUpdate = (DriverID: string) => {
+  const socket = getSocket();
+
+  emitWithConnection(() => {
+    socket.emit(SOCKET_EVENTS.PAYMENT_STATUS_UPDATE, { DriverID });
+  });
+};

@@ -1,5 +1,5 @@
 import { paymentApi } from './paymentApi';
-import {  PaymentResponse, VerifyPaymentPayload } from './type';
+import {  MakePaymentResponse, PaymentResponse, PaymentTransaction, VerifyPaymentPayload } from './type';
 
 export const paymentsApi = paymentApi.injectEndpoints({
   endpoints: builder => ({
@@ -10,7 +10,15 @@ export const paymentsApi = paymentApi.injectEndpoints({
         body: queryArg,
       }),
     }),
+      makePayment: builder.mutation<MakePaymentResponse, PaymentTransaction>({
+      query: queryArg => ({
+        url: `/Payment_pay`,
+        method: 'POST',
+        body: queryArg,
+      }),
+    }),
   }),
+  
 });
 
-export const { useGetLoadPaymentQuery } = paymentsApi;
+export const { useGetLoadPaymentQuery,useMakePaymentMutation } = paymentsApi;

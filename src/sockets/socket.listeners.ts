@@ -75,4 +75,7 @@ export const registerSocketListeners = () => {
     store.dispatch(setStatus(data?.result));
     console.log('customer:status_update', data);
   });
+   socket.on("customer:payment_status", data => {
+    console.log('customer:payment_status', data);
+  });
 };

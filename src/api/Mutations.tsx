@@ -155,13 +155,7 @@ export const authApi = baseApi.injectEndpoints({
         body: queryArg,
       }),
     }),
-    makePayment: builder.mutation<MakePaymentResponse, PaymentTransaction>({
-      query: queryArg => ({
-        url: `/Payment_pay`,
-        method: 'POST',
-        body: queryArg,
-      }),
-    }),
+  
    
   }),
 });
@@ -181,5 +175,4 @@ export const {
   useGetVehicleListsQuery,
   usePostBookmarkMutation,
   useUpdateLoadPostMutation,
-  useMakePaymentMutation,
 } = authApi;

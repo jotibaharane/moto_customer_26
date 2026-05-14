@@ -1,14 +1,14 @@
-import {  useMakePaymentMutation } from '@api/Mutations';
+
 import CustomButton from '@components/Button';
 import CustomCheckbox from '@components/CustomCheckbox';
 import QRScanner from '@components/QRScanner';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { wp } from '@theme/index';
 import React, { useEffect, useState } from 'react';
-import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { styles } from './FrightPayment.style';
 import { emitPaymentStatusUpdate } from '@socket/socket.emitters';
-import { useGetLoadPaymentQuery } from '@api/PaymentMutations';
+import { useGetLoadPaymentQuery, useMakePaymentMutation } from '@api/PaymentMutations';
 import { useSelector } from 'react-redux';
 import { RootState } from '@store/rootReducer';
 import { navigate } from '@navigation/NavigationService';
@@ -25,7 +25,7 @@ const FrightPayment = () => {
   const [success, setSuccess] = useState(false);
   const [paymentAt, setPaymentAt] = useState<'Paid' | 'ToPay'>('Paid');
   
-  const { data } = useGetLoadPaymentQuery(
+  const { data,refetch } = useGetLoadPaymentQuery(
     {
       DriverID: DriverID,
       CustomerID: CustomerID,
@@ -33,6 +33,8 @@ const FrightPayment = () => {
     },
     {
       skip: false, // or condition
+      refetchOnFocus:true,
+      refetchOnReconnect:true
     },
   );
   console.log({ data });
@@ -66,12 +68,17 @@ const FrightPayment = () => {
 
       if (resp?.data?.status === '00') {
         emitPaymentStatusUpdate(load?.driver_id!);
+        refetch()
         setSuccess(true);
+        setPartialAmount("")
+        setPayAnother(false)
       }
     } catch (error) {}
   };
 
-
+useEffect(()=>{
+  refetch()
+},[])
   
   return (
     <View style={styles.container}>
@@ -110,7 +117,8 @@ const FrightPayment = () => {
           placeholder="Enter Amount You Want To Pay"
           style={styles.input}
           placeholderTextColor="#999"
-          onChangeText={t => setPartialAmount(t)}
+          onChangeText={t =>{if (t<=load?.ShowAmount ){ setPartialAmount(t)}}}
+       
         />
       )}
 
@@ -145,7 +153,7 @@ const FrightPayment = () => {
         <View
           style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
         >
-          {!success ? (
+          {!success||load?.ShowAmount !==0 ? (
             <CustomButton
               title="Submit"
               style={{ alignSelf: 'center', paddingHorizontal: wp(24) }}
@@ -153,14 +161,14 @@ const FrightPayment = () => {
             />
           ) : (
             <View style={styles.successContainer}>
-              {/* <Image
+              <Image
                 source={require('@assets/images/paymentdone.png')}
                 style={styles.image}
               />
               <Text style={styles.successText}>
                 Payment has been done successfully.
               </Text>
-              <Text style={styles.receiptText}>Fright Payment Receipt</Text> */}
+              <Text style={styles.receiptText}>Fright Payment Receipt</Text>
             </View>
           )}
         </View>

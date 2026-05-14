@@ -1,0 +1,1 @@
+C:\Users\Intel\Desktop\moto_customer_app\android\app\build\intermediates\cxx\RelWithDebInfo\3j1r251n\obj\x86_64

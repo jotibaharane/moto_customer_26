@@ -12,6 +12,7 @@ import {
 } from '@store/slices/tracking/trackingSlice';
 import { SOCKET_EVENTS } from './socket.events';
 import { getSocket } from './socket.service';
+import { setPayment } from '@store/slices/payment/paymentSlice';
 
 export const registerSocketListeners = () => {
   const socket = getSocket();
@@ -76,6 +77,6 @@ export const registerSocketListeners = () => {
     console.log('customer:status_update', data);
   });
    socket.on("customer:payment_status", data => {
-    console.log('customer:payment_status', data);
+    store.dispatch(setPayment(data?.ReceivePayment));
   });
 };

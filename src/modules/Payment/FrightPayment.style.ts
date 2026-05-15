@@ -100,6 +100,7 @@ export const styles = StyleSheet.create({
     fontFamily: FONT_FAMILIES.semiBold,
     fontSize: fp(16),
     color: COLORS.primary[600],
+    textAlign:"center"
   },
 
   receiptText: {

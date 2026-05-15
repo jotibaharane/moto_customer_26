@@ -8,7 +8,7 @@ import React, { useEffect, useState } from 'react';
 import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { styles } from './FrightPayment.style';
 import { emitPaymentStatusUpdate } from '@socket/socket.emitters';
-import { useGetLoadPaymentQuery, useMakePaymentMutation } from '@api/PaymentMutations';
+import { useGetLoadPaymentQuery, useMakePaymentMutation, usePaymentHistoryMutation } from '@api/PaymentMutations';
 import { useSelector } from 'react-redux';
 import { RootState } from '@store/rootReducer';
 import { navigate } from '@navigation/NavigationService';
@@ -16,6 +16,10 @@ const FrightPayment = () => {
  
   const netInfo = useNetInfo();
   console.log({ netInfo });
+
+    const {PaymentStatus} = useSelector(
+      (state: RootState) => state.payment,
+    );
     const {DriverID,loadId} = useSelector(
       (state: RootState) => state.tracking,
     );
@@ -42,6 +46,7 @@ const FrightPayment = () => {
 
   console.log({ load });
   const [makePayment] = useMakePaymentMutation();
+    const [paymentHistory,{data:historyData}] = usePaymentHistoryMutation();
   const [partialAmount, setPartialAmount] = useState('');
   const [upiId, setUpiId] = useState('');
   const [payAnother, setPayAnother] = useState(false);
@@ -79,7 +84,10 @@ const FrightPayment = () => {
 useEffect(()=>{
   refetch()
 },[])
-  
+  console.log({PaymentStatus})
+  useEffect(()=>{
+    paymentHistory({LoadpostID:loadId})
+  },[])
   return (
     <View style={styles.container}>
       <View style={styles.rowBox}>
@@ -153,24 +161,26 @@ useEffect(()=>{
         <View
           style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
         >
-          {!success||load?.ShowAmount !==0 ? (
+          {!success&& (
             <CustomButton
               title="Submit"
               style={{ alignSelf: 'center', paddingHorizontal: wp(24) }}
               onPress={() => handlePayment()}
             />
-          ) : (
-            <View style={styles.successContainer}>
+          ) }
+
+          {(PaymentStatus!==""&&PaymentStatus!==undefined && success)&&
+              <View style={styles.successContainer}>
               <Image
                 source={require('@assets/images/paymentdone.png')}
                 style={styles.image}
               />
               <Text style={styles.successText}>
-                Payment has been done successfully.
+               {PaymentStatus} Payment has been done successfully.
               </Text>
               <Text style={styles.receiptText}>Fright Payment Receipt</Text>
             </View>
-          )}
+          }
         </View>
       </View>
     </View>

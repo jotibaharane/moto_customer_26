@@ -390,23 +390,15 @@
 	[
 		{
 			"backtrace" : 4,
-			"id" : "react_codegen_RNCGeolocationSpec::@1b959fcb56e23f7716ba"
-		},
-		{
-			"backtrace" : 4,
 			"id" : "react_codegen_AsyncStorageSpec::@15af80695a6281ecf900"
 		},
 		{
 			"backtrace" : 4,
+			"id" : "react_codegen_RNCGeolocationSpec::@1b959fcb56e23f7716ba"
+		},
+		{
+			"backtrace" : 4,
 			"id" : "react_codegen_RNCNetInfoSpec::@c36c96bfd5b5770618a5"
-		},
-		{
-			"backtrace" : 4,
-			"id" : "react_codegen_RNKeychainSpec::@f9a2cb36ebca2de4baf9"
-		},
-		{
-			"backtrace" : 4,
-			"id" : "react_codegen_RNKC::@01e3c54a97c6e9d385b6"
 		},
 		{
 			"backtrace" : 4,
@@ -418,7 +410,15 @@
 		},
 		{
 			"backtrace" : 4,
-			"id" : "react_codegen_safeareacontext::@7984cd80db47aa7b952a"
+			"id" : "react_codegen_RNKC::@01e3c54a97c6e9d385b6"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_RNKeychainSpec::@f9a2cb36ebca2de4baf9"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_rnscreens::@25bcbd507e98d3a854ad"
 		},
 		{
 			"backtrace" : 4,
@@ -426,7 +426,7 @@
 		},
 		{
 			"backtrace" : 4,
-			"id" : "react_codegen_rnreanimated::@8afabad14bfffa3f8b9a"
+			"id" : "react_codegen_safeareacontext::@7984cd80db47aa7b952a"
 		},
 		{
 			"backtrace" : 4,
@@ -438,11 +438,11 @@
 		},
 		{
 			"backtrace" : 4,
-			"id" : "react_codegen_NitroModulesSpec::@472a82f9c57d3d3b8644"
+			"id" : "react_codegen_rnreanimated::@8afabad14bfffa3f8b9a"
 		},
 		{
 			"backtrace" : 4,
-			"id" : "react_codegen_rnscreens::@25bcbd507e98d3a854ad"
+			"id" : "react_codegen_NitroModulesSpec::@472a82f9c57d3d3b8644"
 		}
 	],
 	"id" : "appmodules::@6890427a1f51a3e7e1df",

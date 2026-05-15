@@ -17,8 +17,15 @@ export const paymentsApi = paymentApi.injectEndpoints({
         body: queryArg,
       }),
     }),
+         paymentHistory: builder.mutation<any, {LoadpostID:string}>({
+      query: queryArg => ({
+        url: `/payment_history`,
+        method: 'POST',
+        body: queryArg,
+      }),
+    }),
   }),
   
 });
 
-export const { useGetLoadPaymentQuery,useMakePaymentMutation } = paymentsApi;
+export const { useGetLoadPaymentQuery,useMakePaymentMutation,usePaymentHistoryMutation } = paymentsApi;

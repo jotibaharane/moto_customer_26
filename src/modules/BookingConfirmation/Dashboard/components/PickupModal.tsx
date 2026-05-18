@@ -12,7 +12,7 @@ import { useLocation } from '@hooks/useLocation';
 import { useGetBookmarksQuery, usePostBookmarkMutation } from '@api/Mutations';
 import { RootState } from '@store/rootReducer';
 import { setBookingDetails } from '@store/slices/Booking/bookingSlice';
-import { setPickup } from '@store/slices/map/mapSlice';
+import { setDestination, setPickup } from '@store/slices/map/mapSlice';
 import { bookmarkData } from '@utils/constants';
 import { useFormik } from 'formik';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
@@ -88,6 +88,7 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
       /* ✅ SAVE LAT LNG */
       if (finalData?.coordinates) {
         dispatch(setPickup(finalData.coordinates));
+       
       }
 
       /* ✅ CALL BOOKMARK API */

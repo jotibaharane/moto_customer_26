@@ -12,7 +12,7 @@ const Tab = createBottomTabNavigator();
 
 function BottomNavigation() {
   const navigation = useNavigation<any>();
-  const { CustomerID } = useSelector((state: RootState) => state?.auth);
+  const { CustomerID,status } = useSelector((state: RootState) => state?.auth);
   const { booking, DriverID } = useSelector(
     (state: RootState) => state?.booking,
   );
@@ -23,7 +23,9 @@ function BottomNavigation() {
 
   const trips = data?.data ?? [];
   useEffect(() => {
-    if (trips.length > 0 && !DriverID) {
+    if (status === 'loaded'||status==="reached") {
+      navigation.navigate('FrightPayment');
+    }else if (trips.length > 0 && !DriverID) {
       navigation.navigate('BottomNavigation', { screen: 'New Load' });
     }
   }, [trips]);

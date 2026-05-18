@@ -1,5 +1,5 @@
 # ninja log v5
-1	26	0	C:/Users/Intel/Desktop/moto_customer_app/android/app/.cxx/Debug/6v536gy4/x86/CMakeFiles/cmake.verify_globs	8e54c5b6f0359817
+2	37	0	C:/Users/Intel/Desktop/moto_customer_app/android/app/.cxx/Debug/6v536gy4/x86/CMakeFiles/cmake.verify_globs	8e54c5b6f0359817
 18006	32125	8004475371342562	rnmapbox_maps_specs_autolinked_build/CMakeFiles/react_codegen_rnmapbox_maps_specs.dir/react/renderer/components/rnmapbox_maps_specs/Props.cpp.o	f6b3f59aaa8f62ba
 57	5531	8004475105756052	AsyncStorageSpec_autolinked_build/CMakeFiles/react_codegen_AsyncStorageSpec.dir/react/renderer/components/AsyncStorageSpec/States.cpp.o	db20f991738059a
 39	9591	8004475146480888	AsyncStorageSpec_autolinked_build/CMakeFiles/react_codegen_AsyncStorageSpec.dir/react/renderer/components/AsyncStorageSpec/ComponentDescriptors.cpp.o	3e36173bf2da7d5e
@@ -121,5 +121,5 @@
 103461	122636	8004476276685202	rnsvg_autolinked_build/CMakeFiles/react_codegen_rnsvg.dir/f1163ab5669e6c5defa692848425ea83/build/generated/source/codegen/jni/react/renderer/components/rnsvg/Props.cpp.o	9062e717dba1dce4
 123562	123674	8004476287909840	C:/Users/Intel/Desktop/moto_customer_app/android/app/build/intermediates/cxx/Debug/6v536gy4/obj/x86/libreact_codegen_rnsvg.so	8b392dedd07fb9
 123675	123985	8004476290620691	C:/Users/Intel/Desktop/moto_customer_app/android/app/build/intermediates/cxx/Debug/6v536gy4/obj/x86/libappmodules.so	2ac53d3a2dbbbe41
-47	717	8005408770324815	build.ninja	40b8fac13b4596ba
-1	23	0	C:/Users/Intel/Desktop/moto_customer_app/android/app/.cxx/Debug/6v536gy4/x86/CMakeFiles/cmake.verify_globs	8e54c5b6f0359817
+47	717	8007845131499004	build.ninja	40b8fac13b4596ba
+3	79	0	C:/Users/Intel/Desktop/moto_customer_app/android/app/.cxx/Debug/6v536gy4/x86/CMakeFiles/cmake.verify_globs	8e54c5b6f0359817

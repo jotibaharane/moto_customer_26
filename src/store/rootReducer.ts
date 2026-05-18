@@ -11,7 +11,7 @@ import { paymentApi } from '@api/paymentApi';
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['auth', 'map'], // only persist auth
+  whitelist: ['auth', 'map',"tracking"], // only persist auth
 };
 
 const rootReducer = combineReducers({

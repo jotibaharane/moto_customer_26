@@ -26,6 +26,8 @@ const FrightPayment = () => {
       const {CustomerID} = useSelector(
       (state: RootState) => state.auth,
     );
+    console.log({DriverID,loadId,CustomerID});
+    
   const [success, setSuccess] = useState(false);
   const [paymentAt, setPaymentAt] = useState<'Paid' | 'ToPay'>('Paid');
   
@@ -68,6 +70,7 @@ const FrightPayment = () => {
         TransactionMode: tab as any,
         IPAddress: '',
         DeviceInfo: '',
+        PaymentStage:paymentAt
       });
       console.log({ resp });
 

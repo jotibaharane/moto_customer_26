@@ -3,7 +3,7 @@ import {
   setDriverStates,
   setNearbyVehicles,
 } from '@store/slices/Booking/bookingSlice';
-import { setDrivers, setPickup } from '@store/slices/map/mapSlice';
+import { setDestination, setDrivers, setPickup } from '@store/slices/map/mapSlice';
 import {
   setFromDriver,
   setMessageAndDistance,
@@ -13,15 +13,22 @@ import {
 import { SOCKET_EVENTS } from './socket.events';
 import { getSocket } from './socket.service';
 import { setPayment } from '@store/slices/payment/paymentSlice';
+import { setLPStatus } from '@store/slices/Auth/authSlice';
 
 export const registerSocketListeners = () => {
   const socket = getSocket();
 
   socket.removeAllListeners();
 
-  socket.on('connect', () => {
-    console.log('✅ Connected:', socket.id);
-  });
+socket.on('connect', () => {
+  console.log('🔗 Connected:', socket.id);
+
+  // REJOIN DRIVER
+  socket.emit(SOCKET_EVENTS.JOIN, {
+      userId: store.getState()?.auth?.CustomerID,
+      role: 'customer',
+    });
+});
 
   socket.onAny((event, data) => {
     console.log('📡', event, data);
@@ -38,10 +45,12 @@ export const registerSocketListeners = () => {
   });
 
   socket.on(SOCKET_EVENTS.SINGLE_DRIVER_LOCATION, data => {
+    console.log("SINGLE_DRIVER_LOCATION",{data})
     store.dispatch(
       setDrivers({ lat: data.lat, lng: data.lng, heading: data?.heading }),
     );
     store.dispatch(setPickup({ lat: data.pickup_lat, lng: data.pickup_lng }));
+     store.dispatch(setDestination({ lat: data?.Delivery?.lat, lng: data?.Delivery?.lng }));
     store.dispatch(
       setFromDriver({
         distance_km: data?.distance_km,
@@ -58,6 +67,14 @@ export const registerSocketListeners = () => {
     );
   });
   socket.on(SOCKET_EVENTS.NEARBY_DRIVER_REACH, data => {
+      store.dispatch(
+  setTripDetails({
+    ...store?.getState()?.tracking,
+    DriverID: data?.DriverID,
+    loadId: data?.loadId,
+    distance_km: data?.distance_km,
+  })
+);
     if (store.getState().tracking.message === data?.message) return;
     store.dispatch(
       setMessageAndDistance({
@@ -65,6 +82,7 @@ export const registerSocketListeners = () => {
         message: data?.message,
       }),
     );
+ 
     console.log('customer:driver_nearby', data);
   });
   socket.on(SOCKET_EVENTS.CUSTOMER_DRIVER_UPDATE, data => {
@@ -79,4 +97,17 @@ export const registerSocketListeners = () => {
    socket.on("customer:payment_status", data => {
     store.dispatch(setPayment(data?.ReceivePayment));
   });
+   socket.on("customer:LP_Status", data => {
+   console.log("customer:LP_Status",data);
+   store.dispatch(setLPStatus(data?.data))
+  });
 };
+
+
+
+
+
+
+
+
+

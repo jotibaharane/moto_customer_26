@@ -20,6 +20,7 @@ export type CustomerDetails = {
   CustomerType: string;
   Insert_Date: string;
   MPIN_Flag: string;
+  status:string
 };
 export type ValidateOtpResponse = {
   status: string;
@@ -119,8 +120,9 @@ export interface PaymentTransaction {
   PaidAmount: number;
   Currency: 'INR' | 'USD' | 'EUR'; // extend if needed
   DriverID: string;
-  PaymentStage?: 'PAY' | 'REFUND' | 'PENDING';
+  PaymentStage?: any;
   GatewayResponse?: 'SUCCESS' | 'FAILED' | 'PENDING';
+  
 }
 
 export interface PaymentData {

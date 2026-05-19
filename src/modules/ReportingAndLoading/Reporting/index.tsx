@@ -62,7 +62,9 @@ const ReportingScreen = () => {
   const { status, CustomerID } = useSelector(
     (state: RootState) => state.auth,
   );
-
+  const { PaymentStatus} = useSelector(
+    (state: RootState) => state.payment,
+  );
   const {
     driverMobile,
     distance_km,
@@ -304,7 +306,7 @@ const ReportingScreen = () => {
   // =========================
 
   useEffect(() => {
-    if (status === 'loaded'||status==="reached") {
+    if ((status === 'loaded'||status==="reached")&&PaymentStatus!=="FULL") {
       navigate('FrightPayment');
     }
   }, [status]);

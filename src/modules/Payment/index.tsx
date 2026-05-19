@@ -23,7 +23,7 @@ const FrightPayment = () => {
     const {DriverID,loadId} = useSelector(
       (state: RootState) => state.tracking,
     );
-      const {CustomerID} = useSelector(
+      const {CustomerID,status} = useSelector(
       (state: RootState) => state.auth,
     );
     console.log({DriverID,loadId,CustomerID});
@@ -80,6 +80,9 @@ const FrightPayment = () => {
         setSuccess(true);
         setPartialAmount("")
         setPayAnother(false)
+        if (status==="reached") {
+          
+        }
       }
     } catch (error) {}
   };
@@ -93,18 +96,18 @@ useEffect(()=>{
   },[])
   return (
     <View style={styles.container}>
-      <View style={styles.rowBox}>
+      {status!=="reached"&&<View style={styles.rowBox}>
         <Text style={styles.label}>Paid(at pickup)</Text>
         <CustomCheckbox
           value={paymentAt === 'Paid'}
           onValueChange={val => setPaymentAt(val ? 'Paid' : 'ToPay')}
         />
       </View>
-
+}
       <View style={styles.rowBox}>
         <Text style={styles.label}>To Pay</Text>
         <CustomCheckbox
-          value={paymentAt === 'ToPay'}
+          value={status!=="reached"?paymentAt === 'ToPay':true}
           onValueChange={val => setPaymentAt(val ? 'ToPay' : 'Paid')}
         />
       </View>
@@ -115,7 +118,7 @@ useEffect(()=>{
         </Text>
       </View>
 
-      {paymentAt === 'Paid' && (
+      {paymentAt === 'Paid'&&status!=="reached" && (
         <View style={styles.rowBox}>
           <Text style={styles.label}>Pay Another Amount</Text>
           <CustomCheckbox value={payAnother} onValueChange={setPayAnother} />

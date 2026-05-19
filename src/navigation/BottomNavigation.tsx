@@ -23,9 +23,7 @@ function BottomNavigation() {
 
   const trips = data?.data ?? [];
   useEffect(() => {
-    if (status === 'loaded'||status==="reached") {
-      navigation.navigate('FrightPayment');
-    }else if (trips.length > 0 && !DriverID) {
+ if (trips.length > 0 && !DriverID) {
       navigation.navigate('BottomNavigation', { screen: 'New Load' });
     }
   }, [trips]);

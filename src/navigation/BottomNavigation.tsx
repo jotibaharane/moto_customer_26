@@ -7,12 +7,13 @@ import { useNavigation } from '@react-navigation/native';
 import { RootState } from '@store/rootReducer';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { navigate } from './NavigationService';
 
 const Tab = createBottomTabNavigator();
 
 function BottomNavigation() {
   const navigation = useNavigation<any>();
-  const { CustomerID,status } = useSelector((state: RootState) => state?.auth);
+  const { CustomerID, status } = useSelector((state: RootState) => state?.auth);
   const { booking, DriverID } = useSelector(
     (state: RootState) => state?.booking,
   );
@@ -23,8 +24,8 @@ function BottomNavigation() {
 
   const trips = data?.data ?? [];
   useEffect(() => {
- if (trips.length > 0 && !DriverID) {
-      navigation.navigate('BottomNavigation', { screen: 'New Load' });
+    if (trips.length > 0 && !DriverID) {
+      navigate('BottomNavigation', { screen: 'New Load' });
     }
   }, [trips]);
 

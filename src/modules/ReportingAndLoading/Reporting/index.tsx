@@ -19,10 +19,7 @@ import { RootState } from '@store/rootReducer';
 
 import { COLORS } from '@theme/index';
 
-import {
-  animateMarker,
-  getSmoothHeading,
-} from '@utils/animation.utils';
+import { animateMarker, getSmoothHeading } from '@utils/animation.utils';
 
 import { handleCall } from '@utils/helperfunctions.utils';
 
@@ -30,17 +27,9 @@ import { isValidLocation } from '@utils/location.utils';
 
 import { Phone, User } from 'lucide-react-native';
 
-import React, {
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
-import {
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -59,26 +48,13 @@ const ReportingScreen = () => {
   // REDUX
   // =========================
 
-  const { status, CustomerID } = useSelector(
-    (state: RootState) => state.auth,
-  );
-  const { PaymentStatus} = useSelector(
-    (state: RootState) => state.payment,
-  );
-  const {
-    driverMobile,
-    distance_km,
-    eta_minutes,
-    loadId,
-  } = useSelector(
+  const { status, CustomerID } = useSelector((state: RootState) => state.auth);
+  const { PaymentStatus } = useSelector((state: RootState) => state.payment);
+  const { driverMobile, distance_km, eta_minutes, loadId } = useSelector(
     (state: RootState) => state.tracking,
   );
 
-  const {
-    driver,
-    pickup,
-    destination,
-  } = useSelector(
+  const { driver, pickup, destination } = useSelector(
     (state: RootState) => state.map,
   );
 
@@ -86,15 +62,13 @@ const ReportingScreen = () => {
   // STATES
   // =========================
 
-  const [routeGeoJSON, setRouteGeoJSON] =
-    useState<any>(null);
+  const [routeGeoJSON, setRouteGeoJSON] = useState<any>(null);
 
-  const [animatedCoords, setAnimatedCoords] =
-    useState<[number, number] | null>(null);
+  const [animatedCoords, setAnimatedCoords] = useState<[number, number] | null>(
+    null,
+  );
 
-  const prevCoords = useRef<
-    [number, number] | null
-  >(null);
+  const prevCoords = useRef<[number, number] | null>(null);
 
   const prevHeading = useRef(0);
 
@@ -132,18 +106,12 @@ const ReportingScreen = () => {
 
     // INVALID COORDS
     if (isNaN(lng) || isNaN(lat)) {
-      console.log(
-        'Invalid driver coordinates',
-        driver,
-      );
+      console.log('Invalid driver coordinates', driver);
 
       return;
     }
 
-    const newCoords: [number, number] = [
-      lng,
-      lat,
-    ];
+    const newCoords: [number, number] = [lng, lat];
 
     // FIRST TIME
     if (!prevCoords.current) {
@@ -172,11 +140,7 @@ const ReportingScreen = () => {
     }
 
     // SMOOTH ANIMATION
-    animateMarker(
-      prevCoords.current,
-      newCoords,
-      setAnimatedCoords,
-    );
+    animateMarker(prevCoords.current, newCoords, setAnimatedCoords);
 
     prevCoords.current = newCoords;
 
@@ -219,33 +183,18 @@ const ReportingScreen = () => {
 
         const from =
           status === 'started'
-            ? [
-                Number(pickup?.lng),
-                Number(pickup?.lat),
-              ]
-            : [
-                Number(driver?.lng),
-                Number(driver?.lat),
-              ];
+            ? [Number(pickup?.lng), Number(pickup?.lat)]
+            : [Number(driver?.lng), Number(driver?.lat)];
 
         // AFTER START
         // PICKUP -> DESTINATION
 
         const to =
           status === 'started'
-            ? [
-                Number(destination?.lng),
-                Number(destination?.lat),
-              ]
-            : [
-                Number(pickup?.lng),
-                Number(pickup?.lat),
-              ];
+            ? [Number(destination?.lng), Number(destination?.lat)]
+            : [Number(pickup?.lng), Number(pickup?.lat)];
 
-        const res = await getDirections(
-          from,
-          to,
-        );
+        const res = await getDirections(from, to);
 
         if (!res) return;
 
@@ -257,36 +206,20 @@ const ReportingScreen = () => {
         // =========================
 
         if (status === 'started') {
-          const coords =
-            res?.geometry?.coordinates;
+          const coords = res?.geometry?.coordinates;
 
           if (!coords?.length) return;
 
-          const lats = coords.map(
-            (c: any) => c[1],
-          );
+          const lats = coords.map((c: any) => c[1]);
 
-          const lngs = coords.map(
-            (c: any) => c[0],
-          );
+          const lngs = coords.map((c: any) => c[0]);
 
-          const ne: [number, number] = [
-            Math.max(...lngs),
-            Math.max(...lats),
-          ];
+          const ne: [number, number] = [Math.max(...lngs), Math.max(...lats)];
 
-          const sw: [number, number] = [
-            Math.min(...lngs),
-            Math.min(...lats),
-          ];
+          const sw: [number, number] = [Math.min(...lngs), Math.min(...lats)];
 
           // SHOW FULL ROUTE
-          cameraRef.current?.fitBounds(
-            ne,
-            sw,
-            120,
-            1000,
-          );
+          cameraRef.current?.fitBounds(ne, sw, 120, 1000);
         }
       } catch (e) {
         console.log('Route error', e);
@@ -294,19 +227,17 @@ const ReportingScreen = () => {
     };
 
     loadRoute();
-  }, [
-    pickup,
-    driver,
-    destination,
-    status,
-  ]);
+  }, [pickup, driver, destination, status]);
 
   // =========================
   // NAVIGATION
   // =========================
 
   useEffect(() => {
-    if ((status === 'loaded'||status==="reached")&&PaymentStatus!=="FULL") {
+    if (
+      status === 'loaded' ||
+      (status === 'reached' && PaymentStatus !== 'FULL')
+    ) {
       navigate('FrightPayment');
     }
   }, [status]);
@@ -330,17 +261,11 @@ const ReportingScreen = () => {
           {/* IMAGES */}
           <MapboxGL.Images
             images={{
-              carIcon: require(
-                '@assets/images/carIcon.png',
-              ),
+              carIcon: require('@assets/images/carIcon.png'),
 
-              pickupIcon: require(
-                '@assets/images/marker.png',
-              ),
+              pickupIcon: require('@assets/images/marker.png'),
 
-              dropIcon: require(
-                '@assets/images/drop_marker.png',
-              ),
+              dropIcon: require('@assets/images/drop_marker.png'),
             }}
           />
 
@@ -349,10 +274,7 @@ const ReportingScreen = () => {
           {/* ========================= */}
 
           {routeGeoJSON && (
-            <ShapeSource
-              id="routeSource"
-              shape={routeGeoJSON}
-            >
+            <ShapeSource id="routeSource" shape={routeGeoJSON}>
               <LineLayer
                 id="routeLine"
                 style={{
@@ -391,8 +313,7 @@ const ReportingScreen = () => {
                 geometry: {
                   type: 'Point',
 
-                  coordinates:
-                    animatedCoords,
+                  coordinates: animatedCoords,
                 },
 
                 properties: {},
@@ -417,13 +338,11 @@ const ReportingScreen = () => {
 
                   iconAnchor: 'center',
 
-                  iconRotationAlignment:
-                    'map',
+                  iconRotationAlignment: 'map',
 
                   iconAllowOverlap: true,
 
-                  iconRotate:
-                    prevHeading.current,
+                  iconRotate: prevHeading.current,
                 }}
               />
             </ShapeSource>
@@ -434,23 +353,13 @@ const ReportingScreen = () => {
           {/* ========================= */}
 
           {animatedCoords && (
-            <MarkerView
-              coordinate={animatedCoords}
-              anchor={{ x: 0.5, y: 1.8 }}
-            >
-              <View
-                style={styles.tooltipContainer}
-              >
-                <Text
-                  style={styles.tooltipTitle}
-                >
-                  Distance{' '}
-                  {distance_km || 0} Km
+            <MarkerView coordinate={animatedCoords} anchor={{ x: 0.5, y: 1.8 }}>
+              <View style={styles.tooltipContainer}>
+                <Text style={styles.tooltipTitle}>
+                  Distance {distance_km || 0} Km
                 </Text>
 
-                <Text
-                  style={styles.tooltipText}
-                >
+                <Text style={styles.tooltipText}>
                   Time {eta_minutes || 0} min
                 </Text>
               </View>
@@ -470,10 +379,7 @@ const ReportingScreen = () => {
                 geometry: {
                   type: 'Point',
 
-                  coordinates: [
-                    Number(pickup?.lng),
-                    Number(pickup?.lat),
-                  ],
+                  coordinates: [Number(pickup?.lng), Number(pickup?.lat)],
                 },
 
                 properties: {},
@@ -482,8 +388,7 @@ const ReportingScreen = () => {
               <SymbolLayer
                 id="pickupSymbol"
                 style={{
-                  iconImage:
-                    'pickupIcon',
+                  iconImage: 'pickupIcon',
 
                   iconSize: 0.3,
 
@@ -497,46 +402,37 @@ const ReportingScreen = () => {
           {/* DESTINATION */}
           {/* ========================= */}
 
-          {status === 'started' &&
-            isValidLocation(
-              destination,
-            ) && (
-              <ShapeSource
-                id="dropSource"
-                shape={{
-                  type: 'Feature',
+          {status === 'started' && isValidLocation(destination) && (
+            <ShapeSource
+              id="dropSource"
+              shape={{
+                type: 'Feature',
 
-                  geometry: {
-                    type: 'Point',
+                geometry: {
+                  type: 'Point',
 
-                    coordinates: [
-                      Number(
-                        destination?.lng,
-                      ),
+                  coordinates: [
+                    Number(destination?.lng),
 
-                      Number(
-                        destination?.lat,
-                      ),
-                    ],
-                  },
+                    Number(destination?.lat),
+                  ],
+                },
 
-                  properties: {},
+                properties: {},
+              }}
+            >
+              <SymbolLayer
+                id="dropSymbol"
+                style={{
+                  iconImage: 'dropIcon',
+
+                  iconSize: 0.4,
+
+                  iconAnchor: 'bottom',
                 }}
-              >
-                <SymbolLayer
-                  id="dropSymbol"
-                  style={{
-                    iconImage:
-                      'dropIcon',
-
-                    iconSize: 0.4,
-
-                    iconAnchor:
-                      'bottom',
-                  }}
-                />
-              </ShapeSource>
-            )}
+              />
+            </ShapeSource>
+          )}
         </MapView>
       </View>
 
@@ -547,35 +443,19 @@ const ReportingScreen = () => {
       {loadId && (
         <TouchableOpacity
           style={styles.callButton}
-          onPress={() =>
-            handleCall(driverMobile)
-          }
+          onPress={() => handleCall(driverMobile)}
         >
           <View style={styles.callRows}>
-            <View
-              style={styles.phoneRotate}
-            >
-              <Phone
-                size={36}
-                color={
-                  COLORS.primary[500]
-                }
-              />
+            <View style={styles.phoneRotate}>
+              <Phone size={36} color={COLORS.primary[500]} />
             </View>
 
-            <View
-              style={
-                styles.userIconWrapper
-              }
-            >
+            <View style={styles.userIconWrapper}>
               <User />
             </View>
           </View>
 
-          <Text
-            style={styles.postIdText}
-            numberOfLines={1}
-          >
+          <Text style={styles.postIdText} numberOfLines={1}>
             Post id {loadId || 'N/A'}
           </Text>
         </TouchableOpacity>

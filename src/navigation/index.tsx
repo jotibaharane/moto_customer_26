@@ -1,52 +1,90 @@
+import React, { memo, useEffect, useMemo, useState } from 'react';
+
 import {
   useLogger,
   useReduxDevToolsExtension,
 } from '@react-navigation/devtools';
+
 import { NavigationContainer } from '@react-navigation/native';
 
-import { RootState } from '@store/rootReducer';
 import { StatusBar, useColorScheme } from 'react-native';
+
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { useSelector } from 'react-redux';
+
+import { useSelector, shallowEqual } from 'react-redux';
+
+import { RootState } from '@store/rootReducer';
 
 import SplashScreen from '@modules/SplashScreen';
 
 import { emitCustomerJoin } from '@socket/socket.emitters';
+
 import { registerSocketListeners } from '@socket/socket.listeners';
+
 import { disconnectSocket, initSocket } from '@socket/socket.manager';
-import { useEffect, useState } from 'react';
+
 import AuthNavigation from './AuthNavigation';
-import { navigationRef } from './NavigationService';
 import UserNavigation from './UserNavigation';
 
-function RootNavigator() {
-  const { CustomerID } = useSelector((state: RootState) => state.auth);
+import { navigationRef } from './NavigationService';
+
+const RootNavigator = () => {
+  // ONLY REQUIRED VALUE
+  const CustomerID = useSelector(
+    (state: RootState) => state.auth.CustomerID,
+    shallowEqual,
+  );
+
   const [loading, setLoading] = useState(true);
+
   const isDarkMode = useColorScheme() === 'dark';
 
   useLogger(navigationRef);
+
   useReduxDevToolsExtension(navigationRef);
+
+  // MEMOIZE STATUSBAR STYLE
+  const barStyle = useMemo(
+    () => (isDarkMode ? 'light-content' : 'dark-content'),
+    [isDarkMode],
+  );
+
   useEffect(() => {
+    let mounted = true;
+
     const initApp = async () => {
       try {
+        // SPLASH DELAY
         await new Promise((resolve: any) => setTimeout(resolve, 2000));
+
         if (CustomerID) {
           initSocket(CustomerID);
+
           registerSocketListeners();
+
           emitCustomerJoin(CustomerID);
         }
-        setTimeout(() => setLoading(false), 2000);
-      } catch (e) {
-        console.log('Init error', e);
-      } finally {
+
+        if (mounted) {
+          setLoading(false);
+        }
+      } catch (error) {
+        console.log('Init error:', error);
       }
     };
 
     initApp();
 
     return () => {
+      mounted = false;
+
       disconnectSocket();
     };
+  }, [CustomerID]);
+
+  // PREVENT UNNECESSARY RERENDER
+  const Navigation = useMemo(() => {
+    return CustomerID ? <UserNavigation /> : <AuthNavigation />;
   }, [CustomerID]);
 
   if (loading) {
@@ -56,11 +94,12 @@ function RootNavigator() {
   return (
     <NavigationContainer ref={navigationRef}>
       <SafeAreaProvider>
-        <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-        {CustomerID == '' ? <AuthNavigation /> : <UserNavigation />}
+        <StatusBar barStyle={barStyle} />
+
+        {Navigation}
       </SafeAreaProvider>
     </NavigationContainer>
   );
-}
+};
 
-export default RootNavigator;
+export default memo(RootNavigator);

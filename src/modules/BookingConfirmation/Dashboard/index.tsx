@@ -64,7 +64,13 @@ const DashboardScreen = () => {
   const getRoute = async () => {
     try {
       const res = await fetch(
-        `https://api.mapbox.com/directions/v5/mapbox/driving/${booking?.pickup?.coordinates?.lng},${booking?.pickup?.coordinates?.lat};${booking?.delivery?.coordinates?.lng},${booking?.delivery?.coordinates?.lat}?geometries=geojson&overview=full&access_token=${Config.MAPBOX_ACCESS_TOKEN}`,
+        `https://api.mapbox.com/directions/v5/mapbox/driving/${
+          booking?.pickup?.coordinates?.lng
+        },${booking?.pickup?.coordinates?.lat};${
+          booking?.delivery?.coordinates?.lng
+        },${
+          booking?.delivery?.coordinates?.lat
+        }?geometries=geojson&overview=full&access_token=${'pk.eyJ1IjoicmFtZXNobW90byIsImEiOiJjbWt4c2swb2QwYzA1M2Nxemg2MzZjZG5jIn0.r9DupyA23H--LeacRtBXKA'}`,
       );
 
       const json = await res.json();

@@ -155,9 +155,49 @@ export const authApi = baseApi.injectEndpoints({
         body: queryArg,
       }),
     }),
-  
-   
+    getLoads: builder.query<
+      any,
+      {
+        customer_id: string;
+        load_id?: string;
+      }
+    >({
+      query: body => ({
+        url: '/Cus_get_load_traking',
+        method: 'POST',
+        body,
+      }),
+      transformResponse: (response: {
+        status: string;
+        message: string;
+        data: { load_id: string; trip_id: string }[];
+      }) => {
+        return {
+          ...response,
+          data: response.data
+            .filter(item => item.load_id && item.load_id !== 'NA') // optional: remove invalid entries
+            .map(item => ({
+              label: item?.trip_id?.trim(),
+              value: item?.load_id?.trim(), // or use a code if you have one later
+            })),
+        };
+      },
+    }),
+    getLoadTraking: builder.query<
+      any,
+      {
+        customer_id: string;
+        load_id?: string;
+      }
+    >({
+      query: body => ({
+        url: '/Cus_get_load_traking',
+        method: 'POST',
+        body,
+      }),
+    }),
   }),
+  overrideExisting: true,
 });
 
 export const {
@@ -175,4 +215,6 @@ export const {
   useGetVehicleListsQuery,
   usePostBookmarkMutation,
   useUpdateLoadPostMutation,
+  useGetLoadTrakingQuery,
+  useGetLoadsQuery,
 } = authApi;

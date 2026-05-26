@@ -64,7 +64,6 @@ export const emitJoinRoom = (loadId: string) => {
   });
 };
 
-
 export const emitPaymentStatusUpdate = (DriverID: string) => {
   const socket = getSocket();
 

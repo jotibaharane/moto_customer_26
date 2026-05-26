@@ -136,5 +136,6 @@ export const transformSocketLocation = (
     DistanceKm: distance?.distanceKm,
     assignType: 'single', // broadcast | single | hybrid
     DriverID,
+    VehicleNo: booking?.vehicle?.vehicleNo,
   };
 };

@@ -126,7 +126,7 @@ export const useLocation = () => {
             search,
           )}&limit=10&language=en&session_token=${
             sessionToken.current
-          }&country=IN&access_token=${Config.MAPBOX_ACCESS_TOKEN}`,
+          }&country=IN&access_token=${'pk.eyJ1IjoicmFtZXNobW90byIsImEiOiJjbWt4c2swb2QwYzA1M2Nxemg2MzZjZG5jIn0.r9DupyA23H--LeacRtBXKA'}`,
         );
 
         const data = await res.json();
@@ -154,7 +154,9 @@ export const useLocation = () => {
   const getPlaceDetails = async (mapboxId: string) => {
     try {
       const res = await fetch(
-        `https://api.mapbox.com/search/searchbox/v1/retrieve/${mapboxId}?session_token=${sessionToken.current}&access_token=${Config.MAPBOX_ACCESS_TOKEN}`,
+        `https://api.mapbox.com/search/searchbox/v1/retrieve/${mapboxId}?session_token=${
+          sessionToken.current
+        }&access_token=${'pk.eyJ1IjoicmFtZXNobW90byIsImEiOiJjbWt4c2swb2QwYzA1M2Nxemg2MzZjZG5jIn0.r9DupyA23H--LeacRtBXKA'}`,
       );
 
       const data = await res.json();

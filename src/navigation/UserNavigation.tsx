@@ -1,64 +1,112 @@
-import ReviewBookingScreen from '@modules/BookingConfirmation/ReviewBookingScreen';
-import SelectVehicleScreen from '@modules/BookingConfirmation/SelectVehicleScreen';
-import VehicleDhalaSizeScreen from '@modules/BookingConfirmation/VehicleDhalaSizeScreen';
+import React, { memo, useCallback, useMemo } from 'react';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+import { useSelector, shallowEqual } from 'react-redux';
+import { RootState } from '@store/rootReducer';
+
 import { COLORS } from '@theme/index';
-import React from 'react';
 
 import BackButton from '@components/NavigationComponents/BackButton';
 import HeaderTitle from '@components/NavigationComponents/HeaderTitle';
 import MPINHeader from '@components/NavigationComponents/MPINHeader';
+
+import BottomNavigation from './BottomNavigation';
+
+import ReviewBookingScreen from '@modules/BookingConfirmation/ReviewBookingScreen';
+import SelectVehicleScreen from '@modules/BookingConfirmation/SelectVehicleScreen';
+import VehicleDhalaSizeScreen from '@modules/BookingConfirmation/VehicleDhalaSizeScreen';
+
 import LiveTrackingScreen from '@modules/LiveTracking/LiveTrackingScreen';
+
 import ConfirmMPINScreen from '@modules/Mpin/ConfirmMPIN';
 import MpinLogin from '@modules/Mpin/MpinLogin';
 import SetMPINScreen from '@modules/Mpin/SetMPIN';
+
 import FrightPayment from '@modules/Payment';
-import { RootState } from '@store/rootReducer';
-import { useSelector } from 'react-redux';
-import BottomNavigation from './BottomNavigation';
 
 const Stack = createNativeStackNavigator();
 
-const UserNavigation = () => {
-  const customer = useSelector((state: RootState) => state.auth);
+const ReviewBookingHeader = memo(() => <HeaderTitle title="Review Booking" />);
 
-  const initialRouteName =
-    customer?.MPIN_Flag === 'Y' ? 'MpinLogin' : 'SetMPIN';
+const VehicleDhalaHeader = memo(() => (
+  <HeaderTitle title="Vehicle Dhala Size" />
+));
+
+const FrightPaymentHeader = memo(() => <HeaderTitle title="Fright Payment" />);
+
+const SelectVehicleHeader = memo(() => <HeaderTitle title="Select Vehicle" />);
+
+const LiveTrackingHeader = memo(() => <HeaderTitle title="Live Tracking" />);
+
+const SetMPINHeaderMemo = memo(() => (
+  <MPINHeader subtitle="Enter your 6-digit security PIN" />
+));
+
+const ConfirmMPINHeaderMemo = memo(() => (
+  <MPINHeader subtitle="Confirm your 6-digit security PIN" />
+));
+
+const UserNavigation = () => {
+  // ONLY SELECT REQUIRED VALUE
+  const MPIN_Flag = useSelector(
+    (state: RootState) => state.auth.MPIN_Flag,
+    shallowEqual,
+  );
+
+  // MEMOIZE INITIAL ROUTE
+  const initialRouteName = useMemo(() => {
+    return MPIN_Flag === 'Y' ? 'MpinLogin' : 'SetMPIN';
+  }, [MPIN_Flag]);
+
+  // STATIC OPTIONS
+  const commonHeaderStyle = useMemo(
+    () => ({
+      headerStyle: {
+        backgroundColor: COLORS.white[500],
+      },
+      headerShadowVisible: false,
+    }),
+    [],
+  );
+
+  // MEMOIZED SCREEN OPTIONS
+  const screenOptions = useCallback(
+    ({ navigation }: any) => ({
+      headerLeft: () => <BackButton navigation={navigation} />,
+      headerShadowVisible: false,
+    }),
+    [],
+  );
 
   return (
     <Stack.Navigator initialRouteName={initialRouteName}>
-      <Stack.Group
-        screenOptions={{
-          headerStyle: { backgroundColor: COLORS.white[500] },
-          headerShadowVisible: false,
-        }}
-      >
+      {/* BOTTOM TAB */}
+      <Stack.Group screenOptions={commonHeaderStyle}>
         <Stack.Screen
           name="BottomNavigation"
           component={BottomNavigation}
-          options={{ headerShown: false }}
+          options={{
+            headerShown: false,
+          }}
         />
       </Stack.Group>
 
-      <Stack.Group
-        screenOptions={({ navigation }) => ({
-          headerLeft: () => <BackButton navigation={navigation} />,
-          headerShadowVisible: false,
-        })}
-      >
+      {/* MAIN SCREENS */}
+      <Stack.Group screenOptions={screenOptions}>
         <Stack.Screen
           name="MpinLogin"
+          component={MpinLogin}
           options={{
             headerTitle: '',
           }}
-          component={MpinLogin}
         />
+
         <Stack.Screen
           name="ReviewBookingScreen"
           component={ReviewBookingScreen}
           options={{
-            headerTitle: () => <HeaderTitle title="Review Booking" />,
+            headerTitle: ReviewBookingHeader,
           }}
         />
 
@@ -66,7 +114,7 @@ const UserNavigation = () => {
           name="VehicleDhalaSizeScreen"
           component={VehicleDhalaSizeScreen}
           options={{
-            headerTitle: () => <HeaderTitle title="Vehicle Dhala Size" />,
+            headerTitle: VehicleDhalaHeader,
           }}
         />
 
@@ -74,7 +122,7 @@ const UserNavigation = () => {
           name="FrightPayment"
           component={FrightPayment}
           options={{
-            headerTitle: () => <HeaderTitle title="Fright Payment" />,
+            headerTitle: FrightPaymentHeader,
           }}
         />
 
@@ -82,45 +130,39 @@ const UserNavigation = () => {
           name="SelectVehicleScreen"
           component={SelectVehicleScreen}
           options={{
-            headerTitle: () => <HeaderTitle title="Select Vehicle" />,
+            headerTitle: SelectVehicleHeader,
           }}
         />
+
         <Stack.Screen
           name="LiveTrackingScreen"
           component={LiveTrackingScreen}
           options={{
-            headerTitle: () => <HeaderTitle title="Live Tracking" />,
+            headerTitle: LiveTrackingHeader,
           }}
         />
       </Stack.Group>
 
-      <Stack.Group
-        screenOptions={({ navigation }) => ({
-          headerLeft: () => <BackButton navigation={navigation} />,
-          headerShadowVisible: false,
-        })}
-      >
+      {/* MPIN SCREENS */}
+      <Stack.Group screenOptions={screenOptions}>
         <Stack.Screen
           name="SetMPIN"
-          options={{
-            headerTitle: () => (
-              <MPINHeader subtitle="Enter your 6- digit security PIN" />
-            ),
-          }}
           component={SetMPINScreen}
+          options={{
+            headerTitle: SetMPINHeaderMemo,
+          }}
         />
+
         <Stack.Screen
           name="ConfirmMPIN"
-          options={{
-            headerTitle: () => (
-              <MPINHeader subtitle="Confirm your 6- digit security PIN" />
-            ),
-          }}
           component={ConfirmMPINScreen}
+          options={{
+            headerTitle: ConfirmMPINHeaderMemo,
+          }}
         />
       </Stack.Group>
     </Stack.Navigator>
   );
 };
 
-export default UserNavigation;
+export default memo(UserNavigation);

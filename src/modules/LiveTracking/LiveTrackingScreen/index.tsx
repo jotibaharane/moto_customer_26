@@ -1,66 +1,148 @@
-import React from 'react';
+import { useGetLoadsQuery, useGetLoadTrakingQuery } from '@api/Mutations';
+import Dropdown from '@components/Dropdown';
+import { RootState } from '@store/rootReducer';
+import { setLPStatus } from '@store/slices/Auth/authSlice';
+import { setTripDetails } from '@store/slices/tracking/trackingSlice';
+import { COLORS, FONT_FAMILIES, fp, hp, wp } from '@theme/index';
+import { formatTimeAMPM } from '@utils/datetime.utils';
+import { CheckCircle2 } from 'lucide-react-native';
+import React, { useEffect, useMemo, useState } from 'react';
 import { FlatList, Text, View } from 'react-native';
-import { styles } from './LiveTracking.style';
+import { useDispatch, useSelector } from 'react-redux';
 
-const DATA = [
-  { time: '09:00 AM', title: 'Post' },
-  { time: '09:00 AM', title: 'Booking' },
-  { time: '09:00 AM', title: 'Reporting' },
-  { time: '09:00 AM', title: 'Loading Status' },
-  { time: '09:00 AM', title: 'Payment' },
-  { time: '09:00 AM', title: 'Departed (200, 300 m)' },
-  { time: '09:00 AM', title: 'Location' },
-  { time: '09:00 AM', title: 'Location' },
-  { time: '09:00 AM', title: 'Location' },
-  { time: '09:00 AM', title: 'Reporting' },
-  { time: '09:00 AM', title: 'Unloading' },
-  { time: '08:00 AM', title: 'Payment' },
-  { time: '09:00 AM', title: 'Delivered' },
-  { time: '09:00 AM', title: 'POD' },
-];
+const LiveTracking = () => {
+  const dispatch = useDispatch();
+  const [loadID, setLoadId] = useState<any>('');
+  const { CustomerID } = useSelector((state: RootState) => state.auth);
 
-const LiveTrackingScreen = () => {
-  const renderItem = ({ item, index }: any) => {
-    const isLast = index === DATA.length - 1;
+  const { data: loads } = useGetLoadsQuery({
+    customer_id: CustomerID!,
+  });
+  console.log({ loads });
 
-    return (
-      <View style={styles.row}>
-        {/* LEFT (TIME) */}
-        <Text style={styles.time}>{item.time}</Text>
+  const { data } = useGetLoadTrakingQuery({
+    customer_id: CustomerID!,
+    load_id: loadID || loads?.[0]?.value,
+  });
 
-        {/* CENTER (TIMELINE) */}
-        <View style={styles.timeline}>
-          <View style={styles.circle} />
-          {!isLast && <View style={styles.line} />}
-        </View>
-
-        {/* RIGHT (TEXT) */}
-        <Text style={styles.title}>{item.title}</Text>
-      </View>
-    );
-  };
+  useEffect(() => {
+    if (data?.data?.length) {
+      const load = data?.data?.[0];
+      dispatch(
+        setTripDetails({
+          loadId: load?.load_id,
+          DriverID: load?.driver_id,
+          distance_km: load?.distance,
+          driverMobile: '',
+          eta_minutes: 0,
+          message: load?.message,
+          status: load?.status,
+        }),
+      );
+      dispatch(setLPStatus(load?.status));
+    }
+  }, [data]);
 
   return (
-    <View style={styles.container}>
-      {/* HEADER */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Live Tracking</Text>
-        <Text style={styles.postId}>Post Id 262623</Text>
+    <View
+      style={{ flex: 1, backgroundColor: COLORS.white[100], padding: wp(16) }}
+    >
+      <View style={{ flexDirection: 'row', gap: wp(110) }}>
+        <Text
+          style={{
+            fontFamily: FONT_FAMILIES.regular,
+            color: COLORS.primary[500],
+            fontSize: fp(10),
+          }}
+        >
+          Vehicle No
+        </Text>
+
+        <Text
+          style={{
+            fontFamily: FONT_FAMILIES.regular,
+            color: COLORS.primary[500],
+            fontSize: fp(10),
+          }}
+        >
+          Load Post Id
+        </Text>
       </View>
+      <View style={{ flexDirection: 'row', gap: 5, marginBottom: hp(16) }}>
+        <Text
+          style={{
+            fontFamily: FONT_FAMILIES.semiBold,
+            color: COLORS.primary[500],
+            fontSize: fp(20),
+          }}
+        >
+          {data?.data?.[0]?.vehicle_id}
+        </Text>
 
-      {/* DATE */}
-      <Text style={styles.date}>05/03/2026</Text>
-
-      {/* LIST */}
+        <Text
+          style={{
+            fontFamily: FONT_FAMILIES.semiBold,
+            color: COLORS.primary[500],
+            fontSize: fp(20),
+          }}
+        >
+          - {data?.data?.[0]?.load_id}
+        </Text>
+      </View>
+      <Dropdown
+        label="Your Load"
+        data={loads?.data}
+        onChange={value => {
+          setLoadId(value);
+        }}
+        value={loadID}
+      />
       <FlatList
-        data={DATA}
-        keyExtractor={(_, i) => i.toString()}
-        renderItem={renderItem}
-        contentContainerStyle={styles.list}
-        showsVerticalScrollIndicator={false}
+        data={data?.data || []}
+        keyExtractor={item => item?.id}
+        ItemSeparatorComponent={() => (
+          <View
+            style={{ flexDirection: 'row', gap: wp(13), alignItems: 'center' }}
+          >
+            <View
+              style={{
+                height: 25,
+                borderRightWidth: 1,
+                borderStyle: 'dashed',
+                width: wp(80),
+              }}
+            />
+          </View>
+        )}
+        renderItem={({ item }) => (
+          <View
+            style={{ flexDirection: 'row', gap: wp(13), alignItems: 'center' }}
+          >
+            <Text
+              style={{ fontSize: fp(12), fontFamily: FONT_FAMILIES.regular }}
+            >
+              {formatTimeAMPM(item?.insert_date)}
+            </Text>
+
+            <CheckCircle2
+              color={'#fff'}
+              style={{ backgroundColor: COLORS.primary[500], borderRadius: 99 }}
+              size={25}
+            />
+            <Text
+              style={{
+                fontSize: fp(16),
+                fontFamily: FONT_FAMILIES.semiBold,
+                color: COLORS.primary[500],
+              }}
+            >
+              {item?.status}
+            </Text>
+          </View>
+        )}
       />
     </View>
   );
 };
 
-export default LiveTrackingScreen;
+export default LiveTracking;

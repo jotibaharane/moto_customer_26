@@ -92,6 +92,7 @@ const bookingSlice = createSlice({
     setSelectedVehicle(state, action: PayloadAction<any>) {
       state.booking.vehicle.vehicleType = action.payload?.vehicleType;
       // state.booking.vehicle.vehicleNo = action.payload?.VehicleID;
+
       state.booking.vehicle.vehicleNo = action.payload?.registration_no;
       state.booking.load = {
         freight_amount: action.payload.freight_amount,

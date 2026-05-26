@@ -1,4 +1,3 @@
-
 import CustomButton from '@components/Button';
 import CustomCheckbox from '@components/CustomCheckbox';
 import QRScanner from '@components/QRScanner';
@@ -8,30 +7,28 @@ import React, { useEffect, useState } from 'react';
 import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { styles } from './FrightPayment.style';
 import { emitPaymentStatusUpdate } from '@socket/socket.emitters';
-import { useGetLoadPaymentQuery, useMakePaymentMutation, usePaymentHistoryMutation } from '@api/PaymentMutations';
-import { useSelector } from 'react-redux';
+import {
+  useGetLoadPaymentQuery,
+  useMakePaymentMutation,
+  usePaymentHistoryMutation,
+} from '@api/PaymentMutations';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@store/rootReducer';
 import { navigate } from '@navigation/NavigationService';
+import { setLPStatus } from '@store/slices/Auth/authSlice';
 const FrightPayment = () => {
- 
-  const netInfo = useNetInfo();
-  console.log({ netInfo });
+  const dispatch = useDispatch();
+  const { PaymentStatus } = useSelector((state: RootState) => state.payment);
+  const { DriverID, loadId } = useSelector(
+    (state: RootState) => state.tracking,
+  );
+  const { CustomerID, status } = useSelector((state: RootState) => state.auth);
+  console.log({ DriverID, loadId, CustomerID });
 
-    const {PaymentStatus} = useSelector(
-      (state: RootState) => state.payment,
-    );
-    const {DriverID,loadId} = useSelector(
-      (state: RootState) => state.tracking,
-    );
-      const {CustomerID,status} = useSelector(
-      (state: RootState) => state.auth,
-    );
-    console.log({DriverID,loadId,CustomerID});
-    
   const [success, setSuccess] = useState(false);
   const [paymentAt, setPaymentAt] = useState<'Paid' | 'ToPay'>('Paid');
-  
-  const { data,refetch } = useGetLoadPaymentQuery(
+
+  const { data, refetch } = useGetLoadPaymentQuery(
     {
       DriverID: DriverID,
       CustomerID: CustomerID,
@@ -39,8 +36,8 @@ const FrightPayment = () => {
     },
     {
       skip: false, // or condition
-      refetchOnFocus:true,
-      refetchOnReconnect:true
+      refetchOnFocus: true,
+      refetchOnReconnect: true,
     },
   );
   console.log({ data });
@@ -48,7 +45,7 @@ const FrightPayment = () => {
 
   console.log({ load });
   const [makePayment] = useMakePaymentMutation();
-    const [paymentHistory,{data:historyData}] = usePaymentHistoryMutation();
+  const [paymentHistory, { data: historyData }] = usePaymentHistoryMutation();
   const [partialAmount, setPartialAmount] = useState('');
   const [upiId, setUpiId] = useState('');
   const [payAnother, setPayAnother] = useState(false);
@@ -70,44 +67,55 @@ const FrightPayment = () => {
         TransactionMode: tab as any,
         IPAddress: '',
         DeviceInfo: '',
-        PaymentStage:paymentAt
+        PaymentStage: paymentAt,
       });
       console.log({ resp });
 
       if (resp?.data?.status === '00') {
         emitPaymentStatusUpdate(load?.driver_id!);
-        refetch()
+        refetch();
         setSuccess(true);
-        setPartialAmount("")
-        setPayAnother(false)
-        if (status==="reached") {
-          
-        }
+        setPartialAmount('');
+        setPayAnother(false);
       }
     } catch (error) {}
   };
 
-useEffect(()=>{
-  refetch()
-},[])
-  console.log({PaymentStatus})
-  useEffect(()=>{
-    paymentHistory({LoadpostID:loadId})
-  },[])
+  useEffect(() => {
+    if (!loadId) return;
+
+    paymentHistory({ LoadpostID: loadId });
+  }, [loadId]);
+
+  useEffect(() => {
+    if (!PaymentStatus) return;
+
+    const timer = setTimeout(() => {
+      if (status !== 'reached') {
+        dispatch(setLPStatus(''));
+      }
+      navigate('BottomNavigation', {
+        screen: 'New Load',
+      });
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [PaymentStatus]);
   return (
     <View style={styles.container}>
-      {status!=="reached"&&<View style={styles.rowBox}>
-        <Text style={styles.label}>Paid(at pickup)</Text>
-        <CustomCheckbox
-          value={paymentAt === 'Paid'}
-          onValueChange={val => setPaymentAt(val ? 'Paid' : 'ToPay')}
-        />
-      </View>
-}
+      {status !== 'reached' && (
+        <View style={styles.rowBox}>
+          <Text style={styles.label}>Paid(at pickup)</Text>
+          <CustomCheckbox
+            value={paymentAt === 'Paid'}
+            onValueChange={val => setPaymentAt(val ? 'Paid' : 'ToPay')}
+          />
+        </View>
+      )}
       <View style={styles.rowBox}>
         <Text style={styles.label}>To Pay</Text>
         <CustomCheckbox
-          value={status!=="reached"?paymentAt === 'ToPay':true}
+          value={status !== 'reached' ? paymentAt === 'ToPay' : true}
           onValueChange={val => setPaymentAt(val ? 'ToPay' : 'Paid')}
         />
       </View>
@@ -118,21 +126,24 @@ useEffect(()=>{
         </Text>
       </View>
 
-      {paymentAt === 'Paid'&&status!=="reached" && (
+      {paymentAt === 'Paid' && status !== 'reached' && (
         <View style={styles.rowBox}>
           <Text style={styles.label}>Pay Another Amount</Text>
           <CustomCheckbox value={payAnother} onValueChange={setPayAnother} />
         </View>
       )}
 
-      {payAnother && (
+      {payAnother && paymentAt === 'Paid' && status !== 'reached' && (
         <TextInput
           value={partialAmount}
           placeholder="Enter Amount You Want To Pay"
           style={styles.input}
           placeholderTextColor="#999"
-          onChangeText={t =>{if (t<=load?.ShowAmount ){ setPartialAmount(t)}}}
-       
+          onChangeText={t => {
+            if (t <= load?.ShowAmount) {
+              setPartialAmount(t);
+            }
+          }}
         />
       )}
 
@@ -167,26 +178,26 @@ useEffect(()=>{
         <View
           style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
         >
-          {!success&& (
+          {!success && (
             <CustomButton
               title="Submit"
               style={{ alignSelf: 'center', paddingHorizontal: wp(24) }}
               onPress={() => handlePayment()}
             />
-          ) }
+          )}
 
-          {(PaymentStatus!==""&&PaymentStatus!==undefined && success)&&
-              <View style={styles.successContainer}>
+          {PaymentStatus !== '' && PaymentStatus !== undefined && success && (
+            <View style={styles.successContainer}>
               <Image
                 source={require('@assets/images/paymentdone.png')}
                 style={styles.image}
               />
               <Text style={styles.successText}>
-               {PaymentStatus} Payment has been done successfully.
+                {PaymentStatus} Payment has been done successfully.
               </Text>
               <Text style={styles.receiptText}>Fright Payment Receipt</Text>
             </View>
-          }
+          )}
         </View>
       </View>
     </View>

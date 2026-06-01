@@ -8,8 +8,8 @@ export const styles = StyleSheet.create({
 
   content: {
     flex: 1,
-    padding: hp(16),
-    gap: hp(24),
+    padding: 16,
+    gap: 24,
   },
 
   headerWrapper: {
@@ -18,10 +18,10 @@ export const styles = StyleSheet.create({
 
   signUpButton: {
     position: 'absolute',
-    top: hp(84),
-    left: wp(16),
-    height: hp(40),
-    width: wp(122),
+    top: 84,
+    left: 16,
+    height: 40,
+    width: 122,
     borderRadius: 8,
     backgroundColor: COLORS.white[100],
     borderWidth: 0,
@@ -30,16 +30,16 @@ export const styles = StyleSheet.create({
 
   image: {
     position: 'absolute',
-    width: wp(210),
-    height: hp(150),
-    top: hp(20),
-    right: wp(12),
+    width: 210,
+    height: 150,
+    top: 20,
+    right: 12,
   },
 
   toggleContainer: {
     // marginBottom: hp(110),
     flexDirection: 'row',
-    gap: wp(12),
+    gap: 12,
     justifyContent: 'center',
   },
 
@@ -48,8 +48,8 @@ export const styles = StyleSheet.create({
   },
 
   continueBtn: {
-    marginBottom: hp(24),
-    minWidth: wp(200),
+    marginBottom: 24,
+    minWidth: 200,
     alignSelf: 'center',
   },
 });

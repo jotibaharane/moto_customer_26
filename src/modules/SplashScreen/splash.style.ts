@@ -11,6 +11,6 @@ export const styles = StyleSheet.create({
   text: {
     color: COLORS.white[500],
     fontFamily: FONT_FAMILIES.bold,
-    fontSize: fp(45),
+    fontSize: 45,
   },
 });

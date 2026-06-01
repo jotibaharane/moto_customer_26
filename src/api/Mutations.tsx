@@ -41,7 +41,13 @@ export const authApi = baseApi.injectEndpoints({
         body,
       }),
     }),
-
+    profile: builder.mutation<OnboardingResponse, OnboardingRequest>({
+      query: body => ({
+        url: '/update_Customer',
+        method: 'POST',
+        body,
+      }),
+    }),
     setMpin: builder.mutation<any, any>({
       query: body => ({
         url: '/Customer_Set_Mpin',
@@ -217,4 +223,5 @@ export const {
   useUpdateLoadPostMutation,
   useGetLoadTrakingQuery,
   useGetLoadsQuery,
+  useProfileMutation,
 } = authApi;

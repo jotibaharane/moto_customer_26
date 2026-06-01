@@ -50,7 +50,7 @@ export const useDistance = (pickup?: Coordinates, drop?: Coordinates) => {
         pickup?.lng
       },${pickup?.lat};${drop?.lng},${
         drop?.lat
-      }?access_token=${'pk.eyJ1IjoicmFtZXNobW90byIsImEiOiJjbWt4c2swb2QwYzA1M2Nxemg2MzZjZG5jIn0.r9DupyA23H--LeacRtBXKA'}&overview=false`;
+      }?access_token=${'pk.eyJ1IjoicmFtZXNobW90byIsImEiOiJjbWt4c2swb2QwYzA1M2Nxemg2MzZjZG5jIn0.r9DupyA23H--LeacRtBXKA'}&overview=false'}`;
 
       const res = await fetch(url);
       const json = await res.json();

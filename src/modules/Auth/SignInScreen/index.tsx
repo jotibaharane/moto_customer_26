@@ -134,7 +134,7 @@ const SignInScreen = () => {
       />
       {isOtpSent && (
         <>
-          <Text style={styles.subtitle}>Enter OTP</Text>
+          <Text style={styles.subtitle}>Check your SMS For OTP</Text>
 
           <View style={styles.otpContainer}>
             <OtpInput
@@ -145,6 +145,7 @@ const SignInScreen = () => {
                 pinCodeTextStyle: styles.pinCodeTextStyle,
                 filledPinCodeContainerStyle: styles.filledPinCodeContainerStyle,
               }}
+              autoFocus={false}
             />
           </View>
 
@@ -158,7 +159,7 @@ const SignInScreen = () => {
             </Text>
           )}
           <CustomButton
-            title={'Verify OTP'}
+            title={'Verify'}
             variant="filled"
             style={styles.button}
             onPress={handleVerifyOtp}

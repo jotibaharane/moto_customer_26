@@ -24,28 +24,9 @@ import MpinLogin from '@modules/Mpin/MpinLogin';
 import SetMPINScreen from '@modules/Mpin/SetMPIN';
 
 import FrightPayment from '@modules/Payment';
+import Profile from '@modules/Profile';
 
 const Stack = createNativeStackNavigator();
-
-const ReviewBookingHeader = memo(() => <HeaderTitle title="Review Booking" />);
-
-const VehicleDhalaHeader = memo(() => (
-  <HeaderTitle title="Vehicle Dhala Size" />
-));
-
-const FrightPaymentHeader = memo(() => <HeaderTitle title="Fright Payment" />);
-
-const SelectVehicleHeader = memo(() => <HeaderTitle title="Select Vehicle" />);
-
-const LiveTrackingHeader = memo(() => <HeaderTitle title="Live Tracking" />);
-
-const SetMPINHeaderMemo = memo(() => (
-  <MPINHeader subtitle="Enter your 6-digit security PIN" />
-));
-
-const ConfirmMPINHeaderMemo = memo(() => (
-  <MPINHeader subtitle="Confirm your 6-digit security PIN" />
-));
 
 const UserNavigation = () => {
   // ONLY SELECT REQUIRED VALUE
@@ -106,7 +87,7 @@ const UserNavigation = () => {
           name="ReviewBookingScreen"
           component={ReviewBookingScreen}
           options={{
-            headerTitle: ReviewBookingHeader,
+            headerTitle: () => <HeaderTitle title="Review Booking" />,
           }}
         />
 
@@ -114,7 +95,7 @@ const UserNavigation = () => {
           name="VehicleDhalaSizeScreen"
           component={VehicleDhalaSizeScreen}
           options={{
-            headerTitle: VehicleDhalaHeader,
+            headerTitle: () => <HeaderTitle title="Vehicle Dhala Size" />,
           }}
         />
 
@@ -122,7 +103,7 @@ const UserNavigation = () => {
           name="FrightPayment"
           component={FrightPayment}
           options={{
-            headerTitle: FrightPaymentHeader,
+            headerTitle: () => <HeaderTitle title="Fright Payment" />,
           }}
         />
 
@@ -130,7 +111,7 @@ const UserNavigation = () => {
           name="SelectVehicleScreen"
           component={SelectVehicleScreen}
           options={{
-            headerTitle: SelectVehicleHeader,
+            headerTitle: () => <HeaderTitle title="Select Vehicle" />,
           }}
         />
 
@@ -138,7 +119,7 @@ const UserNavigation = () => {
           name="LiveTrackingScreen"
           component={LiveTrackingScreen}
           options={{
-            headerTitle: LiveTrackingHeader,
+            headerTitle: () => <HeaderTitle title="Live Tracking" />,
           }}
         />
       </Stack.Group>
@@ -149,15 +130,7 @@ const UserNavigation = () => {
           name="SetMPIN"
           component={SetMPINScreen}
           options={{
-            headerTitle: SetMPINHeaderMemo,
-          }}
-        />
-
-        <Stack.Screen
-          name="ConfirmMPIN"
-          component={ConfirmMPINScreen}
-          options={{
-            headerTitle: ConfirmMPINHeaderMemo,
+            headerShown: false,
           }}
         />
       </Stack.Group>

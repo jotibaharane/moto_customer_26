@@ -5,31 +5,31 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.white[100],
-    padding: wp(16),
+    padding: 16,
   },
 
   title: {
-    fontSize: fp(24),
+    fontSize: 24,
     fontFamily: FONT_FAMILIES.semiBold,
   },
 
   subtitle: {
-    fontSize: fp(14),
+    fontSize: 14,
     fontFamily: FONT_FAMILIES.medium,
     color: COLORS.gray[500],
   },
 
   otpWrapper: {
-    marginTop: hp(55),
+    marginTop: 55,
   },
 
   otpContainer: {
-    gap: wp(16),
+    gap: 16,
   },
 
   pinBox: {
-    height: hp(45),
-    width: wp(45),
+    height: 45,
+    width: 45,
     borderColor: COLORS.gray[250],
     borderWidth: 1,
     borderRadius: 16,
@@ -37,26 +37,26 @@ export const styles = StyleSheet.create({
 
   filledPinBox: {
     borderColor: COLORS.primary[500],
-    height: hp(45),
-    width: wp(45),
+    height: 45,
+    width: 45,
     borderWidth: 2,
     borderRadius: 16,
   },
 
   pinText: {
-    fontSize: fp(18),
+    fontSize: 18,
     fontFamily: FONT_FAMILIES.semiBold,
   },
 
   helperText: {
-    fontSize: fp(14),
+    fontSize: 14,
     fontFamily: FONT_FAMILIES.medium,
     color: COLORS.gray[500],
     textAlign: 'center',
-    marginTop: hp(8),
+    marginTop: 8,
   },
 
   loginButton: {
-    marginTop: hp(52),
+    marginTop: 52,
   },
 });

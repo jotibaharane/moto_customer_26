@@ -4,15 +4,15 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   constainer: {
     flex: 1,
-    padding: hp(16),
+    padding: 16,
   },
 
   title: {
-    marginTop: hp(79),
+    marginTop: 79,
     fontFamily: FONT_FAMILIES.bold,
     fontSize: FONT_SIZES.xxl,
     color: COLORS.black[500],
-    marginBottom: hp(24),
+    marginBottom: 29,
   },
 
   subtitle: {
@@ -22,24 +22,24 @@ export const styles = StyleSheet.create({
   },
 
   radioContainer: {
-    marginTop: hp(45),
+    marginTop: 45,
   },
 
   buttonContainer: {
-    marginHorizontal: wp(79),
-    marginTop: hp(65),
+    marginHorizontal: 79,
+    marginTop: 65,
   },
 
   infoRow: {
-    marginTop: hp(45),
+    marginTop: 45,
     flexDirection: 'row',
-    gap: wp(18),
+    gap: 18,
     alignItems: 'center',
     justifyContent: 'center',
   },
 
   infoText: {
-    fontSize: fp(12),
+    fontSize: FONT_SIZES.xs,
     fontFamily: FONT_FAMILIES.regular,
     color: COLORS.primary[400],
   },
@@ -48,21 +48,21 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: hp(37),
-    gap: wp(10),
+    marginTop: 37,
+    gap: 10,
   },
 
   stepDot: {
-    height: hp(10),
-    width: wp(10),
+    height: 10,
+    width: 10,
     backgroundColor: COLORS.gray[150],
-    borderRadius: hp(5),
+    borderRadius: 5,
   },
 
   stepActive: {
-    height: hp(10),
-    width: wp(20),
+    height: 10,
+    width: 20,
     backgroundColor: COLORS.primary[500],
-    borderRadius: hp(5),
+    borderRadius: 5,
   },
 });

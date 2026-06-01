@@ -88,7 +88,6 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
       /* ✅ SAVE LAT LNG */
       if (finalData?.coordinates) {
         dispatch(setPickup(finalData.coordinates));
-       
       }
 
       /* ✅ CALL BOOKMARK API */
@@ -167,7 +166,7 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
   return (
     <RBSheet
       ref={refScrollable}
-      height={hp(700)}
+      height={700}
       draggable
       customModalProps={{
         animationType: 'slide',
@@ -196,11 +195,11 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
             iconColor="#4CAF50"
             containerStyle={{
               borderWidth: 1,
-              marginBottom: hp(16),
+              marginBottom: 16,
             }}
           />
 
-          <View style={{ height: hp(10) }} />
+          <View style={{ height: 10 }} />
           <FlatList
             data={dataToShow}
             keyExtractor={(item, index) => item?.mapboxId || index.toString()}
@@ -296,7 +295,7 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
               );
             }}
             style={{ flex: 1 }}
-            contentContainerStyle={{ paddingBottom: hp(100) }}
+            contentContainerStyle={{ paddingBottom: 100 }}
           />
         </View>
       ) : (
@@ -421,9 +420,8 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
                 title="Confirm Pickup Address"
                 variant="filled"
                 style={{
-                  marginTop: hp(24),
                   alignSelf: 'center',
-                  paddingHorizontal: wp(24),
+                  paddingHorizontal: 24,
                 }}
                 onPress={formik.handleSubmit}
               />

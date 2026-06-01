@@ -2,10 +2,10 @@ import { COLORS, FONT_FAMILIES, fp, wp } from '@theme/index';
 import { Text, View } from 'react-native';
 
 const HeaderTitle = ({ title }: { title: string }) => (
-  <View style={{ paddingLeft: wp(9) }}>
+  <View style={{ paddingLeft: 15 }}>
     <Text
       style={{
-        fontSize: fp(20),
+        fontSize: 20,
         fontFamily: FONT_FAMILIES.semiBold,
         color: COLORS.primary[500],
       }}

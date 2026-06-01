@@ -284,9 +284,9 @@ const styles = StyleSheet.create({
   },
 
   item: {
-    paddingVertical: 14,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    padding: 14,
   },
 
   itemSelected: {
@@ -296,6 +296,7 @@ const styles = StyleSheet.create({
 
   itemLabel: {
     fontSize: 16,
+    flex: 1,
   },
 
   check: {

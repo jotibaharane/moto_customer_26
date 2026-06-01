@@ -5,110 +5,111 @@ export const styles = StyleSheet.create({
   /* ================= LAYOUT ================= */
   container: {
     flex: 1,
-    padding: hp(16),
+    padding: 16,
   },
 
   /* ================= TEXT ================= */
   title: {
-    marginTop: hp(57),
+    marginTop: 57,
     fontFamily: FONT_FAMILIES.bold,
     fontSize: FONT_SIZES.xxl,
     color: COLORS.black[500],
-    marginBottom: hp(24),
+    marginBottom: 24,
     textAlign: 'center',
   },
 
   subtitle: {
-    fontSize: fp(16),
+    fontSize: FONT_SIZES.md,
     fontFamily: FONT_FAMILIES.semiBold,
     color: COLORS.black[500],
-    marginTop: hp(32),
+    marginTop: 32,
   },
 
   expiryText: {
-    fontSize: fp(12),
+    fontSize: 12,
     fontFamily: FONT_FAMILIES.regular,
     color: COLORS.gray[500],
-    marginTop: hp(32),
+    marginTop: 32,
     textAlign: 'center',
   },
 
   /* ================= INPUT ================= */
   inputContainer: {
-    marginTop: hp(16),
+    marginTop: 16,
     flexDirection: 'row',
-    gap: wp(8),
+    gap: 8,
+    height: 54,
   },
 
   input: {
     flex: 1,
     borderWidth: 1,
-    borderRadius: hp(16),
+    borderRadius: 16,
     borderColor: COLORS.gray[250],
-    padding: hp(16),
-    fontSize: fp(16),
+    padding: 16,
+    fontSize: 16,
     fontFamily: FONT_FAMILIES.medium,
   },
 
   /* ================= COUNTRY ================= */
   countryCodeContainer: {
     flexDirection: 'row',
-    height: hp(54),
-    width: hp(98),
+    height: 54,
+    width: 98,
     borderWidth: 1,
-    borderRadius: hp(16),
+    borderRadius: 16,
     borderColor: COLORS.gray[250],
     alignItems: 'center',
     justifyContent: 'center',
   },
 
   flag: {
-    width: wp(23),
-    height: hp(17),
-    marginRight: wp(8),
+    width: 23,
+    height: 17,
+    marginRight: 8,
   },
 
   countryCodeText: {
     color: COLORS.black[500],
-    fontSize: fp(16),
+    fontSize: 16,
     fontFamily: FONT_FAMILIES.regular,
-    marginRight: wp(4),
+    marginRight: 4,
   },
 
   /* ================= OTP ================= */
   otpContainer: {
-    marginTop: hp(24),
+    marginTop: 24,
   },
   pinCodeContainerStyle: {
-    height: hp(56),
-    width: wp(56),
+    height: 56,
+    width: 56,
     borderColor: COLORS.gray[250],
     borderWidth: 1,
     borderRadius: 16,
   },
   pinCodeTextStyle: {
-    fontSize: fp(18),
+    fontSize: 18,
     fontFamily: FONT_FAMILIES.semiBold,
   },
   filledPinCodeContainerStyle: {
     borderColor: COLORS.primary[500],
-    height: hp(56),
-    width: wp(56),
-    borderWidth: 2,
+    height: 56,
+    width: 56,
+    borderWidth: 1,
     borderRadius: 16,
   },
 
   /* ================= BUTTON ================= */
   button: {
-    marginTop: hp(24),
+    marginTop: 24,
     alignSelf: 'center',
-    minWidth: wp(200),
+    minWidth: 200,
   },
   resendText: {
     textAlign: 'center',
     color: COLORS.primary[500],
-    marginTop: hp(12),
-    fontSize: fp(14),
+    marginTop: 12,
+    fontSize: 14,
     fontFamily: FONT_FAMILIES.semiBold,
   },
 });

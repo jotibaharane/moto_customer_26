@@ -44,15 +44,13 @@ const LiveTracking = () => {
   }, [data]);
 
   return (
-    <View
-      style={{ flex: 1, backgroundColor: COLORS.white[100], padding: wp(16) }}
-    >
-      <View style={{ flexDirection: 'row', gap: wp(110) }}>
+    <View style={{ flex: 1, backgroundColor: COLORS.white[100], padding: 16 }}>
+      <View style={{ flexDirection: 'row', gap: 110 }}>
         <Text
           style={{
             fontFamily: FONT_FAMILIES.regular,
             color: COLORS.primary[500],
-            fontSize: fp(10),
+            fontSize: 10,
           }}
         >
           Vehicle No
@@ -62,18 +60,18 @@ const LiveTracking = () => {
           style={{
             fontFamily: FONT_FAMILIES.regular,
             color: COLORS.primary[500],
-            fontSize: fp(10),
+            fontSize: 10,
           }}
         >
           Load Post Id
         </Text>
       </View>
-      <View style={{ flexDirection: 'row', gap: 5, marginBottom: hp(16) }}>
+      <View style={{ flexDirection: 'row', gap: 5, marginBottom: 16 }}>
         <Text
           style={{
             fontFamily: FONT_FAMILIES.semiBold,
             color: COLORS.primary[500],
-            fontSize: fp(20),
+            fontSize: 20,
           }}
         >
           {data?.data?.[0]?.vehicle_id}
@@ -83,7 +81,7 @@ const LiveTracking = () => {
           style={{
             fontFamily: FONT_FAMILIES.semiBold,
             color: COLORS.primary[500],
-            fontSize: fp(20),
+            fontSize: 20,
           }}
         >
           - {data?.data?.[0]?.load_id}
@@ -101,26 +99,20 @@ const LiveTracking = () => {
         data={data?.data || []}
         keyExtractor={item => item?.id}
         ItemSeparatorComponent={() => (
-          <View
-            style={{ flexDirection: 'row', gap: wp(13), alignItems: 'center' }}
-          >
+          <View style={{ flexDirection: 'row', gap: 13, alignItems: 'center' }}>
             <View
               style={{
                 height: 25,
                 borderRightWidth: 1,
                 borderStyle: 'dashed',
-                width: wp(80),
+                width: 80,
               }}
             />
           </View>
         )}
         renderItem={({ item }) => (
-          <View
-            style={{ flexDirection: 'row', gap: wp(13), alignItems: 'center' }}
-          >
-            <Text
-              style={{ fontSize: fp(12), fontFamily: FONT_FAMILIES.regular }}
-            >
+          <View style={{ flexDirection: 'row', gap: 13, alignItems: 'center' }}>
+            <Text style={{ fontSize: 12, fontFamily: FONT_FAMILIES.regular }}>
               {formatTimeAMPM(item?.insert_date)}
             </Text>
 
@@ -131,7 +123,7 @@ const LiveTracking = () => {
             />
             <Text
               style={{
-                fontSize: fp(16),
+                fontSize: 16,
                 fontFamily: FONT_FAMILIES.semiBold,
                 color: COLORS.primary[500],
               }}

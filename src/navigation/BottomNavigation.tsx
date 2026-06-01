@@ -8,6 +8,7 @@ import { RootState } from '@store/rootReducer';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { navigate } from './NavigationService';
+import Profile from '@modules/Profile';
 
 const Tab = createBottomTabNavigator();
 
@@ -46,7 +47,7 @@ function BottomNavigation() {
       <Tab.Screen
         name="Profile"
         options={{ headerShown: false }}
-        component={DashboardScreen}
+        component={Profile}
       />
     </Tab.Navigator>
   );

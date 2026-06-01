@@ -1,4 +1,3 @@
-import { wp } from '@theme/index';
 import { Platform, StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -6,11 +5,11 @@ export const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: wp(16),
+    gap: 8,
   },
   inputsContainer: {
     flexDirection: 'row',
-    gap: wp(8),
+    gap: 8,
   },
   codeContainer: {
     borderWidth: 1,

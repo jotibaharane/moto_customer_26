@@ -1,4 +1,4 @@
-import { COLORS, hp, wp } from '@theme/index';
+import { COLORS, FONT_FAMILIES, hp, wp } from '@theme/index';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -7,8 +7,8 @@ export const styles = StyleSheet.create({
   },
 
   topWrapper: {
-    paddingHorizontal: wp(16),
-    marginTop: hp(24),
+    paddingHorizontal: 16,
+    marginVertical: 24,
   },
 
   card: {
@@ -16,12 +16,12 @@ export const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 16,
     elevation: 5,
-    gap: hp(16),
+    gap: 16,
   },
 
   row: {
     flexDirection: 'row',
-    gap: wp(20),
+    gap: 20,
   },
 
   emptyBox: {
@@ -35,7 +35,7 @@ export const styles = StyleSheet.create({
 
   map: {
     flex: 1,
-    marginBottom: -hp(50),
+    marginBottom: -50,
   },
 
   marker: {
@@ -43,4 +43,21 @@ export const styles = StyleSheet.create({
     borderRadius: 20,
     elevation: 6,
   },
+  declare_weight_container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+  },
+  declare_weight: { fontSize: 18, fontFamily: FONT_FAMILIES.medium },
+  weight_input: {
+    backgroundColor: COLORS.white[100],
+    height: 42,
+    padding: 7,
+    fontFamily: FONT_FAMILIES.bold,
+    fontSize: 16,
+    width: 103,
+    borderRadius: 8,
+  },
+  kg: { fontFamily: FONT_FAMILIES.semiBold, fontSize: 16 },
 });

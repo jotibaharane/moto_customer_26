@@ -118,8 +118,8 @@ const ReviewBookingScreen = () => {
         <View style={styles.vehicleCard}>
           <Image
             source={{ uri: bookingVehicle?.Img }}
-            height={hp(150)}
-            width={wp(150)}
+            height={150}
+            width={150}
           />
           <View style={styles.vehicleDetails}>
             <Text style={styles.vehicleTitle}>
@@ -188,9 +188,9 @@ const ReviewBookingScreen = () => {
           title="Confirm Booking"
           variant="filled"
           style={{
-            marginTop: hp(49),
+            marginTop: 49,
             alignSelf: 'center',
-            paddingHorizontal: wp(40),
+            paddingHorizontal: 40,
           }}
           onPress={handleBook}
           loading={isLoading || updateLoading}

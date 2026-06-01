@@ -96,9 +96,9 @@ export const BORDER_RADIUS = {
 };
 
 export const FONT_FAMILIES = {
-  regular: 'Montserrat-Regular',
-  medium: 'Montserrat-Medium',
-  semiBold: 'Montserrat-SemiBold',
-  bold: 'Montserrat-Bold',
-  extraBold: 'Montserrat-ExtraBold',
+  regular: 'Poppins-Regular',
+  medium: 'Poppins-Medium',
+  semiBold: 'Poppins-SemiBold',
+  bold: 'Poppins-Bold',
+  extraBold: 'Poppins-ExtraBold',
 };

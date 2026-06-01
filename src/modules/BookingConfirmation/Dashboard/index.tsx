@@ -30,13 +30,9 @@ import { setWeight } from '@store/slices/Booking/bookingSlice';
 import { COLORS, FONT_FAMILIES, fp, hp, wp } from '@theme/index';
 import { isValidLocation } from '@utils/location.utils';
 import { ArrowRight } from 'lucide-react-native';
-import Config from 'react-native-config';
 import { styles } from './Dashboard.style';
 
 const DashboardScreen = () => {
-  const { ContactNo, EmailID, full_name } = useSelector(
-    (state: RootState) => state.auth,
-  );
   const { booking } = useSelector((state: RootState) => state.booking);
   const cameraRef = useRef<any>(null);
 
@@ -162,36 +158,7 @@ const DashboardScreen = () => {
     booking?.delivery?.coordinates,
     userLocation,
   ]);
-  // const handlePayment = async () => {
-  //   try {
-  //     const options: CheckoutOptions = {
-  //       description: 'Ride Payment',
-  //       image: 'https://i.imgur.com/3g7nmJC.jpg',
-  //       currency: 'INR',
-  //       key: 'rzp_test_SaFPYEwt9QmzYx',
-  //       amount: 5000,
-  //       name: 'MotoHelp',
-  //       order_id: 'order_SfcK48vOPIuma4', // ✅ dynamic
-  //       prefill: {
-  //         email: EmailID,
-  //         contact: ContactNo,
-  //         name: full_name,
-  //       },
-  //       theme: { color: COLORS.primary[500] },
-  //     };
 
-  //     RazorpayCheckout.open(options)
-  //       .then(data => {
-  //         console.log(data); // 🔥 VERY IMPORTANT
-  //       })
-  //       .catch(error => {
-  //         Alert.alert(`Error: ${error.code} | ${error.description}`);
-  //       });
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
-  console.log({ userLocation });
   return (
     <SafeAreaView style={styles.container}>
       {/* ================= TOP ================= */}
@@ -225,30 +192,11 @@ const DashboardScreen = () => {
             />
             {/* <View style={styles.emptyBox} /> */}
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: wp(10),
-            }}
-          >
-            <Text
-              style={{ fontSize: fp(18), fontFamily: FONT_FAMILIES.medium }}
-            >
-              Declare Weight
-            </Text>
+          <View style={styles.declare_weight_container}>
+            <Text style={styles.declare_weight}>Declare Weight</Text>
             <TextInput
               placeholder="eg. 1000"
-              style={{
-                backgroundColor: COLORS.white[100],
-                height: hp(42),
-                padding: fp(7),
-                fontFamily: FONT_FAMILIES.extraBold,
-                fontSize: 20,
-                width: wp(103),
-                borderRadius: fp(8),
-              }}
+              style={styles.weight_input}
               value={booking?.vehicle?.approximateWeightKg}
               keyboardType="number-pad"
               onChangeText={i =>
@@ -256,11 +204,7 @@ const DashboardScreen = () => {
               }
             />
 
-            <Text
-              style={{ fontFamily: FONT_FAMILIES.semiBold, fontSize: fp(16) }}
-            >
-              Kg
-            </Text>
+            <Text style={styles.kg}>Kg</Text>
           </View>
           <TouchableOpacity
             style={{ flexDirection: 'row', alignSelf: 'flex-end' }}
@@ -278,7 +222,7 @@ const DashboardScreen = () => {
           >
             <Text
               style={{
-                fontSize: fp(18),
+                fontSize: 18,
                 fontFamily: FONT_FAMILIES.bold,
                 color: COLORS.primary[500],
               }}
@@ -289,12 +233,7 @@ const DashboardScreen = () => {
           </TouchableOpacity>
         </View>
       </View>
-      {/* <TouchableHighlight onPress={handlePayment}>
-        <Text>Pay Now</Text>
-      </TouchableHighlight> */}
-      <TouchableHighlight onPress={() => navigate('FrightPayment')}>
-        <Text>Pay Now</Text>
-      </TouchableHighlight>
+
       {/* ================= MAP ================= */}
       <View style={styles.mapContainer}>
         <MapView

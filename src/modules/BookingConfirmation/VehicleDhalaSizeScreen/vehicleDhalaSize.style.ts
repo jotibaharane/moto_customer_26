@@ -5,7 +5,7 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.white[100],
-    padding: fp(16),
+    padding: 16,
   },
 
   /* ================= VEHICLE IMAGES ================= */
@@ -13,17 +13,17 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: wp(29),
+    gap: 29,
   },
 
   vehicleImage: {
-    width: wp(150),
-    height: wp(150),
+    width: 150,
+    height: 150,
   },
 
   vehicleImageMirror: {
-    width: wp(150),
-    height: wp(150),
+    width: 150,
+    height: 150,
     transform: [{ scaleX: -1 }],
   },
 
@@ -31,47 +31,47 @@ export const styles = StyleSheet.create({
   infoContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    gap: hp(4),
+    gap: 4,
   },
 
   vehicleName: {
-    fontSize: fp(16),
+    fontSize: 16,
     fontFamily: FONT_FAMILIES.semiBold,
     color: COLORS.black[500],
     textAlign: 'center',
   },
 
   vehicleDetails: {
-    fontSize: fp(16),
+    fontSize: 16,
     fontFamily: FONT_FAMILIES.regular,
     color: COLORS.gray[500],
     textAlign: 'center',
     borderBottomWidth: 1,
     borderBottomColor: COLORS.gray[250],
-    paddingBottom: hp(24),
+    paddingBottom: 24,
   },
 
   /* ================= TITLE ================= */
   sectionTitle: {
-    fontSize: fp(20),
+    fontSize: 20,
     fontFamily: FONT_FAMILIES.semiBold,
     color: COLORS.primary[500],
-    marginTop: hp(27),
+    marginTop: 27,
   },
 
   /* ================= LIST ================= */
   listItem: {
     flex: 1,
-    marginBottom: hp(16),
+    marginBottom: 16,
   },
 
   listImage: {
     width: '100%',
-    height: hp(146),
+    height: 146,
   },
 
   /* ================= BUTTON ================= */
   button: {
-    marginTop: hp(15),
+    marginTop: 15,
   },
 });

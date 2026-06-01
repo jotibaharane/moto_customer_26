@@ -59,9 +59,7 @@ const RootNavigator = () => {
 
         if (CustomerID) {
           initSocket(CustomerID);
-
           registerSocketListeners();
-
           emitCustomerJoin(CustomerID);
         }
 
@@ -93,11 +91,13 @@ const RootNavigator = () => {
 
   return (
     <NavigationContainer ref={navigationRef}>
-      <SafeAreaProvider>
-        <StatusBar barStyle={barStyle} />
+      <StatusBar
+        translucent
+        backgroundColor="transparent"
+        barStyle={barStyle}
+      />
 
-        {Navigation}
-      </SafeAreaProvider>
+      {Navigation}
     </NavigationContainer>
   );
 };

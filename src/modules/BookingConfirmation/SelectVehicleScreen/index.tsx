@@ -149,6 +149,7 @@ const SelectVehicleScreen = () => {
         variant="filled"
         style={styles.button}
         onPress={() => {
+          navigate('VehicleDhalaSizeScreen', { item: {} });
           if (!isFormValid) {
             Alert.alert('All Fields Mandetory');
             return;

@@ -5,7 +5,7 @@ let socket: Socket | null = null;
 
 export const createSocket = (): Socket => {
   if (!socket) {
-    socket = io(Config.SOCKET_URL, {
+    socket = io('https://uat.motohelpindia.com', {
       transports: ['websocket'],
       autoConnect: false,
       reconnection: true,

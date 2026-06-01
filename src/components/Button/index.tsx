@@ -1,4 +1,4 @@
-import { BORDER_RADIUS, COLORS, FONT_FAMILIES, fp, hp } from '@theme/index';
+import { BORDER_RADIUS, COLORS, FONT_FAMILIES } from '@theme/index';
 import React from 'react';
 import {
   ActivityIndicator,
@@ -68,7 +68,7 @@ export default CustomButton;
 
 const styles = StyleSheet.create({
   button: {
-    height: hp(56),
+    height: 56,
     borderRadius: BORDER_RADIUS.lg,
     justifyContent: 'center',
     alignItems: 'center',
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
   },
 
   text: {
-    fontSize: fp(16),
+    fontSize: 16,
     fontFamily: FONT_FAMILIES.bold,
   },
 

@@ -91,7 +91,7 @@ const DropModal: React.FC<Props> = ({ onOpen, open, setModalVisible }) => {
   return (
     <RBSheet
       ref={refScrollable}
-      height={hp(700)}
+      height={700}
       draggable
       customModalProps={{
         animationType: 'slide',
@@ -121,7 +121,7 @@ const DropModal: React.FC<Props> = ({ onOpen, open, setModalVisible }) => {
           {!search && recent.length > 0 && (
             <Text
               onPress={clearHistory}
-              style={{ color: COLORS.primary[500], marginTop: hp(10) }}
+              style={{ color: COLORS.primary[500], marginTop: 10 }}
             >
               Clear History
             </Text>
@@ -165,7 +165,7 @@ const DropModal: React.FC<Props> = ({ onOpen, open, setModalVisible }) => {
 
           {/* FORM */}
           <KeyboardAwareScrollView scrollEnabled>
-            <View style={{ marginTop: hp(32), gap: hp(24) }}>
+            <View style={{ marginTop: 32, gap: 24 }}>
               <InputOutline
                 placeholder="Plot / unit / Building"
                 value={formik.values.plotOrBuilding}
@@ -192,11 +192,16 @@ const DropModal: React.FC<Props> = ({ onOpen, open, setModalVisible }) => {
                 characterCount={10}
               />
 
-              <CustomButton
-                title="Confirm Delivery Address"
-                onPress={formik.handleSubmit}
-                style={{ marginTop: hp(24) }}
-              />
+              <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <CustomButton
+                  title="Confirm Delivery Address"
+                  onPress={formik.handleSubmit}
+                  style={{
+                    alignSelf: 'center',
+                    paddingHorizontal: 24,
+                  }}
+                />
+              </View>
             </View>
           </KeyboardAwareScrollView>
         </View>
@@ -211,29 +216,29 @@ export default DropModal;
 const styles = StyleSheet.create({
   gridContainer: {
     flex: 1,
-    padding: fp(16),
+    padding: 16,
     marginBottom: 20,
   },
   listItem: {
     borderBottomWidth: 1,
-    marginBottom: hp(16),
-    paddingBottom: hp(7),
+    marginBottom: 16,
+    paddingBottom: 7,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: wp(16),
+    gap: 16,
   },
   title: {
-    fontSize: fp(14),
+    fontSize: 14,
     fontFamily: FONT_FAMILIES.regular,
   },
   subtitle: {
-    fontSize: fp(14),
+    fontSize: 14,
     fontFamily: FONT_FAMILIES.regular,
     color: COLORS.gray[500],
   },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: wp(19),
+    gap: 19,
   },
 });

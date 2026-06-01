@@ -1,4 +1,4 @@
-import { COLORS, FONT_FAMILIES, fp, hp } from '@theme/index';
+import { COLORS, FONT_FAMILIES } from '@theme/index';
 import React, {
   forwardRef,
   useCallback,
@@ -187,7 +187,7 @@ const InputOutlineComponent = forwardRef<InputOutline, InputOutlineProps>(
       backgroundColor = 'white',
 
       // fonts
-      fontSize = fp(16),
+      fontSize = 16,
       fontColor = COLORS.black[500],
       fontFamily = FONT_FAMILIES.medium,
 
@@ -208,7 +208,7 @@ const InputOutlineComponent = forwardRef<InputOutline, InputOutlineProps>(
       // styling
       paddingHorizontal = 16,
       paddingVertical = 12,
-      roundness = fp(8),
+      roundness = 8,
       style,
       selectionColor = COLORS.black[500],
       // features
@@ -346,7 +346,7 @@ const InputOutlineComponent = forwardRef<InputOutline, InputOutlineProps>(
         alignSelf: 'stretch',
         flexDirection: 'row',
         backgroundColor,
-        height: hp(48),
+        height: 48,
       },
       inputContainer: {
         flex: 1,

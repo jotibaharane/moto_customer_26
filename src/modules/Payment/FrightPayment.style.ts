@@ -5,29 +5,29 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.white[100],
-    padding: fp(16),
-    gap: hp(24),
+    padding: 16,
+    gap: 24,
   },
 
   rowBox: {
     flexDirection: 'row',
-    height: hp(50),
+    height: 50,
     borderWidth: 0.5,
     borderRadius: 8,
     borderColor: COLORS.gray[200],
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: wp(16),
+    paddingHorizontal: 16,
   },
 
   label: {
     fontFamily: FONT_FAMILIES.medium,
-    fontSize: fp(16),
+    fontSize: 16,
   },
 
   totalBox: {
     backgroundColor: COLORS.primary[300],
-    height: hp(56),
+    height: 56,
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
@@ -37,13 +37,13 @@ export const styles = StyleSheet.create({
   totalText: {
     fontFamily: FONT_FAMILIES.medium,
     color: COLORS.white[100],
-    fontSize: fp(16),
-    paddingHorizontal: wp(22),
-    paddingVertical: hp(18),
+    fontSize: 16,
+    paddingHorizontal: 22,
+    paddingVertical: 18,
   },
 
   input: {
-    marginHorizontal: wp(40),
+    marginHorizontal: 40,
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 15,
@@ -55,12 +55,12 @@ export const styles = StyleSheet.create({
 
   tabContainer: {
     flexDirection: 'row',
-    gap: wp(16),
+    gap: 16,
   },
 
   tab: {
     flex: 1,
-    height: hp(28.65),
+    height: 28.65,
     borderWidth: 1,
     borderRadius: 8,
     justifyContent: 'center',
@@ -72,7 +72,7 @@ export const styles = StyleSheet.create({
 
   tabText: {
     fontFamily: FONT_FAMILIES.bold,
-    fontSize: fp(16),
+    fontSize: 16,
     color: COLORS.primary[600],
     textAlign: 'center',
   },
@@ -98,13 +98,13 @@ export const styles = StyleSheet.create({
 
   successText: {
     fontFamily: FONT_FAMILIES.semiBold,
-    fontSize: fp(16),
+    fontSize: 16,
     color: COLORS.primary[600],
-    textAlign:"center"
+    textAlign: 'center',
   },
 
   receiptText: {
     fontFamily: FONT_FAMILIES.semiBold,
-    fontSize: fp(16),
+    fontSize: 16,
   },
 });

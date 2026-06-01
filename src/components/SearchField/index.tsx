@@ -63,8 +63,8 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: wp(16),
-    padding: wp(8),
+    borderRadius: 16,
+    padding: 8,
     backgroundColor: COLORS.white[100],
     overflow: 'hidden',
     width: '100%',
@@ -72,13 +72,13 @@ const styles = StyleSheet.create({
 
   input: {
     flex: 1,
-    fontSize: fp(16),
+    fontSize: 16,
     color: '#6D4C5B',
     fontFamily: FONT_FAMILIES.medium,
-    borderRadius: wp(16),
+    borderRadius: 16,
   },
   clearBtn: {
-    padding: wp(6),
+    padding: 6,
     justifyContent: 'center',
     alignItems: 'center',
   },

@@ -1,13 +1,13 @@
 import { Dimensions } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
-
+export * from './scaling-utils';
 /**
  * Based on iPhone 11 design (375x812)
  * You can change base if needed
  */
-const BASE_WIDTH = 375;
-const BASE_HEIGHT = 812;
+const BASE_WIDTH = 428;
+const BASE_HEIGHT = 926;
 
 /* Width scale */
 const wp = (size: number) => (width / BASE_WIDTH) * size;

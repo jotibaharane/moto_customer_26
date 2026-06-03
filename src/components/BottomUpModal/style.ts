@@ -1,3 +1,4 @@
+import { s, vs } from '@theme/scaling-utils';
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -21,10 +22,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   draggableIcon: {
-    width: 35,
-    height: 5,
-    borderRadius: 5,
-    margin: 10,
+    width: s(35),
+    height: vs(5),
+    borderRadius: s(5),
+    margin: s(10),
     backgroundColor: '#ccc',
   },
 });

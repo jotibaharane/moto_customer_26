@@ -1,5 +1,6 @@
 // components/CustomCheckbox.tsx
 
+import { s } from '@theme/scaling-utils';
 import { CheckSquare, Square } from 'lucide-react-native';
 import React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
@@ -39,30 +40,38 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+
   checkbox: {
-    height: 22,
-    width: 22,
+    width: s(22),
+    height: s(22),
+
     borderWidth: 2,
     borderColor: '#333',
-    borderRadius: 4,
+    borderRadius: s(4),
+
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   checked: {
     backgroundColor: '#007AFF',
     borderColor: '#007AFF',
   },
+
   innerCheck: {
-    width: 10,
-    height: 10,
+    width: s(10),
+    height: s(10),
+
+    borderRadius: s(2),
     backgroundColor: '#fff',
-    borderRadius: 2,
   },
+
   label: {
-    marginLeft: 8,
-    fontSize: 14,
+    marginLeft: s(8),
+    fontSize: 14, // Figma font size same
     color: '#333',
   },
+
   disabled: {
     opacity: 0.5,
   },

@@ -1,45 +1,48 @@
-import { COLORS, FONT_FAMILIES, FONT_SIZES, fp, hp, wp } from '@theme/index';
+import { COLORS, FONT_FAMILIES } from '@theme/index';
 import { StyleSheet } from 'react-native';
+import { s, vs, ms } from '@theme/index'; // path as per your project
 
 export const styles = StyleSheet.create({
   constainer: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: s(16),
+    backgroundColor: COLORS.white[100],
   },
 
   title: {
-    marginTop: 79,
+    marginTop: vs(79),
     fontFamily: FONT_FAMILIES.bold,
-    fontSize: FONT_SIZES.xxl,
+    fontSize: ms(24), // Figma font size
     color: COLORS.black[500],
-    marginBottom: 29,
   },
 
   subtitle: {
+    marginTop: vs(29),
     fontFamily: FONT_FAMILIES.regular,
     color: COLORS.gray[400],
-    fontSize: FONT_SIZES.sm,
+    fontSize: ms(14), // Figma font size
   },
 
   radioContainer: {
-    marginTop: 45,
+    marginTop: vs(45),
   },
 
   buttonContainer: {
-    marginHorizontal: 79,
-    marginTop: 65,
+    marginTop: vs(65),
+    width: '60%',
+    alignSelf: 'center',
   },
 
   infoRow: {
-    marginTop: 45,
+    marginTop: vs(32),
     flexDirection: 'row',
-    gap: 18,
     alignItems: 'center',
     justifyContent: 'center',
+    gap: s(18),
   },
 
   infoText: {
-    fontSize: FONT_SIZES.xs,
+    fontSize: ms(12), // Figma font size
     fontFamily: FONT_FAMILIES.regular,
     color: COLORS.primary[400],
   },
@@ -48,21 +51,21 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 37,
-    gap: 10,
+    marginTop: vs(37),
+    gap: s(10),
   },
 
   stepDot: {
-    height: 10,
-    width: 10,
+    width: s(10),
+    height: s(10),
+    borderRadius: s(5),
     backgroundColor: COLORS.gray[150],
-    borderRadius: 5,
   },
 
   stepActive: {
-    height: 10,
-    width: 20,
+    width: s(20),
+    height: s(10),
+    borderRadius: s(5),
     backgroundColor: COLORS.primary[500],
-    borderRadius: 5,
   },
 });

@@ -1,115 +1,127 @@
-import { COLORS, FONT_FAMILIES, FONT_SIZES, fp, hp, wp } from '@theme/index';
+import {
+  COLORS,
+  FONT_FAMILIES,
+  moderateScale,
+  scale,
+  verticalScale,
+} from '@theme/index';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   /* ================= LAYOUT ================= */
   container: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: scale(16),
+    backgroundColor: COLORS.white[100],
   },
 
   /* ================= TEXT ================= */
   title: {
-    marginTop: 57,
-    fontFamily: FONT_FAMILIES.bold,
-    fontSize: FONT_SIZES.xxl,
-    color: COLORS.black[500],
-    marginBottom: 24,
+    marginTop: verticalScale(57),
     textAlign: 'center',
+    fontFamily: FONT_FAMILIES.bold,
+    fontSize: moderateScale(24),
+    color: COLORS.black[500],
   },
 
   subtitle: {
-    fontSize: FONT_SIZES.md,
+    marginTop: verticalScale(32),
+    fontSize: moderateScale(16),
     fontFamily: FONT_FAMILIES.semiBold,
     color: COLORS.black[500],
-    marginTop: 32,
   },
 
   expiryText: {
-    fontSize: 12,
+    marginTop: verticalScale(32),
+    textAlign: 'center',
+    fontSize: moderateScale(12),
     fontFamily: FONT_FAMILIES.regular,
     color: COLORS.gray[500],
-    marginTop: 32,
-    textAlign: 'center',
   },
 
   /* ================= INPUT ================= */
   inputContainer: {
-    marginTop: 16,
+    marginTop: verticalScale(16),
     flexDirection: 'row',
-    gap: 8,
-    height: 54,
+    gap: scale(8),
   },
 
   input: {
     flex: 1,
     borderWidth: 1,
-    borderRadius: 16,
     borderColor: COLORS.gray[250],
-    padding: 16,
-    fontSize: 16,
+    borderRadius: scale(16),
+    paddingHorizontal: scale(16),
+    fontSize: moderateScale(16),
     fontFamily: FONT_FAMILIES.medium,
   },
 
-  /* ================= COUNTRY ================= */
+  /* ================= COUNTRY CODE ================= */
   countryCodeContainer: {
     flexDirection: 'row',
-    height: 54,
-    width: 98,
-    borderWidth: 1,
-    borderRadius: 16,
-    borderColor: COLORS.gray[250],
     alignItems: 'center',
     justifyContent: 'center',
+
+    width: scale(98),
+    height: verticalScale(54),
+
+    borderWidth: 1,
+    borderColor: COLORS.gray[250],
+    borderRadius: scale(16),
   },
 
   flag: {
-    width: 23,
-    height: 17,
-    marginRight: 8,
+    width: scale(23),
+    height: verticalScale(17),
+    marginRight: scale(8),
   },
 
   countryCodeText: {
     color: COLORS.black[500],
-    fontSize: 16,
+    fontSize: moderateScale(16),
     fontFamily: FONT_FAMILIES.regular,
-    marginRight: 4,
+    marginRight: scale(4),
   },
 
   /* ================= OTP ================= */
   otpContainer: {
-    marginTop: 24,
+    marginTop: verticalScale(24),
   },
+
   pinCodeContainerStyle: {
-    height: 56,
-    width: 56,
-    borderColor: COLORS.gray[250],
+    width: scale(56),
+    height: scale(56),
     borderWidth: 1,
-    borderRadius: 16,
+    borderColor: COLORS.gray[250],
+    borderRadius: scale(16),
   },
+
   pinCodeTextStyle: {
-    fontSize: 18,
+    fontSize: moderateScale(18),
     fontFamily: FONT_FAMILIES.semiBold,
   },
+
   filledPinCodeContainerStyle: {
+    width: scale(56),
+    height: scale(56),
+    borderWidth: 2,
     borderColor: COLORS.primary[500],
-    height: 56,
-    width: 56,
-    borderWidth: 1,
-    borderRadius: 16,
+    borderRadius: scale(16),
   },
 
   /* ================= BUTTON ================= */
   button: {
-    marginTop: 24,
+    marginTop: verticalScale(32),
     alignSelf: 'center',
-    minWidth: 200,
+    width: scale(191),
+    minHeight: verticalScale(56),
   },
+
   resendText: {
+    marginTop: verticalScale(12),
     textAlign: 'center',
     color: COLORS.primary[500],
-    marginTop: 12,
-    fontSize: 14,
+    fontSize: moderateScale(14),
     fontFamily: FONT_FAMILIES.semiBold,
   },
 });

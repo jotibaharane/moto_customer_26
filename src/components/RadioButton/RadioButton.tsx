@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { COLORS, FONT_FAMILIES, FONT_SIZES, fp, hp, wp } from '@theme/index';
+import { COLORS, FONT_FAMILIES, FONT_SIZES, ms, s, vs } from '@theme/index';
 import { RadioButtonProps } from './types';
 
 export default function RadioButton({
@@ -40,27 +40,33 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 5,
-    gap: 19,
+    marginBottom: vs(5),
+    gap: s(19),
   },
+
   border: {
     justifyContent: 'center',
     alignItems: 'center',
+    width: s(20),
+    height: s(20),
+
     borderWidth: 1,
-    height: 20,
-    width: 20,
-    borderRadius: 10,
+    borderRadius: s(10),
+
     borderColor: COLORS.gray[250],
     backgroundColor: COLORS.white[100],
   },
+
   smallBorder: {
-    height: 10,
-    width: 10,
+    width: s(10),
+    height: s(10),
+
+    borderRadius: s(5),
     backgroundColor: COLORS.white[100],
-    borderRadius: 10,
   },
+
   label: {
-    fontSize: FONT_SIZES.sm,
+    fontSize: ms(14),
     fontFamily: FONT_FAMILIES.regular,
     color: COLORS.gray[650],
   },

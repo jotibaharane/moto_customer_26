@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from './LangugeSelection.style';
+import { s } from '@theme/scaling-utils';
 
 const LangugeSelection = () => {
   const { t, i18n } = useTranslation();
@@ -32,6 +33,7 @@ const LangugeSelection = () => {
         <CustomButton
           title="Next  →"
           variant="filled"
+          style={{ width: s(213) }}
           onPress={() => {
             i18n.changeLanguage(selectedId || 'en');
             navigate('Login');

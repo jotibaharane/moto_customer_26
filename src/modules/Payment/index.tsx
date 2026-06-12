@@ -72,7 +72,7 @@ const FrightPayment = () => {
       console.log({ resp });
 
       if (resp?.data?.status === '00') {
-        emitPaymentStatusUpdate(load?.driver_id!);
+        emitPaymentStatusUpdate(load?.driver_id!,load?.LoadPostID!);
         refetch();
         setSuccess(true);
         setPartialAmount('');

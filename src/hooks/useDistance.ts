@@ -46,12 +46,10 @@ export const useDistance = (pickup?: Coordinates, drop?: Coordinates) => {
 
     try {
       setLoading(true);
-      const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${
-        pickup?.lng
-      },${pickup?.lat};${drop?.lng},${
-        drop?.lat
-      }?access_token=${'pk.eyJ1IjoicmFtZXNobW90byIsImEiOiJjbWt4c2swb2QwYzA1M2Nxemg2MzZjZG5jIn0.r9DupyA23H--LeacRtBXKA'}&overview=false'}`;
+   const MAPBOX_TOKEN =
+  "pk.eyJ1IjoicmFtZXNobW90byIsImEiOiJjbWt4c2swb2QwYzA1M2Nxemg2MzZjZG5jIn0.r9DupyA23H--LeacRtBXKA";
 
+const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${pickup?.lng},${pickup?.lat};${drop?.lng},${drop?.lat}?access_token=${MAPBOX_TOKEN}&overview=false`;
       const res = await fetch(url);
       const json = await res.json();
 

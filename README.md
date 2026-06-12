@@ -96,10 +96,10 @@ To learn more about React Native, take a look at the following resources:
 - [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
 - [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
 
-ENV=development
+<!-- ENV=development
 API_URL=https://uat.motohelpindia.com/customer/v1
 SOCKET_URL=https://uat.motohelpindia.com
 APP_NAME=MotoCustomer
 SERVICE_TOKEN=1234567890abcdef
 MAPBOX_ACCESS_TOKEN=pk.eyJ1IjoicmFtZXNobW90byIsImEiOiJjbWt4c2swb2QwYzA1M2Nxemg2MzZjZG5jIn0.r9DupyA23H--LeacRtBXKA
-PAYMENT_API_URL=https://uat.motohelpindia.com/payment/v1
+PAYMENT_API_URL=https://uat.motohelpindia.com/payment/v1 -->

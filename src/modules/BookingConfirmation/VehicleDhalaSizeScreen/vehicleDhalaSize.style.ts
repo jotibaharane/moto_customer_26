@@ -1,11 +1,11 @@
-import { COLORS, FONT_FAMILIES, fp, hp, wp } from '@theme/index';
+import { COLORS, FONT_FAMILIES, s, vs } from '@theme/index';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.white[100],
-    padding: 16,
+    padding: s(16),
   },
 
   /* ================= VEHICLE IMAGES ================= */
@@ -13,17 +13,17 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 29,
+    gap: s(29),
   },
 
   vehicleImage: {
-    width: 150,
-    height: 150,
+    width: s(150),
+    height: s(150),
   },
 
   vehicleImageMirror: {
-    width: 150,
-    height: 150,
+    width: s(150),
+    height: s(150),
     transform: [{ scaleX: -1 }],
   },
 
@@ -31,7 +31,7 @@ export const styles = StyleSheet.create({
   infoContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 4,
+    gap: vs(4),
   },
 
   vehicleName: {
@@ -46,32 +46,35 @@ export const styles = StyleSheet.create({
     fontFamily: FONT_FAMILIES.regular,
     color: COLORS.gray[500],
     textAlign: 'center',
+
     borderBottomWidth: 1,
     borderBottomColor: COLORS.gray[250],
-    paddingBottom: 24,
+
+    paddingBottom: vs(24),
   },
 
   /* ================= TITLE ================= */
   sectionTitle: {
+    marginTop: vs(27),
+
     fontSize: 20,
     fontFamily: FONT_FAMILIES.semiBold,
     color: COLORS.primary[500],
-    marginTop: 27,
   },
 
   /* ================= LIST ================= */
   listItem: {
     flex: 1,
-    marginBottom: 16,
+    marginBottom: vs(16),
   },
 
   listImage: {
     width: '100%',
-    height: 146,
+    height: vs(146),
   },
 
   /* ================= BUTTON ================= */
   button: {
-    marginTop: 15,
+    marginTop: vs(15),
   },
 });

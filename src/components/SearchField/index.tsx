@@ -1,4 +1,4 @@
-import { COLORS, FONT_FAMILIES, fp, wp } from '@theme/index';
+import { COLORS, FONT_FAMILIES, fp, ms, s, wp } from '@theme/index';
 import { MapPin, Search } from 'lucide-react-native';
 import React from 'react';
 import {
@@ -58,27 +58,35 @@ const SearchField: React.FC<Props> = ({
 export default SearchField;
 
 const styles = StyleSheet.create({
-  wrapper: { flex: 1 },
+  wrapper: {
+    flex: 1,
+  },
 
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 16,
-    padding: 8,
+
+    width: '100%',
+
+    padding: s(8),
+    borderRadius: s(16),
+
     backgroundColor: COLORS.white[100],
     overflow: 'hidden',
-    width: '100%',
   },
 
   input: {
     flex: 1,
-    fontSize: 16,
+
+    fontSize: ms(16), // Figma size same
     color: '#6D4C5B',
     fontFamily: FONT_FAMILIES.medium,
-    borderRadius: 16,
+
+    borderRadius: s(16),
   },
+
   clearBtn: {
-    padding: 6,
+    padding: s(6),
     justifyContent: 'center',
     alignItems: 'center',
   },

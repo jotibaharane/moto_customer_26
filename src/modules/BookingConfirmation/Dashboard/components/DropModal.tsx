@@ -2,7 +2,7 @@ import RBSheet from '@components/BottomUpModal';
 import CustomButton from '@components/Button';
 import { InputOutline } from '@components/Input';
 import SearchField from '@components/SearchField';
-import { COLORS, FONT_FAMILIES, fp, hp, wp } from '@theme/index';
+import { COLORS, FONT_FAMILIES, fp, hp, ms, s, vs, wp } from '@theme/index';
 import { Edit, MapPin, Timer } from 'lucide-react-native';
 import React, { useEffect, useRef } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
@@ -216,29 +216,36 @@ export default DropModal;
 const styles = StyleSheet.create({
   gridContainer: {
     flex: 1,
-    padding: 16,
-    marginBottom: 20,
+    padding: s(16),
+    marginBottom: vs(20),
   },
+
   listItem: {
-    borderBottomWidth: 1,
-    marginBottom: 16,
-    paddingBottom: 7,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
+
+    borderBottomWidth: 1,
+
+    marginBottom: vs(16),
+    paddingBottom: vs(7),
+
+    gap: s(16),
   },
+
   title: {
-    fontSize: 14,
+    fontSize: ms(14), // Figma size same
     fontFamily: FONT_FAMILIES.regular,
   },
+
   subtitle: {
-    fontSize: 14,
+    fontSize: ms(14), // Figma size same
     fontFamily: FONT_FAMILIES.regular,
     color: COLORS.gray[500],
   },
+
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 19,
+    gap: s(19),
   },
 });

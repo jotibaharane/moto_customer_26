@@ -10,6 +10,7 @@ import React, { useState } from 'react';
 import { Alert, Text, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { styles } from './SetMpin.style';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const SetMPINScreen = () => {
   const dispatch = useDispatch();
@@ -66,29 +67,10 @@ const SetMPINScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text
-        style={{
-          marginTop: 57,
-          textAlign: 'center',
-          fontSize: 24,
-          fontFamily: FONT_FAMILIES.bold,
-        }}
-      >
-        Set New MPIN
-      </Text>
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.headerText}>Set New MPIN</Text>
 
-      <Text
-        style={{
-          marginTop: 33,
-          fontSize: 12,
-          fontFamily: FONT_FAMILIES.regular,
-          color: COLORS.gray[500],
-          marginBottom: 16,
-        }}
-      >
-        Enter your 6-digit security PIN
-      </Text>
+      <Text style={styles.fieldLabel}>Enter your 6-digit security PIN</Text>
 
       <OtpInput
         ref={pinRef}
@@ -99,19 +81,10 @@ const SetMPINScreen = () => {
           pinCodeTextStyle: styles.pinCodeTextStyle,
           filledPinCodeContainerStyle: styles.filledPinCodeContainerStyle,
         }}
+        autoFocus={false}
       />
 
-      <Text
-        style={{
-          marginTop: 33,
-          fontSize: 12,
-          fontFamily: FONT_FAMILIES.regular,
-          color: COLORS.gray[500],
-          marginBottom: 16,
-        }}
-      >
-        Confirm your 6-digit security PIN
-      </Text>
+      <Text style={styles.fieldLabel}>Confirm your 6-digit security PIN</Text>
 
       <OtpInput
         ref={confirmPinRef}
@@ -122,6 +95,7 @@ const SetMPINScreen = () => {
           pinCodeTextStyle: styles.pinCodeTextStyle,
           filledPinCodeContainerStyle: styles.filledPinCodeContainerStyle,
         }}
+        autoFocus={false}
       />
 
       <View style={styles.buttonRow}>
@@ -140,7 +114,7 @@ const SetMPINScreen = () => {
           loading={isLoading}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

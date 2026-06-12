@@ -104,7 +104,7 @@ export const styles = StyleSheet.create({
   filledPinCodeContainerStyle: {
     width: scale(56),
     height: scale(56),
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: COLORS.primary[500],
     borderRadius: scale(16),
   },

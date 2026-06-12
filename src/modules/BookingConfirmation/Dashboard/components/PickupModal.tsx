@@ -2,7 +2,7 @@ import RBSheet from '@components/BottomUpModal';
 import CustomButton from '@components/Button';
 import { InputOutline } from '@components/Input';
 import SearchField from '@components/SearchField';
-import { COLORS, hp, wp } from '@theme/index';
+import { COLORS, hp, s, vs, wp } from '@theme/index';
 import { Bookmark, Edit, Locate, MapPin, Timer } from 'lucide-react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
@@ -195,7 +195,7 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
             iconColor="#4CAF50"
             containerStyle={{
               borderWidth: 1,
-              marginBottom: 16,
+              marginBottom: vs(16),
             }}
           />
 
@@ -295,7 +295,7 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
               );
             }}
             style={{ flex: 1 }}
-            contentContainerStyle={{ paddingBottom: 100 }}
+            contentContainerStyle={{ paddingBottom: vs(100) }}
           />
         </View>
       ) : (
@@ -320,7 +320,7 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
 
           {/* FORM */}
           <KeyboardAwareScrollView scrollEnabled>
-            <View style={{ marginTop: hp(32), gap: hp(24) }}>
+            <View style={{ marginTop: vs(32), gap: s(24) }}>
               <InputOutline
                 placeholder="Plot / unit / Building"
                 value={formik.values.plot}
@@ -421,7 +421,7 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
                 variant="filled"
                 style={{
                   alignSelf: 'center',
-                  paddingHorizontal: 24,
+                  paddingHorizontal: s(24),
                 }}
                 onPress={formik.handleSubmit}
               />

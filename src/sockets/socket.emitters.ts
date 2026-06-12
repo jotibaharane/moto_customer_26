@@ -64,10 +64,10 @@ export const emitJoinRoom = (loadId: string) => {
   });
 };
 
-export const emitPaymentStatusUpdate = (DriverID: string) => {
+export const emitPaymentStatusUpdate = (DriverID: string, loadId: string) => {
   const socket = getSocket();
 
   emitWithConnection(() => {
-    socket.emit(SOCKET_EVENTS.PAYMENT_STATUS_UPDATE, { DriverID });
+    socket.emit(SOCKET_EVENTS.PAYMENT_STATUS_UPDATE, { DriverID, loadId });
   });
 };

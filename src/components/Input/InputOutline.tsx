@@ -1,4 +1,10 @@
-import { COLORS, FONT_FAMILIES } from '@theme/index';
+import {
+  COLORS,
+  FONT_FAMILIES,
+  moderateScale,
+  scale,
+  verticalScale,
+} from '@theme/index';
 import React, {
   forwardRef,
   useCallback,
@@ -12,6 +18,7 @@ import {
   // @ts-ignore
   LogBox,
   Platform,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -178,44 +185,54 @@ type InputOutline = InputOutlineMethods;
 
 const InputOutlineComponent = forwardRef<InputOutline, InputOutlineProps>(
   (props, ref) => {
+    const scrollRef = useRef<ScrollView>(null);
+    const inputY = useRef(0);
+
+    const scrollToInput = () => {
+      scrollRef.current?.scrollTo({
+        y: inputY.current - 100,
+        animated: true,
+      });
+    };
+
     // establish provided props
     const {
-      // theme colors
-      inactiveColor = COLORS.black[500],
+      inactiveColor = COLORS.gray[75],
       activeColor = COLORS.primary[500],
       errorColor = 'red',
       backgroundColor = 'white',
 
-      // fonts
-      fontSize = 16,
+      fontSize = moderateScale(16),
       fontColor = COLORS.black[500],
       fontFamily = FONT_FAMILIES.medium,
 
       error,
-      errorFontSize = 10,
+      errorFontSize = moderateScale(10),
       errorFontFamily,
 
       assistiveText,
-      assistiveTextFontSize = 10,
+      assistiveTextFontSize = moderateScale(10),
       assistiveTextColor = inactiveColor,
       assistiveFontFamily,
 
       characterCount,
       characterCountFontFamily,
       characterCountColor = inactiveColor,
-      characterCountFontSize = 10,
+      characterCountFontSize = moderateScale(10),
+
       placeholderTextColor = COLORS.black[500],
-      // styling
-      paddingHorizontal = 16,
-      paddingVertical = 12,
-      roundness = 8,
+
+      paddingHorizontal = scale(16),
+      paddingVertical = verticalScale(12),
+      roundness = scale(8),
+
       style,
       selectionColor = COLORS.black[500],
-      // features
+
       placeholder = 'Placeholder',
       TrailingIcon,
+      editable,
 
-      // others
       value: _providedValue = '',
       onChangeText,
       ...inputProps
@@ -244,6 +261,7 @@ const InputOutlineComponent = forwardRef<InputOutline, InputOutlineProps>(
     );
 
     const handleFocus = () => {
+      scrollToInput();
       placeholderMap.value = withTiming(1); // focused
       if (!errorState()) colorMap.value = withTiming(1); // active
       focus();
@@ -285,11 +303,7 @@ const InputOutlineComponent = forwardRef<InputOutline, InputOutlineProps>(
     const animatedPlaceholderStyles = useAnimatedStyle(() => ({
       transform: [
         {
-          translateY: interpolate(
-            placeholderMap.value,
-            [0, 1],
-            [0, -(paddingVertical + fontSize * 0.7)],
-          ),
+          translateY: interpolate(placeholderMap.value, [0, 1], [0, -25]),
         },
         {
           scale: interpolate(placeholderMap.value, [0, 1], [1, 0.7]),
@@ -308,7 +322,7 @@ const InputOutlineComponent = forwardRef<InputOutline, InputOutlineProps>(
       color: interpolateColor(
         colorMap.value,
         [0, 1, 2],
-        [inactiveColor, activeColor, errorColor],
+        [COLORS.black[500], activeColor, errorColor],
       ),
     }));
 
@@ -338,7 +352,6 @@ const InputOutlineComponent = forwardRef<InputOutline, InputOutlineProps>(
       isFocused: isFocused(),
       clear: clear,
     }));
-
     const styles = StyleSheet.create({
       container: {
         borderWidth: 1,
@@ -346,8 +359,10 @@ const InputOutlineComponent = forwardRef<InputOutline, InputOutlineProps>(
         alignSelf: 'stretch',
         flexDirection: 'row',
         backgroundColor,
-        height: 48,
+        height: verticalScale(56), // 48 ऐवजी
+        borderColor: COLORS.gray[75],
       },
+
       inputContainer: {
         flex: 1,
         paddingHorizontal,
@@ -356,80 +371,99 @@ const InputOutlineComponent = forwardRef<InputOutline, InputOutlineProps>(
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+        overflow: 'hidden',
       },
+
       input: {
         flex: 1,
         fontSize,
         fontFamily,
         color: fontColor,
       },
+
       placeholder: {
         position: 'absolute',
         top: paddingVertical,
         left: paddingHorizontal,
+        backgroundColor, // '#fff' काढा
       },
+
       placeholderText: {
         fontSize,
         fontFamily,
       },
+
       placeholderSpacer: {
         position: 'absolute',
         top: -1,
-        left: paddingHorizontal - 3,
+        left: paddingHorizontal - scale(3),
         backgroundColor,
         height: 1,
       },
+
       errorText: {
         position: 'absolute',
         color: errorColor,
         fontSize: errorFontSize,
         fontFamily: errorFontFamily,
-        bottom: -errorFontSize - 7,
+        bottom: -moderateScale(errorFontSize) - verticalScale(7),
         left: paddingHorizontal,
       },
+
       trailingIcon: {
         position: 'absolute',
         right: paddingHorizontal,
         alignSelf: 'center',
       },
+
       counterText: {
         position: 'absolute',
         color: errorState() ? errorColor : characterCountColor,
         fontSize: characterCountFontSize,
-        bottom: -characterCountFontSize - 7,
+        bottom: -moderateScale(characterCountFontSize) - verticalScale(7),
         right: paddingHorizontal,
         fontFamily: characterCountFontFamily,
       },
+
       assistiveText: {
         position: 'absolute',
         color: assistiveTextColor,
         fontSize: assistiveTextFontSize,
-        bottom: -assistiveTextFontSize - 7,
+        bottom: -moderateScale(assistiveTextFontSize) - verticalScale(7),
         left: paddingHorizontal,
         fontFamily: assistiveFontFamily,
       },
     });
-
     const placeholderStyle = useMemo(() => {
       return [styles.placeholder, animatedPlaceholderStyles];
     }, [styles.placeholder, animatedPlaceholderStyles]);
 
     return (
       <Animated.View style={[styles.container, animatedContainerStyle, style]}>
-        <TouchableWithoutFeedback onPress={handleFocus}>
-          <View style={styles.inputContainer}>
+        <TouchableWithoutFeedback
+          onPress={() => {
+            if (editable) handleFocus();
+          }}
+        >
+          <View
+            style={styles.inputContainer}
+            onLayout={e => {
+              inputY.current = e.nativeEvent.layout.y;
+            }}
+          >
             <TextInput
               {...inputProps}
               ref={inputRef}
               style={styles.input}
+              editable={editable}
               pointerEvents={isFocused() ? 'auto' : 'none'}
               onFocus={handleFocus}
               onBlur={handleBlur}
               onChangeText={handleChangeText}
               maxLength={characterCount ? characterCount : undefined}
               selectionColor={errorState() ? errorColor : activeColor}
-              placeholder=""
               value={value}
+              numberOfLines={1}
             />
           </View>
         </TouchableWithoutFeedback>

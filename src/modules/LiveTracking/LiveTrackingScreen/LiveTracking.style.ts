@@ -1,11 +1,12 @@
+import { ms, s, vs } from '@theme/scaling-utils';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingHorizontal: 16,
-    paddingTop: 20,
+    paddingHorizontal: s(16),
+    paddingTop: vs(20),
   },
 
   header: {
@@ -15,61 +16,61 @@ export const styles = StyleSheet.create({
   },
 
   headerTitle: {
-    fontSize: 18,
+    fontSize: ms(18),
     fontWeight: '600',
     color: '#2563eb',
   },
 
   postId: {
-    fontSize: 14,
+    fontSize: ms(14),
     color: '#1e3a8a',
   },
 
   date: {
-    marginTop: 16,
-    fontSize: 16,
+    marginTop: vs(16),
+    fontSize: ms(16),
     fontWeight: '600',
   },
 
   list: {
-    marginTop: 20,
-    paddingBottom: 40,
+    marginTop: vs(20),
+    paddingBottom: vs(40),
   },
 
   row: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: 20,
+    marginBottom: vs(20),
   },
 
   time: {
-    width: 80,
-    fontSize: 12,
+    width: s(80),
+    fontSize: ms(12),
     color: '#555',
   },
 
   timeline: {
-    width: 30,
+    width: s(30),
     alignItems: 'center',
   },
 
   circle: {
-    width: 18,
-    height: 18,
-    borderRadius: 9,
+    width: s(18),
+    height: s(18),
+    borderRadius: s(9),
     backgroundColor: '#1e3a8a',
   },
 
   line: {
-    width: 2,
+    width: s(2),
     flex: 1,
     backgroundColor: '#ccc',
-    marginTop: 2,
+    marginTop: vs(2),
   },
 
   title: {
     flex: 1,
-    fontSize: 14,
+    fontSize: ms(14),
     color: '#1e3a8a',
     fontWeight: '500',
   },

@@ -13,7 +13,7 @@ import {
   setDriverStates,
   setLoadPost,
 } from '@store/slices/Booking/bookingSlice';
-import { hp, wp } from '@theme/index';
+import { hp, s, vs, wp } from '@theme/index';
 import {
   transformBookingPayload,
   transformSocketLocation,
@@ -188,9 +188,9 @@ const ReviewBookingScreen = () => {
           title="Confirm Booking"
           variant="filled"
           style={{
-            marginTop: 49,
+            marginTop: vs(49),
             alignSelf: 'center',
-            paddingHorizontal: 40,
+            paddingHorizontal: s(40),
           }}
           onPress={handleBook}
           loading={isLoading || updateLoading}

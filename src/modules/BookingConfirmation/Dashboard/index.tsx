@@ -27,7 +27,7 @@ import PickupModal from './components/PickupModal';
 import { useCurrentLocation } from '@hooks/useCurrentLocation';
 import { navigate } from '@navigation/NavigationService';
 import { setWeight } from '@store/slices/Booking/bookingSlice';
-import { COLORS, FONT_FAMILIES, fp, hp, wp } from '@theme/index';
+import { COLORS, FONT_FAMILIES, fp, hp, ms, wp } from '@theme/index';
 import { isValidLocation } from '@utils/location.utils';
 import { ArrowRight } from 'lucide-react-native';
 import { styles } from './Dashboard.style';
@@ -222,7 +222,7 @@ const DashboardScreen = () => {
           >
             <Text
               style={{
-                fontSize: 18,
+                fontSize: ms(18),
                 fontFamily: FONT_FAMILIES.bold,
                 color: COLORS.primary[500],
               }}

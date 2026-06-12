@@ -1,34 +1,34 @@
-import { COLORS, FONT_FAMILIES, fp, hp, wp } from '@theme/index';
+import { COLORS, FONT_FAMILIES, ms, s, vs } from '@theme/index';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.white[100],
-    padding: 16,
-    gap: 24,
+    padding: s(16),
+    gap: vs(24),
   },
 
   rowBox: {
     flexDirection: 'row',
-    height: 50,
+    height: vs(50),
     borderWidth: 0.5,
-    borderRadius: 8,
+    borderRadius: s(8),
     borderColor: COLORS.gray[200],
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: s(16),
   },
 
   label: {
     fontFamily: FONT_FAMILIES.medium,
-    fontSize: 16,
+    fontSize: ms(16),
   },
 
   totalBox: {
     backgroundColor: COLORS.primary[300],
-    height: 56,
-    borderRadius: 8,
+    minHeight: vs(56),
+    borderRadius: s(8),
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
@@ -37,33 +37,37 @@ export const styles = StyleSheet.create({
   totalText: {
     fontFamily: FONT_FAMILIES.medium,
     color: COLORS.white[100],
-    fontSize: 16,
-    paddingHorizontal: 22,
-    paddingVertical: 18,
+    fontSize: ms(16),
+    paddingHorizontal: s(22),
+    paddingVertical: vs(18),
   },
 
   input: {
-    marginHorizontal: 40,
+    marginHorizontal: s(40),
+    height: vs(56),
+
     borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    height: 56,
-    fontSize: 16,
+    borderRadius: s(8),
+
+    paddingHorizontal: s(15),
+    paddingVertical: vs(10),
+
+    fontSize: ms(16),
     color: '#000',
   },
 
   tabContainer: {
     flexDirection: 'row',
-    gap: 16,
+    gap: s(16),
   },
 
   tab: {
     flex: 1,
-    height: 28.65,
+    minHeight: vs(32),
     borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: s(8),
     justifyContent: 'center',
+    alignItems: 'center',
   },
 
   activeTab: {
@@ -72,7 +76,7 @@ export const styles = StyleSheet.create({
 
   tabText: {
     fontFamily: FONT_FAMILIES.bold,
-    fontSize: 16,
+    fontSize: ms(16),
     color: COLORS.primary[600],
     textAlign: 'center',
   },
@@ -92,19 +96,19 @@ export const styles = StyleSheet.create({
   },
 
   image: {
-    width: 94,
-    height: 96,
+    width: s(94),
+    height: vs(96),
   },
 
   successText: {
     fontFamily: FONT_FAMILIES.semiBold,
-    fontSize: 16,
+    fontSize: ms(16),
     color: COLORS.primary[600],
     textAlign: 'center',
   },
 
   receiptText: {
     fontFamily: FONT_FAMILIES.semiBold,
-    fontSize: 16,
+    fontSize: ms(16),
   },
 });

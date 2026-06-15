@@ -9,7 +9,6 @@ import { COLORS } from '@theme/index';
 
 import BackButton from '@components/NavigationComponents/BackButton';
 import HeaderTitle from '@components/NavigationComponents/HeaderTitle';
-import MPINHeader from '@components/NavigationComponents/MPINHeader';
 
 import BottomNavigation from './BottomNavigation';
 
@@ -18,13 +17,10 @@ import SelectVehicleScreen from '@modules/BookingConfirmation/SelectVehicleScree
 import VehicleDhalaSizeScreen from '@modules/BookingConfirmation/VehicleDhalaSizeScreen';
 
 import LiveTrackingScreen from '@modules/LiveTracking/LiveTrackingScreen';
-
-import ConfirmMPINScreen from '@modules/Mpin/ConfirmMPIN';
 import MpinLogin from '@modules/Mpin/MpinLogin';
 import SetMPINScreen from '@modules/Mpin/SetMPIN';
 
 import FrightPayment from '@modules/Payment';
-import Profile from '@modules/Profile';
 
 const Stack = createNativeStackNavigator();
 

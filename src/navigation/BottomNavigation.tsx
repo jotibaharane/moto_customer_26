@@ -13,11 +13,8 @@ import Profile from '@modules/Profile';
 const Tab = createBottomTabNavigator();
 
 function BottomNavigation() {
-  const navigation = useNavigation<any>();
-  const { CustomerID, status } = useSelector((state: RootState) => state?.auth);
-  const { booking, DriverID } = useSelector(
-    (state: RootState) => state?.booking,
-  );
+  const { CustomerID } = useSelector((state: RootState) => state?.auth);
+  const { DriverID } = useSelector((state: RootState) => state?.booking);
   const { data } = useGetLoadPostsQuery(
     { CustomerID: CustomerID! },
     { skip: !CustomerID },
@@ -37,13 +34,13 @@ function BottomNavigation() {
         options={{ headerShown: false }}
         component={DashboardScreen}
       />
-      <Tab.Screen name="OPS" component={DashboardScreen} />
+      <Tab.Screen name="OPS" component={() => <></>} />
       <Tab.Screen
         name="New Load"
         options={{ headerShown: false }}
         component={ReportingScreen}
       />
-      <Tab.Screen name="History" component={DashboardScreen} />
+      <Tab.Screen name="History" component={() => <></>} />
       <Tab.Screen
         name="Profile"
         options={{ headerShown: false }}

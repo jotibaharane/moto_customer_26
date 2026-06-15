@@ -241,7 +241,7 @@ const ReportingScreen = () => {
       navigate('FrightPayment');
     }
   }, [status]);
-
+  debugger;
   return (
     <SafeAreaView style={styles.container}>
       {/* HEADER */}

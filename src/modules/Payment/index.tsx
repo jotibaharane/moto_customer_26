@@ -72,7 +72,7 @@ const FrightPayment = () => {
       console.log({ resp });
 
       if (resp?.data?.status === '00') {
-        emitPaymentStatusUpdate(load?.driver_id!,load?.LoadPostID!);
+        emitPaymentStatusUpdate(load?.driver_id!, load?.LoadPostID!);
         refetch();
         setSuccess(true);
         setPartialAmount('');
@@ -101,6 +101,8 @@ const FrightPayment = () => {
 
     return () => clearTimeout(timer);
   }, [PaymentStatus]);
+
+  debugger;
   return (
     <View style={styles.container}>
       {status !== 'reached' && (

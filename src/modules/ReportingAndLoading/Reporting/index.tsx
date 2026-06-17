@@ -1,24 +1,13 @@
 // ReportingScreen.tsx
 
 import { useGetLoadPostsQuery } from '@api/Mutations';
-import { getDirections } from '@api/mapbox/mapbox.api';
-import MapboxGL, {
-  Camera,
-  LineLayer,
-  MapView,
-  MarkerView,
-  ShapeSource,
-  SymbolLayer,
-} from '@rnmapbox/maps';
 
 import { emitJoinRoom } from '@socket/socket.emitters';
 import { RootState } from '@store/rootReducer';
 import { COLORS } from '@theme/index';
-import { animateMarker, getSmoothHeading } from '@utils/animation.utils';
 import { handleCall } from '@utils/helperfunctions.utils';
-import { isValidLocation } from '@utils/location.utils';
 import { Phone, User } from 'lucide-react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect} from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
@@ -29,7 +18,6 @@ import { navigate } from '@navigation/NavigationService';
 import MapComponent from './components/MapComponent';
 
 const ReportingScreen = () => {
-
   const { status, CustomerID } = useSelector((state: RootState) => state.auth);
   const { PaymentStatus } = useSelector((state: RootState) => state.payment);
   const { driverMobile, loadId } = useSelector(
@@ -60,7 +48,6 @@ const ReportingScreen = () => {
       status === 'loaded' ||
       (status === 'reached' && PaymentStatus !== 'FULL')
     ) {
-      debugger;
       navigate('FrightPayment');
     }
   }, [status]);

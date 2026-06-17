@@ -9,12 +9,7 @@ import { animateMarker, getSmoothHeading } from '@utils/animation.utils'
 import { getDirections } from '@api/mapbox/mapbox.api'
 
 const MapComponent = () => {
-      const cameraRef = useRef<any>(null);
-
-
-  // =========================
-  // REDUX
-  // =========================
+  const cameraRef = useRef<any>(null);
 
   const { status } = useSelector((state: RootState) => state.auth);
   const { distance_km, eta_minutes } = useSelector(

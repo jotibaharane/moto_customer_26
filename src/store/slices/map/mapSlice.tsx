@@ -4,12 +4,21 @@ export type Coordinates = {
   lat: number;
   lng: number;
 };
-
+export interface BookingState {
+  loadId: string;
+  DriverID: string;
+  driverMobile: string;
+  distance_km: string;
+  eta_minutes: number;
+  message: string;
+  status?: string;
+}
 export interface MapState {
   customer: Coordinates | null;
   pickup: Coordinates | null;
   destination: Coordinates | null;
   driver: (Coordinates & { heading?: any }) | null;
+  tracking?:BookingState
 }
 
 /* =========================
@@ -21,6 +30,7 @@ const initialState: MapState = {
   destination: null,
   driver: null,
   customer: null,
+  tracking:undefined
 };
 
 /* =========================

@@ -13,7 +13,7 @@ import {
   setDriverStates,
   setLoadPost,
 } from '@store/slices/Booking/bookingSlice';
-import { hp, s, vs, wp } from '@theme/index';
+import {  s, vs, } from '@theme/index';
 import {
   transformBookingPayload,
   transformSocketLocation,
@@ -26,13 +26,10 @@ import { styles } from './ReviewBooking.style';
 
 const ReviewBookingScreen = () => {
   const [watingDriver, setWaitingDriver] = React.useState(false);
-  const [timeLeft, setTimeLeft] = React.useState(150);
   const dispatch = useDispatch();
   const { booking, bookingVehicle, isConfirmed, DriverID } = useSelector(
     (state: RootState) => state.booking,
   );
-
-  console.log({ booking });
   const customerId = useSelector((state: RootState) => state?.auth?.CustomerID);
 
   const [createLoadPost, { isLoading }] = useCreateLoadPostMutation();
@@ -57,25 +54,7 @@ const ReviewBookingScreen = () => {
     }
   }, [isConfirmed?.loadstatus]);
 
-  useEffect(() => {
-    let timer: any;
-    if (watingDriver && timeLeft > 0) {
-      timer = setInterval(() => {
-        setTimeLeft(prev => prev - 1);
-      }, 1000);
-    }
 
-    return () => {
-      if (timer) clearInterval(timer);
-    };
-  }, [watingDriver, timeLeft]);
-
-  useEffect(() => {
-    if (timeLeft === 0) {
-      goBack();
-      setWaitingDriver(false);
-    }
-  }, [watingDriver, timeLeft]);
 
   const handleBook = async () => {
     try {
@@ -103,7 +82,6 @@ const ReviewBookingScreen = () => {
         );
         emitCreateCustomerLoad(socketPayload);
         setWaitingDriver(true);
-        setTimeLeft(150);
       } else {
         Alert.alert(resp?.message);
       }
@@ -111,7 +89,7 @@ const ReviewBookingScreen = () => {
       console.log(error);
     }
   };
-
+console.log("loading")
   return (
     <View style={styles.container}>
       <ScrollView style={{ flex: 1 }}>
@@ -176,12 +154,9 @@ const ReviewBookingScreen = () => {
         </Text>
         <OverlayLoader
           visible={watingDriver}
-          duration={timeLeft}
-          showTimer={true}
-          text={`Waiting for Driver’s Confirmation`}
+         
           onClose={() => {
-            setWaitingDriver(false); // ✅ close modal
-            setTimeLeft(150);
+            setWaitingDriver(false); 
           }}
         />
         <CustomButton

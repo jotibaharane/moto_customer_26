@@ -3,9 +3,10 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android:dev": "SET ENVFILE=.env.dev &&  npx react-native run-android",
-    "android:local": "SET ENVFILE=.env.local && npx react-native run-android",
-    "android:prod": "SET ENVFILE=.env.prod && npx react-native run-android",
+      "start": "npx react-native start",
+    "android:dev": "ENVFILE=.env.dev npx react-native run-android",
+"android:local": "ENVFILE=.env.local npx react-native run-android",
+"android:prod": "ENVFILE=.env.prod npx react-native run-android",
     "build:local": "cd android && set ENVFILE=.env.local && gradlew.bat assembleRelease",
     "build:dev": "cd android && set ENVFILE=.env.dev && gradlew.bat assembleRelease",
     "build:prod": "cd android && set ENVFILE=.env.prod && gradlew.bat assembleRelease",

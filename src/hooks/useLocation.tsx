@@ -2,10 +2,9 @@ import { reverseGeocode } from '@api/mapbox/mapbox.api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Geolocation from '@react-native-community/geolocation';
 import MapboxGL from '@rnmapbox/maps';
+import { MAPBOX_ACCESS_TOKEN } from '@utils/constants';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { PermissionsAndroid, Platform } from 'react-native';
-import Config from 'react-native-config';
-
 const HISTORY_KEY = 'LOCATION_HISTORY';
 
 export const useLocation = () => {
@@ -126,7 +125,7 @@ export const useLocation = () => {
             search,
           )}&limit=10&language=en&session_token=${
             sessionToken.current
-          }&country=IN&access_token=${'pk.eyJ1IjoicmFtZXNobW90byIsImEiOiJjbWt4c2swb2QwYzA1M2Nxemg2MzZjZG5jIn0.r9DupyA23H--LeacRtBXKA'}`,
+          }&country=IN&access_token=${MAPBOX_ACCESS_TOKEN}`,
         );
 
         const data = await res.json();
@@ -156,7 +155,7 @@ export const useLocation = () => {
       const res = await fetch(
         `https://api.mapbox.com/search/searchbox/v1/retrieve/${mapboxId}?session_token=${
           sessionToken.current
-        }&access_token=${'pk.eyJ1IjoicmFtZXNobW90byIsImEiOiJjbWt4c2swb2QwYzA1M2Nxemg2MzZjZG5jIn0.r9DupyA23H--LeacRtBXKA'}`,
+        }&access_token=${MAPBOX_ACCESS_TOKEN}`,
       );
 
       const data = await res.json();

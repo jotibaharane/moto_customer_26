@@ -1,9 +1,0 @@
-if(NOT TARGET react-native-nitro-image::NitroImage)
-add_library(react-native-nitro-image::NitroImage SHARED IMPORTED)
-set_target_properties(react-native-nitro-image::NitroImage PROPERTIES
-    IMPORTED_LOCATION "C:/Users/Intel/Desktop/moto_customer_app/node_modules/react-native-nitro-image/android/build/intermediates/cxx/RelWithDebInfo/4m2m3say/obj/x86_64/libNitroImage.so"
-    INTERFACE_INCLUDE_DIRECTORIES "C:/Users/Intel/Desktop/moto_customer_app/node_modules/react-native-nitro-image/android/build/headers/nitroimage"
-    INTERFACE_LINK_LIBRARIES ""
-)
-endif()
-

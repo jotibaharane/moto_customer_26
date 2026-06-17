@@ -4,7 +4,7 @@ import { InputOutline } from '@components/Input';
 import SearchField from '@components/SearchField';
 import { COLORS, hp, s, vs, wp } from '@theme/index';
 import { Bookmark, Edit, Locate, MapPin, Timer } from 'lucide-react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
 
 import { useLocation } from '@hooks/useLocation';
@@ -12,7 +12,6 @@ import { useLocation } from '@hooks/useLocation';
 import { useGetBookmarksQuery, usePostBookmarkMutation } from '@api/Mutations';
 import { RootState } from '@store/rootReducer';
 import { setBookingDetails } from '@store/slices/Booking/bookingSlice';
-import { setDestination, setPickup } from '@store/slices/map/mapSlice';
 import { bookmarkData } from '@utils/constants';
 import { useFormik } from 'formik';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
@@ -85,11 +84,7 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
         }),
       );
 
-      /* ✅ SAVE LAT LNG */
-      if (finalData?.coordinates) {
-        dispatch(setPickup(finalData.coordinates));
-      }
-
+ 
       /* ✅ CALL BOOKMARK API */
       if (selectedBookmark && selectedBookmark !== ' +Add New') {
         try {
@@ -433,4 +428,4 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
   );
 };
 
-export default PickupModal;
+export default memo(PickupModal);

@@ -33,7 +33,7 @@ const paymentSlice = createSlice({
     setPayment: (state, action: PayloadAction<BookingState>) => {
       return action.payload;
     },
-setPaymentStatus:(state, action: PayloadAction<BookingState>) => {
+    setPaymentStatus:(state, action: PayloadAction<BookingState>) => {
       return {...action.payload,...state};
     },
     /* ✅ RESET */

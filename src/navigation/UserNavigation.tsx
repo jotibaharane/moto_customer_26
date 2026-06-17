@@ -40,30 +40,19 @@ const UserNavigation = () => {
     return MPIN_Flag === 'Y' ? 'MpinLogin' : 'SetMPIN';
   }, [MPIN_Flag]);
 
-  // STATIC OPTIONS
-  const commonHeaderStyle = useMemo(
-    () => ({
-      headerStyle: {
-        backgroundColor: COLORS.white[500],
-      },
-      headerShadowVisible: false,
-    }),
-    [],
-  );
 
-  // MEMOIZED SCREEN OPTIONS
-  const screenOptions = useCallback(
-    ({ navigation }: any) => ({
-      headerLeft: () => <BackButton navigation={navigation} />,
-      headerShadowVisible: false,
-    }),
-    [],
-  );
+
+
 
   return (
     <Stack.Navigator initialRouteName={initialRouteName}>
       {/* BOTTOM TAB */}
-      <Stack.Group screenOptions={commonHeaderStyle}>
+      <Stack.Group screenOptions={{
+                  headerStyle: {
+                    backgroundColor: COLORS.white[500],
+            },
+            headerShadowVisible: false,
+          }}>
         <Stack.Screen
           name="BottomNavigation"
           component={BottomNavigation}
@@ -74,7 +63,10 @@ const UserNavigation = () => {
       </Stack.Group>
 
       {/* MAIN SCREENS */}
-      <Stack.Group screenOptions={screenOptions}>
+      <Stack.Group screenOptions={ ({ navigation }: any) => ({
+      headerLeft: () => <BackButton navigation={navigation} />,
+      headerShadowVisible: false,
+    })}>
         <Stack.Screen
           name="MpinLogin"
           component={MpinLogin}
@@ -122,11 +114,7 @@ const UserNavigation = () => {
             headerTitle: () => <HeaderTitle title="Live Tracking" />,
           }}
         />
-      </Stack.Group>
-
-      {/* MPIN SCREENS */}
-      <Stack.Group screenOptions={screenOptions}>
-        <Stack.Screen
+         <Stack.Screen
           name="SetMPIN"
           component={SetMPINScreen}
           options={{
@@ -134,6 +122,8 @@ const UserNavigation = () => {
           }}
         />
       </Stack.Group>
+
+      
     </Stack.Navigator>
   );
 };

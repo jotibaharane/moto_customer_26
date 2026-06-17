@@ -1,17 +1,35 @@
 import { FONT_FAMILIES, fp } from '@theme/index';
-import React from 'react';
+import React, { memo, useEffect } from 'react';
 import { Modal, StyleSheet, Text, View } from 'react-native';
 import CircularLoader from '../CircularLoader';
+import { goBack } from '@navigation/NavigationService';
 
 const OverlayLoader = ({
   visible = false,
-  duration = 150,
-  showTimer = true,
-  text = 'Waiting for driver...',
   onClose, // ✅ add this
 }: any) => {
   if (!visible) return null;
+  const [timeLeft, setTimeLeft] = React.useState(150);
 
+    useEffect(() => {
+      let timer: any;
+      if (visible && timeLeft > 0) {
+        timer = setInterval(() => {
+          setTimeLeft(prev => prev - 1);
+        }, 1000);
+      }
+  
+      return () => {
+        if (timer) clearInterval(timer);
+      };
+    }, [visible, timeLeft]);
+  
+    useEffect(() => {
+      if (timeLeft === 0) {
+        goBack();
+        onClose()
+      }
+    }, [visible, timeLeft]);
   return (
     <Modal
       transparent
@@ -23,15 +41,16 @@ const OverlayLoader = ({
         <View style={styles.overlay} />
 
         <View style={styles.card}>
-          <CircularLoader duration={duration} showTimer={showTimer} />
-          <Text style={styles.text}>{text}</Text>
+          <CircularLoader duration={timeLeft
+          } showTimer={true} />
+          <Text style={styles.text}>Waiting for Driver’s Confirmation</Text>
         </View>
       </View>
     </Modal>
   );
 };
 
-export default OverlayLoader;
+export default memo(OverlayLoader);
 
 const styles = StyleSheet.create({
   container: {

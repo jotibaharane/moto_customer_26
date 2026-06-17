@@ -2,7 +2,7 @@ import { navigate } from '@navigation/NavigationService';
 import { RootState } from '@store/rootReducer';
 import { setWeight } from '@store/slices/Booking/bookingSlice';
 import { COLORS, FONT_FAMILIES, fp, hp, wp } from '@theme/index';
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import {
   Modal,
   StyleSheet,
@@ -60,7 +60,7 @@ const WeightModal: React.FC<WeightModalProps> = ({
   );
 };
 
-export default WeightModal;
+export default memo(WeightModal);
 const styles = StyleSheet.create({
   container: {
     flex: 1,

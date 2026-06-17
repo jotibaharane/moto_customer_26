@@ -1,7 +1,6 @@
 import CustomButton from '@components/Button';
 import CustomCheckbox from '@components/CustomCheckbox';
 import QRScanner from '@components/QRScanner';
-import { useNetInfo } from '@react-native-community/netinfo';
 import { wp } from '@theme/index';
 import React, { useEffect, useState } from 'react';
 import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -16,6 +15,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@store/rootReducer';
 import { navigate } from '@navigation/NavigationService';
 import { setLPStatus } from '@store/slices/Auth/authSlice';
+
+
 const FrightPayment = () => {
   const dispatch = useDispatch();
   const { PaymentStatus } = useSelector((state: RootState) => state.payment);
@@ -23,7 +24,6 @@ const FrightPayment = () => {
     (state: RootState) => state.tracking,
   );
   const { CustomerID, status } = useSelector((state: RootState) => state.auth);
-  console.log({ DriverID, loadId, CustomerID });
 
   const [success, setSuccess] = useState(false);
   const [paymentAt, setPaymentAt] = useState<'Paid' | 'ToPay'>('Paid');
@@ -35,7 +35,7 @@ const FrightPayment = () => {
       LoadpostID: loadId,
     },
     {
-      skip: false, // or condition
+      skip: false, 
       refetchOnFocus: true,
       refetchOnReconnect: true,
     },
@@ -45,7 +45,7 @@ const FrightPayment = () => {
 
   console.log({ load });
   const [makePayment] = useMakePaymentMutation();
-  const [paymentHistory, { data: historyData }] = usePaymentHistoryMutation();
+  const [paymentHistory] = usePaymentHistoryMutation();
   const [partialAmount, setPartialAmount] = useState('');
   const [upiId, setUpiId] = useState('');
   const [payAnother, setPayAnother] = useState(false);

@@ -2,15 +2,14 @@ import RBSheet from '@components/BottomUpModal';
 import CustomButton from '@components/Button';
 import { InputOutline } from '@components/Input';
 import SearchField from '@components/SearchField';
-import { COLORS, FONT_FAMILIES, fp, hp, ms, s, vs, wp } from '@theme/index';
+import { COLORS, FONT_FAMILIES, ms, s, vs} from '@theme/index';
 import { Edit, MapPin, Timer } from 'lucide-react-native';
-import React, { useEffect, useRef } from 'react';
+import React, { memo, useEffect, useRef } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useLocation } from '@hooks/useLocation';
 import { RootState } from '@store/rootReducer';
 import { setBookingDetails } from '@store/slices/Booking/bookingSlice';
-import { setDestination } from '@store/slices/map/mapSlice';
 import { useFormik } from 'formik';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useDispatch, useSelector } from 'react-redux';
@@ -69,7 +68,6 @@ const DropModal: React.FC<Props> = ({ onOpen, open, setModalVisible }) => {
           delivery: finalData,
         }),
       );
-      dispatch(setDestination(finalData?.coordinates));
       // setModalVisible?.(true);
       onOpen?.(false);
     },
@@ -210,7 +208,7 @@ const DropModal: React.FC<Props> = ({ onOpen, open, setModalVisible }) => {
   );
 };
 
-export default DropModal;
+export default memo(DropModal);
 
 /* ---------------- STYLES ---------------- */
 const styles = StyleSheet.create({

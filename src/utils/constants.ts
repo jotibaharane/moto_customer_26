@@ -1,5 +1,5 @@
 import { RadioButtonProps } from '@components/RadioButton';
-
+export const MAPBOX_ACCESS_TOKEN="pk.eyJ1IjoicmFtZXNobW90byIsImEiOiJjbWt4c2swb2QwYzA1M2Nxemg2MzZjZG5jIn0.r9DupyA23H--LeacRtBXKA"
 export const OTP_TIME = 120;
 export const Languges: RadioButtonProps[] = [
   {

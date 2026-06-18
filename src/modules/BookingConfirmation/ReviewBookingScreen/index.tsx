@@ -89,7 +89,6 @@ const ReviewBookingScreen = () => {
       console.log(error);
     }
   };
-console.log("loading")
   return (
     <View style={styles.container}>
       <ScrollView style={{ flex: 1 }}>

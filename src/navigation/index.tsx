@@ -1,31 +1,18 @@
 import React, { memo, useEffect, useMemo, useState } from 'react';
-
 import {
   useLogger,
   useReduxDevToolsExtension,
 } from '@react-navigation/devtools';
-
 import { NavigationContainer } from '@react-navigation/native';
-
 import { StatusBar, useColorScheme } from 'react-native';
-
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-
 import { useSelector, shallowEqual } from 'react-redux';
-
 import { RootState } from '@store/rootReducer';
-
 import SplashScreen from '@modules/SplashScreen';
-
 import { emitCustomerJoin } from '@socket/socket.emitters';
-
 import { registerSocketListeners } from '@socket/socket.listeners';
-
 import { disconnectSocket, initSocket } from '@socket/socket.manager';
-
 import AuthNavigation from './AuthNavigation';
 import UserNavigation from './UserNavigation';
-
 import { navigationRef } from './NavigationService';
 
 const RootNavigator = () => {

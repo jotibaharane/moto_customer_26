@@ -5,7 +5,6 @@ import { persistReducer } from 'redux-persist';
 import authReducer from './slices/Auth/authSlice';
 import bookingSlice from './slices/Booking/bookingSlice';
 import mapSlice from './slices/map/mapSlice';
-import trackingSlice from './slices/tracking/trackingSlice';
 import paymentSlice from "./slices/payment/paymentSlice"
 import { paymentApi } from '@api/paymentApi';
 const persistConfig = {
@@ -16,7 +15,6 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   auth: authReducer,
-  tracking: trackingSlice,
   payment: paymentSlice,
   booking: bookingSlice,
   map: mapSlice,

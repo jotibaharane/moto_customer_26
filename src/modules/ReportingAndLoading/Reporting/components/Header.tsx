@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import { styles } from '../reporting.style';
 
 const Header = () => {
-  const { message } = useSelector((state: RootState) => state.tracking);
+  const { message } = useSelector((state: RootState) => state.map?.tracking || {message: null});
 
   return (
     <>

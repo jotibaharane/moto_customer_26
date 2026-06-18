@@ -10,7 +10,6 @@ const initialState: CustomerDetails = {
   full_name: '',
   Insert_Date: '',
   MPIN_Flag: '',
-  status: '',
 };
 
 const authSlice = createSlice({
@@ -22,9 +21,7 @@ const authSlice = createSlice({
     signIn: (state, action: PayloadAction<CustomerDetails>) => {
       return { ...initialState, ...action.payload };
     },
-    setLPStatus: (state, action: PayloadAction<string>) => {
-      state.status = action.payload;
-    },
+ 
     // 🚪 Logout
     signOut: state => {
       return initialState;
@@ -32,6 +29,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { signIn, signOut, setLPStatus } = authSlice.actions;
+export const { signIn, signOut } = authSlice.actions;
 
 export default authSlice.reducer;

@@ -53,15 +53,6 @@ const bookingSlice = createSlice({
   name: 'booking',
   initialState,
   reducers: {
-    setCurrentLocation: (state, action: { payload: Location }) => {
-      state.current_location = action.payload;
-    },
-    setPickupLocation: (state, action: { payload: Location }) => {
-      state.pickupLocation = action.payload;
-    },
-    setDropLocation: (state, action: { payload: Location }) => {
-      state.dropLocation = action.payload;
-    },
     setWeight: (
       state,
       action: { payload: { approximateWeightKg: string } },
@@ -112,9 +103,6 @@ const bookingSlice = createSlice({
 });
 
 export const {
-  setCurrentLocation,
-  setPickupLocation,
-  setDropLocation,
   setBookingDetails,
   setWeight,
   setDriverStates,

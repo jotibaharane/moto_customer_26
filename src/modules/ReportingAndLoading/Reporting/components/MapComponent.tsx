@@ -11,21 +11,11 @@ import { getDirections } from '@api/mapbox/mapbox.api'
 const MapComponent = () => {
   const cameraRef = useRef<any>(null);
 
-  const { status } = useSelector((state: RootState) => state.auth);
-  const { distance_km, eta_minutes } = useSelector(
-    (state: RootState) => state.tracking,
-  );
-
-  const { driver, pickup, destination } = useSelector(
+  const { status,tracking,driver, pickup, destination} = useSelector(
     (state: RootState) => state.map,
   );
-
-  // =========================
-  // STATES
-  // =========================
-
-  const [routeGeoJSON, setRouteGeoJSON] = useState<any>(null);
-
+const { distance_km, eta_minutes } =tracking || { distance_km: 0, eta_minutes: 0 }
+const [routeGeoJSON, setRouteGeoJSON] = useState<any>(null);
   const [animatedCoords, setAnimatedCoords] = useState<[number, number] | null>(
     null,
   );

@@ -1,8 +1,7 @@
 import { useGetLoadsQuery, useGetLoadTrakingQuery } from '@api/Mutations';
 import Dropdown from '@components/Dropdown';
 import { RootState } from '@store/rootReducer';
-import { setLPStatus } from '@store/slices/Auth/authSlice';
-import { setTripDetails } from '@store/slices/tracking/trackingSlice';
+import { setLPStatus, setTripDetails } from '@store/slices/map/mapSlice';
 import { COLORS, FONT_FAMILIES, fp, hp, wp } from '@theme/index';
 import { formatTimeAMPM } from '@utils/datetime.utils';
 import { CheckCircle2 } from 'lucide-react-native';

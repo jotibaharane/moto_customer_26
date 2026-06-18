@@ -20,7 +20,6 @@ export type CustomerDetails = {
   CustomerType: string;
   Insert_Date: string;
   MPIN_Flag: string;
-  status:string
 };
 export type ValidateOtpResponse = {
   status: string;

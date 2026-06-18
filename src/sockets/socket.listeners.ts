@@ -3,17 +3,12 @@ import {
   setDriverStates,
   setNearbyVehicles,
 } from '@store/slices/Booking/bookingSlice';
-import { setDestination, setDrivers, setPickup } from '@store/slices/map/mapSlice';
-import {
-  setFromDriver,
-  setMessageAndDistance,
-  setStatus,
-  setTripDetails,
-} from '@store/slices/tracking/trackingSlice';
+import { setDestination, setDrivers, setFromDriver, setLPStatus, setMessageAndDistance, setPickup, setTripDetails } from '@store/slices/map/mapSlice';
+
 import { SOCKET_EVENTS } from './socket.events';
 import { getSocket } from './socket.service';
 import { setPayment, setPaymentStatus } from '@store/slices/payment/paymentSlice';
-import { setLPStatus } from '@store/slices/Auth/authSlice';
+import { navigate } from '@navigation/NavigationService';
 
 export const registerSocketListeners = () => {
   const socket = getSocket();
@@ -32,6 +27,7 @@ socket.on('connect', () => {
 
   socket.onAny((event, data) => {
     console.log('📡', event, data);
+    debugger;
   });
 
   socket.on(SOCKET_EVENTS.GET_NEARBY_DRIVERS, data => {
@@ -40,7 +36,6 @@ socket.on('connect', () => {
   });
 
   socket.on(SOCKET_EVENTS.DRIVER_ACCEPTED, data => {
-    console.log({ DRIVER_ACCEPTED: data });
     store.dispatch(setDriverStates(data));
   });
 
@@ -69,42 +64,39 @@ socket.on('connect', () => {
   socket.on(SOCKET_EVENTS.NEARBY_DRIVER_REACH, data => {
       store.dispatch(
   setTripDetails({
-    ...store?.getState()?.tracking,
+    ...store?.getState()?.map?.tracking as any,
     DriverID: data?.DriverID,
     loadId: data?.loadId,
     distance_km: data?.distance_km,
   })
 );
-    if (store.getState().tracking.message === data?.message) return;
+const currentMessage = store.getState()?.map?.tracking?.message;
+
+if (currentMessage === data?.message) return;
     store.dispatch(
       setMessageAndDistance({
         distance: data?.distance,
         message: data?.message,
       }),
     );
- 
-    console.log('customer:driver_nearby', data);
   });
-  socket.on(SOCKET_EVENTS.CUSTOMER_DRIVER_UPDATE, data => {
-    // store.dispatch(setTripDetails(data));
-    console.log('customer:drivers_update', data);
-  });
-   socket.on("customer:status_update", data => {
-    // store.dispatch(setTripDetails(data));
-    store.dispatch(setStatus(data?.result));
-    console.log('customer:status_update', data);
-  });
+
+
+
+  //  socket.on("customer:status_update", data => {
+  //   store.dispatch(setStatus(data?.result));
+  // });
+
+
    socket.on("customer:payment_status", data => {
     store.dispatch(setPayment(data?.ReceivePayment));
   });
-
-
-     socket.on("customer:payment_details", data => {
+  socket.on("customer:payment_details", data => {
     store.dispatch(setPaymentStatus(data?.ReceivePayment));
   });
    socket.on("customer:LP_Status", data => {
-   console.log("customer:LP_Status",data);
    store.dispatch(setLPStatus(data?.data))
+  
   });
 };
 

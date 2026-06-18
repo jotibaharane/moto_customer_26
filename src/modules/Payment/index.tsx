@@ -14,25 +14,24 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@store/rootReducer';
 import { navigate } from '@navigation/NavigationService';
-import { setLPStatus } from '@store/slices/Auth/authSlice';
+import { setLPStatus } from '@store/slices/map/mapSlice';
+import { resetPayment } from '@store/slices/payment/paymentSlice';
 
 
 const FrightPayment = () => {
   const dispatch = useDispatch();
   const { PaymentStatus } = useSelector((state: RootState) => state.payment);
-  const { DriverID, loadId } = useSelector(
-    (state: RootState) => state.tracking,
-  );
-  const { CustomerID, status } = useSelector((state: RootState) => state.auth);
-
+ 
+  const { CustomerID, } = useSelector((state: RootState) => state.auth);
+ const { status,tracking} = useSelector((state: RootState) => state.map);
   const [success, setSuccess] = useState(false);
   const [paymentAt, setPaymentAt] = useState<'Paid' | 'ToPay'>('Paid');
-
+ const { DriverID, loadId } = tracking || {};
   const { data, refetch } = useGetLoadPaymentQuery(
     {
-      DriverID: DriverID,
-      CustomerID: CustomerID,
-      LoadpostID: loadId,
+      DriverID: DriverID!,
+      CustomerID: CustomerID!,
+      LoadpostID: loadId!,
     },
     {
       skip: false, 
@@ -91,9 +90,8 @@ const FrightPayment = () => {
     if (!PaymentStatus) return;
 
     const timer = setTimeout(() => {
-      if (status !== 'reached') {
         dispatch(setLPStatus(''));
-      }
+        dispatch(resetPayment());
       navigate('BottomNavigation', {
         screen: 'New Load',
       });

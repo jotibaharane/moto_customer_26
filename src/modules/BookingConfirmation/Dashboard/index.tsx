@@ -16,7 +16,7 @@ import DropModal from './components/DropModal';
 import PickupModal from './components/PickupModal';
 import { navigate } from '@navigation/NavigationService';
 import { setWeight } from '@store/slices/Booking/bookingSlice';
-import { COLORS, FONT_FAMILIES, fp, hp, ms, wp } from '@theme/index';
+import { COLORS, FONT_FAMILIES, ms} from '@theme/index';
 import { ArrowRight } from 'lucide-react-native';
 import { styles } from './Dashboard.style';
 import MapComponent from './components/MapComponent';

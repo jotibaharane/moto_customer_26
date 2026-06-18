@@ -18,11 +18,10 @@ import { navigate } from '@navigation/NavigationService';
 import MapComponent from './components/MapComponent';
 
 const ReportingScreen = () => {
-  const { status, CustomerID } = useSelector((state: RootState) => state.auth);
+  const {  CustomerID } = useSelector((state: RootState) => state.auth);
+   const { status ,tracking} = useSelector((state: RootState) => state.map);
   const { PaymentStatus } = useSelector((state: RootState) => state.payment);
-  const { driverMobile, loadId } = useSelector(
-    (state: RootState) => state.tracking,
-  );
+  const { driverMobile, loadId } =tracking ||{}
 
 
 
@@ -49,6 +48,7 @@ const ReportingScreen = () => {
       (status === 'reached' && PaymentStatus !== 'FULL')
     ) {
       navigate('FrightPayment');
+      
     }
   }, [status]);
   

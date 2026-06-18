@@ -1,41 +1,29 @@
-import React, { memo, useCallback, useMemo } from 'react';
-
+import React, { memo,  useMemo } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
 import { useSelector, shallowEqual } from 'react-redux';
 import { RootState } from '@store/rootReducer';
-
 import { COLORS } from '@theme/index';
-
 import BackButton from '@components/NavigationComponents/BackButton';
 import HeaderTitle from '@components/NavigationComponents/HeaderTitle';
-import MPINHeader from '@components/NavigationComponents/MPINHeader';
-
 import BottomNavigation from './BottomNavigation';
-
 import ReviewBookingScreen from '@modules/BookingConfirmation/ReviewBookingScreen';
 import SelectVehicleScreen from '@modules/BookingConfirmation/SelectVehicleScreen';
 import VehicleDhalaSizeScreen from '@modules/BookingConfirmation/VehicleDhalaSizeScreen';
-
 import LiveTrackingScreen from '@modules/LiveTracking/LiveTrackingScreen';
-
-import ConfirmMPINScreen from '@modules/Mpin/ConfirmMPIN';
 import MpinLogin from '@modules/Mpin/MpinLogin';
 import SetMPINScreen from '@modules/Mpin/SetMPIN';
-
 import FrightPayment from '@modules/Payment';
-import Profile from '@modules/Profile';
 
 const Stack = createNativeStackNavigator();
 
 const UserNavigation = () => {
-  // ONLY SELECT REQUIRED VALUE
+ 
   const MPIN_Flag = useSelector(
     (state: RootState) => state.auth.MPIN_Flag,
     shallowEqual,
   );
 
-  // MEMOIZE INITIAL ROUTE
+
   const initialRouteName = useMemo(() => {
     return MPIN_Flag === 'Y' ? 'MpinLogin' : 'SetMPIN';
   }, [MPIN_Flag]);

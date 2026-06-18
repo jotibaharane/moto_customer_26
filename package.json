@@ -7,10 +7,11 @@
     "android:dev": "ENVFILE=.env.dev npx react-native run-android",
 "android:local": "ENVFILE=.env.local npx react-native run-android",
 "android:prod": "ENVFILE=.env.prod npx react-native run-android",
-    "build:local": "cd android && set ENVFILE=.env.local && gradlew.bat assembleRelease",
-    "build:dev": "cd android && set ENVFILE=.env.dev && gradlew.bat assembleRelease",
-    "build:prod": "cd android && set ENVFILE=.env.prod && gradlew.bat assembleRelease",
-    "android:clean": "cd android && gradlew.bat clean"
+   "build:local": "cd android && ENVFILE=.env.local ./gradlew assembleRelease",
+    "build:dev": "cd android && ENVFILE=.env.dev ./gradlew assembleRelease",
+    "build:prod": "cd android && ENVFILE=.env.prod ./gradlew assembleRelease",
+
+    "android:clean": "cd android && ./gradlew clean"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^3.0.2",

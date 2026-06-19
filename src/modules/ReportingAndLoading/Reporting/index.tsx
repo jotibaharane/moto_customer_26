@@ -7,7 +7,7 @@ import { RootState } from '@store/rootReducer';
 import { COLORS } from '@theme/index';
 import { handleCall } from '@utils/helperfunctions.utils';
 import { Phone, User } from 'lucide-react-native';
-import React, { useEffect} from 'react';
+import React, { useEffect } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
@@ -20,7 +20,7 @@ import MapComponent from './components/MapComponent';
 const ReportingScreen = () => {
   const {  CustomerID } = useSelector((state: RootState) => state.auth);
    const { status ,tracking} = useSelector((state: RootState) => state.map);
-  const { PaymentStatus } = useSelector((state: RootState) => state.payment);
+  const { PaymentStatus,BalanceAmount } = useSelector((state: RootState) => state.payment);
   const { driverMobile, loadId } =tracking ||{}
 
 
@@ -45,7 +45,7 @@ const ReportingScreen = () => {
   useEffect(() => {
     if (
       status === 'loaded' ||
-      (status === 'reached' && PaymentStatus !== 'FULL')
+      (status === 'reached' && PaymentStatus !== 'FULL'&&BalanceAmount!==0)
     ) {
       navigate('FrightPayment');
       

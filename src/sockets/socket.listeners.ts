@@ -5,10 +5,9 @@ import {
 } from '@store/slices/Booking/bookingSlice';
 import { setDestination, setDrivers, setFromDriver, setLPStatus, setMessageAndDistance, setPickup, setTripDetails } from '@store/slices/map/mapSlice';
 
+import { setPayment, setPaymentStatus } from '@store/slices/payment/paymentSlice';
 import { SOCKET_EVENTS } from './socket.events';
 import { getSocket } from './socket.service';
-import { setPayment, setPaymentStatus } from '@store/slices/payment/paymentSlice';
-import { navigate } from '@navigation/NavigationService';
 
 export const registerSocketListeners = () => {
   const socket = getSocket();
@@ -80,13 +79,6 @@ if (currentMessage === data?.message) return;
       }),
     );
   });
-
-
-
-  //  socket.on("customer:status_update", data => {
-  //   store.dispatch(setStatus(data?.result));
-  // });
-
 
    socket.on("customer:payment_status", data => {
     store.dispatch(setPayment(data?.ReceivePayment));

@@ -2,17 +2,17 @@ import RBSheet from '@components/BottomUpModal';
 import CustomButton from '@components/Button';
 import { InputOutline } from '@components/Input';
 import SearchField from '@components/SearchField';
-import { COLORS, hp, s, vs, wp } from '@theme/index';
-import { Bookmark, Edit, Locate, MapPin, Timer } from 'lucide-react-native';
+import { COLORS, s, vs } from '@theme/index';
+import { Bookmark, Edit, MapPin, Timer } from 'lucide-react-native';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
 
-import { useLocation } from '@hooks/useLocation';
 
-import { useGetBookmarksQuery, usePostBookmarkMutation } from '@api/Mutations';
+import { useGetAddressLabelsQuery, useGetSavedLocationQuery, useGetSearchLocationQuery } from '@api/query';
+import { LoadLocation } from '@api/type';
+import { useCurrentLocation } from '@hooks/useCurrentLocation';
 import { RootState } from '@store/rootReducer';
-import { setBookingDetails } from '@store/slices/Booking/bookingSlice';
-import { bookmarkData } from '@utils/constants';
+import { setPickup } from '@store/slices/Booking/bookingSlice';
 import { useFormik } from 'formik';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useDispatch, useSelector } from 'react-redux';
@@ -23,141 +23,44 @@ interface Props {
 }
 
 const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
-  const refScrollable = useRef<any>(null);
+const {pickup}=useSelector((state:RootState)=>state?.booking)
   const dispatch = useDispatch();
-  const customer = useSelector((state: RootState) => state.auth);
-  const [bookmarkAddress] = usePostBookmarkMutation();
-  const { data: bookmarksData, refetch } = useGetBookmarksQuery({
-    CustomerID: customer?.CustomerID!,
-  });
-
-  /* ---------------- REDUX ---------------- */
-
-  const booking = useSelector((state: RootState) => state.booking.booking);
-  const savedPickup: any = booking?.pickup;
-
-  /* ---------------- LOCATION HOOK ---------------- */
-  const {
-    search,
-    setSearch,
-    results,
-    recent,
-    selected,
-    setSelected,
-    handleSelect,
-    clearHistory,
-    current,
-  } = useLocation();
-  const [isCustomBookmark, setIsCustomBookmark] = useState(false);
-  const [customBookmark, setCustomBookmark] = useState(
-    savedPickup?.bookmark || '',
-  );
-  /* ---------------- BOOKMARK STATE ---------------- */
-  const [selectedBookmark, setSelectedBookmark] = useState(
-    savedPickup?.bookmark || '',
-  );
-
-  /* ---------------- FORM ---------------- */
-  const formik = useFormik({
+   /* ---------------- FORM ---------------- */
+  const formik = useFormik<LoadLocation>({
     enableReinitialize: true,
-    initialValues: {
-      plot: savedPickup?.plot || '',
-      street: savedPickup?.street || '',
-      phone: savedPickup?.phone || '',
-      bookmark: savedPickup?.bookmark || '',
+    initialValues: pickup||{
+        plotBuilding:"",
+        streetArea:"",
+        contactMobile:"",
+        tag:"",
+        latitude:0,
+        longitude:0,
+        fullAddress:"",
     },
     onSubmit: async values => {
-      const finalBookmark = isCustomBookmark
-        ? customBookmark
-        : selectedBookmark;
-      const finalData = {
-        ...selected,
-        ...values,
-        bookmark: finalBookmark,
-      };
-
-      /* ✅ SAVE REDUX */
-      dispatch(
-        setBookingDetails({
-          ...booking,
-          pickup: finalData,
-        }),
-      );
-
- 
-      /* ✅ CALL BOOKMARK API */
-      if (selectedBookmark && selectedBookmark !== ' +Add New') {
-        try {
-          await bookmarkAddress({
-            CustomerID: customer?.CustomerID || '',
-
-            PickupAddress: finalData.googleAddress || '',
-            AddressType: selectedBookmark,
-
-            PickupCity: finalData.city || '',
-            PickupState: finalData.state || '',
-            PickupPincode: finalData.pincode || '',
-            PickupDistrict: finalData.district || '',
-            PickupTaluka: finalData.taluka || '',
-
-            PickupLat: finalData.coordinates?.lat || '',
-            PickupLng: finalData.coordinates?.lng || '',
-
-            PickupPlotBuilding: values.plot || '',
-            PickupStreetArea: values.street || '',
-
-            SenderContactNo: values.phone || '',
-            SenderName: '',
-          });
-          refetch();
-          setCustomBookmark('');
-          setSelectedBookmark('');
-        } catch (e) {
-          console.log('Bookmark error', e);
-        }
-      }
-
+      dispatch(setPickup({pickup:values}));
       onOpen?.(false);
     },
+    
   });
-
+  const currentLocation=useCurrentLocation();
+  const refScrollable = useRef<any>(null);
+  const [search,setSearch]=useState('');
+  const {data:locationData}=useGetSearchLocationQuery({search:search,latitude:currentLocation?.lat,longitude:currentLocation?.lng});
+  const { data: savedLocationData, refetch } = useGetSavedLocationQuery();
+  const {data:addressTag,refetch:refetchTags}=useGetAddressLabelsQuery()
+  const [isCustomBookmark, setIsCustomBookmark] = useState(false);
+  const [openGoogleAddress, setOpenGoogleAddress] = useState(false);
   /* ---------------- MODAL OPEN CLOSE ---------------- */
   useEffect(() => {
     if (open) {
       refScrollable?.current?.open();
+      refetch();
+      refetchTags()
     } else {
       refScrollable?.current?.close();
     }
   }, [open]);
-
-  /* ---------------- RESTORE DATA ---------------- */
-  useEffect(() => {
-    if (savedPickup && !selected) {
-      setSelected(savedPickup);
-    }
-
-    if (savedPickup?.bookmark) {
-      setSelectedBookmark(savedPickup.bookmark);
-    }
-  }, [savedPickup]);
-
-  const formattedBookmarks = Array.isArray(bookmarksData?.data)
-    ? bookmarksData?.data?.map((item: any) => ({
-        type: 'bookmark',
-        id: item.PickupID.toString(),
-        bookmark: item.AddressType,
-        title: item.PickupCity,
-        subtitle: item.PickupAddress,
-        original: item,
-      }))
-    : [];
-  console.log({ current });
-  const currentLocationItem = current ? [current] : [];
-
-  /* ---------------- DATA ---------------- */
-  const dataToShow = search
-    ? [...currentLocationItem, ...results]
-    : [...currentLocationItem, ...formattedBookmarks, ...recent];
   return (
     <RBSheet
       ref={refScrollable}
@@ -179,7 +82,8 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
       onOpen={() => onOpen?.(true)}
       onClose={() => onOpen?.(false)}
     >
-      {!selected ? (
+     
+      {!formik?.values?.fullAddress||openGoogleAddress ? (
         /* 🔍 SEARCH SCREEN */
         <View style={styles.gridContainer}>
           <SearchField
@@ -195,14 +99,16 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
           />
 
           <View style={{ height: 10 }} />
-          <FlatList
-            data={dataToShow}
+         {/* {locationData?.data?.length > 0 &&  <FlatList
+            data={locationData?.data||[]}
             keyExtractor={(item, index) => item?.mapboxId || index.toString()}
             renderItem={({ item }) => {
-              if (item.type === 'current') {
                 return (
                   <Pressable
-                    onPress={() => handleSelect(item)}
+                    onPress={() => {
+                      formik?.setFieldValue("name",item.name)
+                      formik?.setFieldValue("fullAddress",item.fullAddress)
+                    }}
                     style={styles.currentLoactionButton}
                   >
                     <Text style={styles.listLabel}>Current Location</Text>
@@ -210,80 +116,75 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
                       <Locate size={20} />
                       <View style={{ flex: 1 }}>
                         <Text style={styles.title}>
-                          {item.name || item.city}
+                          {item.name }
                         </Text>
                         <Text style={styles.subtitle}>
-                          {item.fullAddress || item.googleAddress}
+                          {item.fullAddress}
                         </Text>
                       </View>
                     </View>
                   </Pressable>
-                );
-              }
-              /* ✅ BOOKMARK ITEM (NEW) */
-              if (item.type === 'bookmark') {
-                return (
-                  <Pressable
+                );  
+            }}
+            style={{ flex: 1 }}
+            contentContainerStyle={{ paddingBottom: vs(100) }}
+          />} */}
+          {savedLocationData?.data?.length > 0 &&locationData?.data?.length === 0 && (
+            <FlatList
+              data={savedLocationData?.data||[]}
+              keyExtractor={(item, index) => item?.mapboxId || index.toString()}
+              renderItem={({ item }) => {
+                  return (
+                    <Pressable
                     onPress={() => {
-                      const b = item.original;
-
-                      const selectedData = {
-                        mapboxId: b.PickupID.toString(),
-                        name: b.PickupCity,
-                        fullAddress: b.PickupAddress,
-                        googleAddress: b.PickupAddress,
-                        city: b.PickupCity,
-                        pincode: b.PickupPincode,
-                        district: b.PickupDistrict,
-                        taluka: b.PickupTaluka,
-                        coordinates: {
-                          lat: b.PickupLat,
-                          lng: b.PickupLng,
-                        },
-                        bookmark: b.AddressType,
-                        contactNumber: b.senderContactNo,
-                      };
-
-                      /* ✅ SET SELECTED */
-                      setSelected(selectedData);
-
-                      /* ✅ AUTO FILL FORM */
-                      setSelectedBookmark(b.AddressType);
-                      formik.setValues({
-                        ...formik.values,
-                        phone: b.senderContactNo || '',
-                        bookmark: b.AddressType,
-                      });
+                       formik?.setValues({
+                        name: item?.PlaceName,
+                        fullAddress: item?.FullAddress,
+                        latitude: item?.Latitude,
+                        longitude: item?.Longitude,
+                        plotBuilding: item?.PlotBuilding,
+                        streetArea: item?.StreetArea,
+                        contactMobile: item?.ContactMobile,
+                        tag: item?.Tag, 
+                       })
+                      setOpenGoogleAddress(false)
                     }}
                   >
                     <View style={styles.bookmarkListContiner}>
-                      <Text style={styles.listLabel}>{item.bookmark}</Text>
+                      <Text style={styles.listLabel}>{item.Tag}</Text>
 
                       <View style={{ flexDirection: 'row' }}>
                         <View style={{ flex: 1 }}>
-                          <Text style={styles.title}>{item.title}</Text>
-                          <Text style={styles.subtitle}>{item.subtitle}</Text>
+                          <Text style={styles.title}>{item.PlaceName}</Text>
+                          <Text style={styles.subtitle}>{item.FullAddress}</Text>
                         </View>
-
                         <Bookmark size={20} fill={COLORS.primary[500]} />
                       </View>
                     </View>
                   </Pressable>
-                );
-              }
-
-              /* ✅ KEEP YOUR EXISTING CODE SAME */
+                )
+            }}
+            style={{ flex: 1 }}
+            contentContainerStyle={{ paddingBottom: vs(100) }}
+          />)}
+         {locationData?.data?.length > 0 &&  <FlatList
+            data={locationData?.data||[]}
+            keyExtractor={(item, index) => item?.mapboxId || index.toString()}
+            renderItem={({ item }) => {
               return (
                 <Pressable
-                  onPress={() => handleSelect(item)}
+                  onPress={() => {
+                    formik?.setFieldValue("name",item.name)
+                    formik?.setFieldValue("fullAddress",item.fullAddress)
+                    setOpenGoogleAddress(false)
+                  }}
                   style={styles.listItem}
                 >
                   {search ? <MapPin size={20} /> : <Timer size={20} />}
-
                   <View style={{ flex: 1 }}>
-                    <Text style={styles.title}>{item.name || item.city}</Text>
+                    <Text style={styles.title}>{item.name}</Text>
                     <Text style={styles.subtitle}>
-                      {item.fullAddress || item.googleAddress}
+                      {item.fullAddress}
                     </Text>
                   </View>
                 </Pressable>
@@ -291,7 +192,7 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
             }}
             style={{ flex: 1 }}
             contentContainerStyle={{ paddingBottom: vs(100) }}
-          />
+          />}
         </View>
       ) : (
         /* 📍 SELECTED SCREEN */
@@ -301,14 +202,14 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
 
             <View style={{ flex: 1 }}>
               <Text style={styles.title}>
-                {selected?.name || selected?.city || 'No location'}
+                {formik?.values?.name || 'No location'}
               </Text>
               <Text style={styles.subtitle}>
-                {selected?.googleAddress || 'No address'}
+                {formik?.values?.fullAddress || 'No address'}
               </Text>
             </View>
 
-            <Pressable onPress={() => setSelected(null)}>
+            <Pressable onPress={() => setOpenGoogleAddress(true)}>
               <Edit size={24} />
             </Pressable>
           </View>
@@ -318,20 +219,20 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
             <View style={{ marginTop: vs(32), gap: s(24) }}>
               <InputOutline
                 placeholder="Plot / unit / Building"
-                value={formik.values.plot}
-                onChangeText={formik.handleChange('plot')}
+                value={formik.values.plotBuilding}
+                onChangeText={formik.handleChange('plotBuilding')}
               />
 
               <InputOutline
                 placeholder="Street / Area / Sector / Village"
-                value={formik.values.street}
-                onChangeText={formik.handleChange('street')}
+                value={formik.values.streetArea}
+                onChangeText={formik.handleChange('streetArea')}
               />
 
               <InputOutline
                 placeholder="Alternative Phone Number"
-                value={formik.values.phone}
-                onChangeText={formik.handleChange('phone')}
+                value={formik.values.contactMobile}
+                onChangeText={formik.handleChange('contactMobile')}
                 keyboardType="phone-pad"
                 characterCount={10}
               />
@@ -340,32 +241,18 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
 
               {/* ✅ BOOKMARK UI */}
               <View style={styles.bookmarkContainer}>
-                {bookmarkData.map((item, index) => {
-                  const isSelected =
-                    selectedBookmark === item.bookmark && !isCustomBookmark;
-                  if (isCustomBookmark && item.bookmark.trim() === '+Add New') {
-                    return;
-                  }
+                {addressTag?.data?.map((item: any, index: number) => {
                   return (
                     <Pressable
                       key={index}
-                      onPress={() => {
-                        if (item.bookmark.trim() === '+Add New') {
-                          setIsCustomBookmark(true);
-                          setSelectedBookmark('');
-                        } else {
-                          setIsCustomBookmark(false);
-                          setSelectedBookmark(item.bookmark);
-                          formik.setFieldValue('bookmark', item.bookmark);
-                        }
-                      }}
+                      onPress={() => formik.setFieldValue('tag', item?.Tag)}
                       style={[
                         styles.gridButtonContainer,
                         {
-                          borderColor: isSelected
+                          borderColor: formik?.values?.tag===item?.Tag
                             ? COLORS.primary[500]
                             : '#ccc',
-                          backgroundColor: isSelected ? '#E8F5E9' : 'white',
+                          backgroundColor: formik?.values?.tag===item?.Tag ? '#E8F5E9' : 'white',
                         },
                       ]}
                     >
@@ -373,26 +260,51 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
                         style={[
                           styles.gridLabel,
                           {
-                            color: isSelected ? COLORS.primary[500] : '#333',
+                            color: formik?.values?.tag===item?.Tag ? COLORS.primary[500] : '#333',
                             width: '100%',
                             textAlign: 'center',
                           },
                         ]}
+                        numberOfLines={1}
                       >
-                        {item.bookmark}
+                        {item.Tag}
                       </Text>
                     </Pressable>
                   );
                 })}
-                {isCustomBookmark && (
+                 
+                {!isCustomBookmark ? <Pressable
+                      
+                      onPress={() => {formik.setFieldValue('tag', "");setIsCustomBookmark(true)}}
+                      style={[
+                        styles.gridButtonContainer,
+                        {
+                          borderColor:'#ccc',
+                          backgroundColor: 'white',
+                        },
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.gridLabel,
+                          {
+                            color: '#333',
+                            width: '100%',
+                            textAlign: 'center',
+                          },
+                        ]}
+                        numberOfLines={1}
+
+                      >
+                        + Add New
+                      </Text>
+                    </Pressable>: (
                   <View style={styles.customeBookmarkFieldContiner}>
                     <TextInput
                       placeholder="Enter custom label (e.g. Shop, Office 2)"
-                      value={customBookmark}
+                      value={formik?.values?.tag}
                       onChangeText={text => {
-                        setCustomBookmark(text);
-                        setSelectedBookmark(text);
-                        formik.setFieldValue('bookmark', text);
+                        formik.setFieldValue('tag', text);
                       }}
                       style={styles.bookmarkField}
                     />
@@ -400,9 +312,7 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
                     <Pressable
                       onPress={() => {
                         setIsCustomBookmark(false);
-                        setCustomBookmark('');
-                        setSelectedBookmark('');
-                        formik.setFieldValue('bookmark', '');
+                        formik.setFieldValue('tag', '');
                       }}
                     >
                       <Text style={styles.closeButton}>✕</Text>

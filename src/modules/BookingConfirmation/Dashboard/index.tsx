@@ -12,17 +12,17 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { RootState } from '@store/rootReducer';
 import { useDispatch, useSelector } from 'react-redux';
 
-import DropModal from './components/DropModal';
-import PickupModal from './components/PickupModal';
 import { navigate } from '@navigation/NavigationService';
 import { setWeight } from '@store/slices/Booking/bookingSlice';
-import { COLORS, FONT_FAMILIES, ms} from '@theme/index';
+import { COLORS, FONT_FAMILIES, ms } from '@theme/index';
 import { ArrowRight } from 'lucide-react-native';
 import { styles } from './Dashboard.style';
+import DropModal from './components/DropModal';
 import MapComponent from './components/MapComponent';
+import PickupModal from './components/PickupModal';
 
 const DashboardScreen = () => {
-  const { booking } = useSelector((state: RootState) => state.booking);
+  const { pickup ,delivery,weight} = useSelector((state: RootState) => state.booking);
   const dispatch = useDispatch();
   const [pickupModalVisible, setPickupModalVisible] = useState(false);
   const [dropModalVisible, setDropModalVisible] = useState(false);
@@ -39,7 +39,7 @@ const DashboardScreen = () => {
               onPress={() => setPickupModalVisible(true)}
               iconColor="#4CAF50"
               editable={false}
-              value={booking?.pickup?.fullAddress}
+              value={pickup?.fullAddress}
               iconType="location"
             />
             {/* <Bell size={30} /> */}
@@ -49,13 +49,13 @@ const DashboardScreen = () => {
             <SearchField
               placeholder="Delivery Address"
               onPress={() => {
-                booking?.pickup?.name
+               pickup?.name
                   ? setDropModalVisible(true)
                   : Alert.alert('Select pickup first');
               }}
               iconColor="#FF0A0A"
               editable={false}
-              value={booking?.delivery?.fullAddress}
+              value={delivery?.fullAddress}
               iconType="location"
             />
             {/* <View style={styles.emptyBox} /> */}
@@ -65,10 +65,10 @@ const DashboardScreen = () => {
             <TextInput
               placeholder="eg. 1000"
               style={styles.weight_input}
-              value={booking?.vehicle?.approximateWeightKg}
+              value={weight?.toString()}
               keyboardType="number-pad"
               onChangeText={i =>
-                dispatch(setWeight({ approximateWeightKg: i }))
+                dispatch(setWeight({ weight: i }))
               }
             />
 
@@ -78,9 +78,9 @@ const DashboardScreen = () => {
             style={{ flexDirection: 'row', alignSelf: 'flex-end' }}
             onPress={() => {
               if (
-                booking?.pickup &&
-                booking?.delivery &&
-                booking?.vehicle?.approximateWeightKg
+                pickup &&
+                delivery &&
+                weight
               ) {
                 navigate('SelectVehicleScreen');
               } else {

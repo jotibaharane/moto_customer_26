@@ -1,9 +1,9 @@
 export type SendOtpRequest = {
-  mobile_number: string;
+  mobile: string;
 };
 
 export type ValidateOtpRequest = {
-  mobile_number: string;
+  mobile: string;
   otp: string;
 };
 
@@ -28,12 +28,12 @@ export type ValidateOtpResponse = {
 };
 
 export type OnboardingRequest = {
-  full_name: string;
-  mobile_number: string;
-  email: string;
-  customer_type: 'individual' | 'organization';
-  organization_name?: string;
-  organization_type?: string;
+    mobile: string,
+  fullName: string,
+  email: string,
+  customerType: string,
+  organizationName: string,
+  organizationType: string
 };
 
 export type OnboardingResponse = {
@@ -218,3 +218,35 @@ export interface MakePaymentResponse {
   message: string;
   data: PaymentTransactionData;
 }
+
+
+
+
+
+export interface CreateLoadRequest {
+  customerId: string;
+  pickup: LoadLocation;
+  delivery: LoadLocation;
+  vehicleType: string;
+  weight: number;
+}
+
+export interface LoadLocation {
+  mapboxId?: string;
+  name?: string;
+  fullAddress: string;
+  latitude: number;
+  longitude: number;
+  plotBuilding: string;
+  streetArea: string;
+  contactName?: string;
+  contactMobile?: string;
+  tag?: LocationTag|string;
+}
+
+export type LocationTag =
+  | 'HOME'
+  | 'OFFICE'
+  | 'WAREHOUSE'
+  | 'OTHER';
+

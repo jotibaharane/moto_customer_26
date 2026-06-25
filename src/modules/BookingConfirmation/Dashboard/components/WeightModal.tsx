@@ -21,19 +21,19 @@ const WeightModal: React.FC<WeightModalProps> = ({
   modalVisible,
   setModalVisible,
 }) => {
-  const { approximateWeightKg } = useSelector(
-    (state: RootState) => state?.booking?.booking?.vehicle,
+  const { weight:approximateWeightKg } = useSelector(
+    (state: RootState) => state?.booking
   );
   const [weight, setWeightValue] = useState('');
   const dispatch = useDispatch();
   const handleSubmit = () => {
-    dispatch(setWeight({ approximateWeightKg: weight }));
+    dispatch(setWeight({ weight: weight }));
     setModalVisible(false);
     navigate('SelectVehicleScreen');
   };
 
   useEffect(() => {
-    setWeightValue(approximateWeightKg);
+    setWeightValue(approximateWeightKg?.toString());
   }, []);
   return (
     <Modal animationType="fade" transparent visible={modalVisible}>

@@ -1,15 +1,27 @@
-import { CustomerDetails } from '@api/type';
+
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+
+interface CustomerDetails{
+    "userId": string,
+    "mobile": string,
+    "role": string,
+    "isProfileCompleted": boolean,
+    "accessToken": string,
+    "refreshToken": string
+    isMPINSet?:boolean
+  
+}
+
 
 // ✅ Initial state
 const initialState: CustomerDetails = {
-  ContactNo: '',
-  CustomerID: '',
-  CustomerType: '',
-  EmailID: '',
-  full_name: '',
-  Insert_Date: '',
-  MPIN_Flag: '',
+ accessToken:"",
+  isProfileCompleted:false,
+  mobile:"",
+  refreshToken:"",
+  role:"",
+  userId:""
 };
 
 const authSlice = createSlice({
@@ -17,11 +29,13 @@ const authSlice = createSlice({
   initialState,
 
   reducers: {
-    // 🔐 Login
-    signIn: (state, action: PayloadAction<CustomerDetails>) => {
-      return { ...initialState, ...action.payload };
+  signIn: (
+      state,
+      action: PayloadAction<CustomerDetails>
+    ) => {
+      return { ...action.payload };
     },
- 
+
     // 🚪 Logout
     signOut: state => {
       return initialState;

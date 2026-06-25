@@ -15,14 +15,9 @@ const MpinLogin = () => {
 
   const handleMpinLogin = async () => {
     try {
-      const resp = await mpinLogin({
-        ContactNo: customer?.ContactNo || '',
-        CustomerID: customer?.CustomerID || '',
-        Customer_MPIN: mpin,
-      }).unwrap();
-
-      if (resp?.status_code === '00') {
-        reset('BottomNavigation');
+      const resp = await mpinLogin({ mpin}).unwrap();
+      if (resp?.status === '00') {
+        reset('BottomNavigation', { screen: 'Home' });
       } else {
         Alert.alert('Login Failed', resp?.message || 'Invalid MPIN');
       }

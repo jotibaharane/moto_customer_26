@@ -7,6 +7,7 @@ import { Alert, Image, StatusBar, View } from 'react-native';
 import { styles } from './SignUp.style';
 
 import { useOnboardingMutation } from '@api/Mutations';
+import { OnboardingRequest } from '@api/type';
 import Dropdown from '@components/Dropdown';
 import { useRoute } from '@react-navigation/native';
 import { signIn } from '@store/slices/Auth/authSlice';
@@ -23,13 +24,13 @@ const SignUpScreen = () => {
     try {
       const payload = {
         ...values,
-        organization_name:
-          values.customer_type === 'organization'
-            ? values.organization_name
+        organizationName:
+          values.customerType === 'organization'
+            ? values.organizationName
             : undefined,
-        organization_type:
-          values.customer_type === 'organization'
-            ? values.organization_type
+        organizationType:
+          values.customerType === 'organization'
+            ? values.organizationType
             : undefined,
       };
       const response = await signUp(payload).unwrap();
@@ -37,7 +38,7 @@ const SignUpScreen = () => {
         Alert.alert('Error', response?.message || 'Sign up failed');
         return;
       }
-      dispatch(signIn(response?.Customer_Details as any));
+      dispatch(signIn(response?.data as any));
     } catch (error) {
       console.error('Sign Up Error:', error);
     }
@@ -50,14 +51,14 @@ const SignUpScreen = () => {
         barStyle="light-content"
       />
 
-      <Formik
+      <Formik<OnboardingRequest>
         initialValues={{
-          full_name: '',
-          ContactNo: route.params?.mobile || '',
+          fullName: '',
+          mobile: route.params?.mobile || '',
           email: '',
-          customer_type: 'individual',
-          organization_name: '',
-          organization_type: '',
+          customerType: 'individual',
+          organizationName: '',
+          organizationType: '',
         }}
         validationSchema={SignUpSchema}
         onSubmit={handleSubmit}
@@ -93,17 +94,17 @@ const SignUpScreen = () => {
                 {/* Full Name */}
                 <InputOutline
                   placeholder="Full Name"
-                  value={values.full_name}
-                  onChangeText={handleChange('full_name')}
-                  error={errors?.full_name}
+                  value={values.fullName}
+                  onChangeText={handleChange('fullName')}
+                  error={errors?.fullName}
                 />
 
                 {/* Mobile */}
                 <InputOutline
                   placeholder="Mobile Number"
-                  value={values.ContactNo}
+                  value={values.mobile}
                   keyboardType="numeric"
-                  onChangeText={handleChange('ContactNo')}
+                  onChangeText={handleChange('mobile')}
                   editable={false}
                 />
 
@@ -116,23 +117,23 @@ const SignUpScreen = () => {
                 />
 
                 {/* Toggle */}
-                {values.customer_type !== 'individual' && (
+                {values.customerType !== 'individual' && (
                   <>
                     <InputOutline
                       placeholder="Organization Name"
-                      value={values.organization_name}
-                      onChangeText={handleChange('organization_name')}
-                      error={errors?.organization_name}
+                      value={values.organizationName}
+                      onChangeText={handleChange('organizationName')}
+                      error={errors?.organizationName}
                     />
 
                     <Dropdown
                       label="Organization Type"
                       data={companyTypedata}
                       onChange={value =>
-                        setFieldValue('organization_type', value)
+                        setFieldValue('organizationType', value)
                       }
-                      value={values.organization_type}
-                      error={errors?.organization_type}
+                      value={values.organizationType}
+                      error={errors?.organizationType}
                     />
                   </>
                 )}
@@ -141,22 +142,22 @@ const SignUpScreen = () => {
                     title="Individual"
                     style={styles.flexBtn}
                     variant={
-                      values.customer_type === 'individual'
+                      values.customerType === 'individual'
                         ? 'filled'
                         : 'outline'
                     }
-                    onPress={() => setFieldValue('customer_type', 'individual')}
+                    onPress={() => setFieldValue('customerType', 'individual')}
                   />
                   <CustomButton
                     title="Organization"
                     variant={
-                      values.customer_type !== 'individual'
+                      values.customerType !== 'individual'
                         ? 'filled'
                         : 'outline'
                     }
                     style={styles.flexBtn}
                     onPress={() =>
-                      setFieldValue('customer_type', 'organization')
+                      setFieldValue('customerType', 'organization')
                     }
                   />
                 </View>

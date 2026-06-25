@@ -2,14 +2,16 @@ import RBSheet from '@components/BottomUpModal';
 import CustomButton from '@components/Button';
 import { InputOutline } from '@components/Input';
 import SearchField from '@components/SearchField';
-import { COLORS, FONT_FAMILIES, ms, s, vs} from '@theme/index';
+import { COLORS, FONT_FAMILIES, ms, s, vs } from '@theme/index';
 import { Edit, MapPin, Timer } from 'lucide-react-native';
-import React, { memo, useEffect, useRef } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { useLocation } from '@hooks/useLocation';
+import { useGetSearchLocationQuery } from '@api/query';
+import { LoadLocation } from '@api/type';
+import { useCurrentLocation } from '@hooks/useCurrentLocation';
 import { RootState } from '@store/rootReducer';
-import { setBookingDetails } from '@store/slices/Booking/bookingSlice';
+import { setDelivery } from '@store/slices/Booking/bookingSlice';
 import { useFormik } from 'formik';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,55 +22,30 @@ interface Props {
   setModalVisible?: (open: boolean) => void;
 }
 
-const DropModal: React.FC<Props> = ({ onOpen, open, setModalVisible }) => {
+const DropModal: React.FC<Props> = ({ onOpen, open }) => {
+  const currentLocation=useCurrentLocation();
   const refScrollable = useRef<any>(null);
+  const [search,setSearch]=useState('');
+  const {data:locationData}=useGetSearchLocationQuery({search:search,latitude:currentLocation?.lat,longitude:currentLocation?.lng});
   const dispatch = useDispatch();
+  const [openGoogleAddress, setOpenGoogleAddress] = useState(false);
+  const {delivery} = useSelector((state: RootState) => state.booking);
 
-  const booking = useSelector((state: RootState) => state.booking.booking);
-  const savedDrop: any = booking?.delivery;
-
-  /* 🔥 LOCATION HOOK */
-  const {
-    search,
-    setSearch,
-    results,
-    recent,
-    selected,
-    setSelected,
-    handleSelect,
-    clearHistory,
-  } = useLocation();
-
+  
   /* 🔥 FORM */
-  const formik = useFormik({
+  const formik = useFormik<LoadLocation>({
     enableReinitialize: true,
-    initialValues: {
-      id: savedDrop?.id || '',
-      consigneeName: savedDrop?.consigneeName || '',
-      contactNumber: savedDrop?.contactNumber || '',
-      plotOrBuilding: savedDrop?.plotOrBuilding || '',
-      streetArea: savedDrop?.streetArea || '',
-      googleAddress: savedDrop?.googleAddress || '',
-      city: savedDrop?.city || '',
-      district: savedDrop?.district || '',
-      taluka: savedDrop?.taluka || '',
-      state: savedDrop?.state || '',
-      pincode: savedDrop?.pincode || '',
+    initialValues: delivery||{
+      fullAddress:"",
+      latitude:  0,
+      longitude:  0,
+      plotBuilding:  '',
+      streetArea: '',
+      contactName: '',
+      contactMobile: '',
     },
     onSubmit: values => {
-      const finalData = {
-        ...selected,
-        ...values,
-      };
-
-      /* ✅ SAVE REDUX */
-      dispatch(
-        setBookingDetails({
-          ...booking,
-          delivery: finalData,
-        }),
-      );
-      // setModalVisible?.(true);
+      dispatch(setDelivery({delivery:values}));
       onOpen?.(false);
     },
   });
@@ -79,12 +56,7 @@ const DropModal: React.FC<Props> = ({ onOpen, open, setModalVisible }) => {
     else refScrollable?.current?.close();
   }, [open]);
 
-  useEffect(() => {
-    if (open) {
-      setSearch('');
-    }
-  }, [open]);
-  const dataToShow = search ? results : recent;
+ 
 
   return (
     <RBSheet
@@ -104,7 +76,7 @@ const DropModal: React.FC<Props> = ({ onOpen, open, setModalVisible }) => {
       onOpen={() => onOpen?.(true)}
       onClose={() => onOpen?.(false)}
     >
-      {!selected ? (
+      {!formik?.values?.fullAddress||openGoogleAddress ? (
         /* 🔍 SEARCH SCREEN */
         <View style={styles.gridContainer}>
           <SearchField
@@ -116,29 +88,26 @@ const DropModal: React.FC<Props> = ({ onOpen, open, setModalVisible }) => {
             containerStyle={{ borderWidth: 1 }}
           />
 
-          {!search && recent.length > 0 && (
-            <Text
-              onPress={clearHistory}
-              style={{ color: COLORS.primary[500], marginTop: 10 }}
-            >
-              Clear History
-            </Text>
-          )}
+         
 
           <FlatList
-            data={dataToShow}
+            data={locationData?.data}
             keyExtractor={(item, index) => item?.mapboxId || index.toString()}
             renderItem={({ item }) => (
               <Pressable
-                onPress={() => handleSelect(item)}
+                onPress={() => {
+                    formik?.setFieldValue("name",item.name)
+                    formik?.setFieldValue("fullAddress",item.fullAddress)
+                    setOpenGoogleAddress(false)
+                  }}
                 style={styles.listItem}
               >
                 {search ? <MapPin size={20} /> : <Timer size={20} />}
 
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.title}>{item.name || item.city}</Text>
+                  <Text style={styles.title}>{item.name }</Text>
                   <Text style={styles.subtitle}>
-                    {item.fullAddress || item.googleAddress}
+                    {item.fullAddress}
                   </Text>
                 </View>
               </Pressable>
@@ -152,11 +121,11 @@ const DropModal: React.FC<Props> = ({ onOpen, open, setModalVisible }) => {
             <MapPin size={32} fill={'#FF0A0A'} />
 
             <View style={{ flex: 1 }}>
-              <Text style={styles.title}>{selected?.name}</Text>
-              <Text style={styles.subtitle}>{selected?.googleAddress}</Text>
+              <Text style={styles.title}>{formik.values.name}</Text>
+              <Text style={styles.subtitle}>{formik.values.fullAddress}</Text>
             </View>
 
-            <Pressable onPress={() => setSelected(null)}>
+            <Pressable onPress={() => setOpenGoogleAddress(true)}>
               <Edit size={24} />
             </Pressable>
           </View>
@@ -166,8 +135,8 @@ const DropModal: React.FC<Props> = ({ onOpen, open, setModalVisible }) => {
             <View style={{ marginTop: 32, gap: 24 }}>
               <InputOutline
                 placeholder="Plot / unit / Building"
-                value={formik.values.plotOrBuilding}
-                onChangeText={formik.handleChange('plotOrBuilding')}
+                value={formik.values.plotBuilding}
+                onChangeText={formik.handleChange('plotBuilding')}
               />
 
               <InputOutline
@@ -178,14 +147,14 @@ const DropModal: React.FC<Props> = ({ onOpen, open, setModalVisible }) => {
 
               <InputOutline
                 placeholder="Receiver Name"
-                value={formik.values.consigneeName}
-                onChangeText={formik.handleChange('consigneeName')}
+                value={formik.values.contactName}
+                onChangeText={formik.handleChange('contactName')}
               />
 
               <InputOutline
                 placeholder="Receiver Phone Number"
-                value={formik.values.contactNumber}
-                onChangeText={formik.handleChange('contactNumber')}
+                value={formik.values.contactMobile}
+                onChangeText={formik.handleChange('contactMobile')}
                 keyboardType="phone-pad"
                 characterCount={10}
               />

@@ -1,26 +1,21 @@
 import { baseApi } from './baseApi';
 import {
   DriverPhotosResponse,
-  MakePaymentResponse,
   OnboardingRequest,
   OnboardingResponse,
-  PaymentResponse,
-  PaymentTransaction,
   PickupAddress,
   PincodeDataRequest,
   PincodeDataResponse,
   SendOtpRequest,
-  SendOtpResponse,
   ValidateOtpRequest,
-  ValidateOtpResponse,
-  VerifyPaymentPayload,
+  ValidateOtpResponse
 } from './type';
 
 export const authApi = baseApi.injectEndpoints({
   endpoints: builder => ({
-    sendOtp: builder.mutation<SendOtpResponse, SendOtpRequest>({
+     sendOtp: builder.mutation<any, SendOtpRequest>({
       query: body => ({
-        url: '/Customer_SendOtp',
+        url: '/auth/send-otp',
         method: 'POST',
         body,
       }),
@@ -28,7 +23,7 @@ export const authApi = baseApi.injectEndpoints({
 
     validateOtp: builder.mutation<ValidateOtpResponse, ValidateOtpRequest>({
       query: body => ({
-        url: '/Customer_ValidateOtp',
+        url: '/auth/verify-otp',
         method: 'POST',
         body,
       }),
@@ -36,7 +31,28 @@ export const authApi = baseApi.injectEndpoints({
 
     onboarding: builder.mutation<OnboardingResponse, OnboardingRequest>({
       query: body => ({
-        url: '/Customer_Onboarding',
+        url: '/auth/customer/register',
+        method: 'POST',
+        body,
+      }),
+    }),
+
+
+     setMpin: builder.mutation<any, any>({
+      query: body => ({
+        url: '/mpin/create-mpin',
+        method: 'POST',
+        body,
+      }),
+    }),
+       mpinLogin: builder.mutation<
+      any,
+      {
+        mpin: string;
+      }
+    >({
+      query: body => ({
+        url: '/mpin/login-mpin',
         method: 'POST',
         body,
       }),
@@ -48,30 +64,8 @@ export const authApi = baseApi.injectEndpoints({
         body,
       }),
     }),
-    setMpin: builder.mutation<any, any>({
-      query: body => ({
-        url: '/Customer_Set_Mpin',
-        method: 'POST',
-        body,
-      }),
-    }),
-    mpinLogin: builder.mutation<
-      {
-        status_code: string;
-        message: string;
-      },
-      {
-        CustomerID: string;
-        ContactNo: string;
-        Customer_MPIN: string;
-      }
-    >({
-      query: body => ({
-        url: '/Customer_Login_Mpin',
-        method: 'POST',
-        body,
-      }),
-    }),
+   
+ 
     createLoadPost: builder.mutation<any, any>({
       query: body => ({
         url: '/Insert_customer_load_post',

@@ -1,21 +1,15 @@
 import CustomButton from '@components/Button';
 import { useDistance } from '@hooks/useDistance';
 import { navigate } from '@navigation/NavigationService';
-import { emitCustomerLocation } from '@socket/socket.emitters';
 import { RootState } from '@store/rootReducer';
-import {
-  setBookingVehicle,
-  setSelectedVehicle,
-} from '@store/slices/Booking/bookingSlice';
 import { MapPin } from 'lucide-react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Alert,
   FlatList,
-  Image,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import DropModal from '../Dashboard/components/DropModal';
@@ -25,31 +19,27 @@ import { styles } from './SelectVehicle.styles';
 
 const SelectVehicleScreen = () => {
   const dispatch = useDispatch();
-  const { avilableVehicles } = useSelector((state: RootState) => state.booking);
   const [modalVisible, setModalVisible] = useState(false);
   const [pickupModalVisible, setPickupModalVisible] = useState(false);
   const [dropModalVisible, setDropModalVisible] = useState(false);
-  const { booking } = useSelector((state: RootState) => state.booking);
-  const { CustomerID } = useSelector((state: RootState) => state.auth);
+  const {  pickup, delivery, vehicleType,weight} = useSelector((state: RootState) => state.booking);
   const { distance, loading } = useDistance(
-    booking?.pickup?.coordinates,
-    booking?.delivery?.coordinates,
+    {lat:pickup?.latitude,lng:pickup?.longitude},
+    {lat:delivery?.latitude,lng:delivery?.longitude},
   );
 
-  useEffect(() => {
-    if (!booking?.pickup || !booking?.vehicle?.approximateWeightKg) return;
-    emitCustomerLocation(
-      booking?.pickup?.coordinates?.lat!,
-      booking?.pickup?.coordinates?.lng!,
-      booking?.vehicle?.approximateWeightKg ?? 0,
-      CustomerID,
-    );
-  }, [booking?.pickup, booking.vehicle?.approximateWeightKg]);
+  // useEffect(() => {
+  //   if (!pickup || !vehicle?.approximateWeightKg) return;
+  //   emitCustomerLocation(
+  //     pickup?.coordinates?.lat!,
+  //     pickup?.coordinates?.lng!,
+  //     vehicle?.approximateWeightKg ?? 0,
+  //     CustomerID,
+  //   );
+  // }, [pickup, weight]);
   const isFormValid =
-    booking?.pickup &&
-    booking?.delivery &&
-    booking?.vehicle?.vehicleNo &&
-    booking?.vehicle?.approximateWeightKg;
+    pickup &&
+    delivery &&weight
   return (
     <View style={styles.container}>
       {/* Pickup */}
@@ -62,7 +52,7 @@ const SelectVehicleScreen = () => {
           <View>
             <Text style={styles.label}>Pick up Address</Text>
             <Text style={styles.subText}>
-              {booking?.pickup?.name || 'Select Pickup Address'}
+              {pickup?.name || 'Select Pickup Address'}
             </Text>
           </View>
         </TouchableOpacity>
@@ -83,7 +73,7 @@ const SelectVehicleScreen = () => {
           <View>
             <Text style={styles.label}>Delivery Address</Text>
             <Text style={styles.subText}>
-              {booking?.delivery?.name || 'Select Drop Address'}
+              {delivery?.name || 'Select Drop Address'}
             </Text>
           </View>
         </TouchableOpacity>
@@ -95,14 +85,14 @@ const SelectVehicleScreen = () => {
         onPress={() => setModalVisible(true)}
       >
         <Text style={styles.weightText}>
-          Approx Weight - {booking?.vehicle?.approximateWeightKg || 0} KG
+          Approx Weight - {weight|| 0} KG
         </Text>
       </TouchableOpacity>
 
       {/* Vehicle List */}
       <FlatList
-        data={avilableVehicles}
-        keyExtractor={(item, index) => item?.DriverID + index}
+        data={[]}
+        
         ListEmptyComponent={() => (
           <View style={styles.emptyContainer}>
             <View style={styles.emptyCard}>
@@ -114,30 +104,28 @@ const SelectVehicleScreen = () => {
           </View>
         )}
         renderItem={({ item }) => {
-          const isSelected =
-            booking?.vehicle?.vehicleNo === item?.registration_no;
+          const isSelected =false
 
           return (
             <TouchableOpacity
               style={[styles.card, isSelected && styles.selectedCard]}
               onPress={() => {
-                dispatch(setSelectedVehicle(item));
-                dispatch(setBookingVehicle(item));
+              
               }}
             >
               <TouchableOpacity
                 onPress={() => navigate('VehicleDhalaSizeScreen', { item })}
               >
-                <Image source={{ uri: item?.Img }} style={styles.image} />
+                {/* <Image source={{ uri: item?.Img }} style={styles.image} /> */}
               </TouchableOpacity>
 
-              <View style={styles.cardContent}>
+              {/* <View style={styles.cardContent}>
                 <Text style={styles.vehicleName}>{item?.VehicleName}</Text>
                 <Text style={styles.vehicleDetails}>
                   {item?.WeightRange} , {item?.expectedVehicleAvailability} min
                   {'\n'} Freight - {item?.freight_amount} ₹
                 </Text>
-              </View>
+              </View> */}
             </TouchableOpacity>
           );
         }}

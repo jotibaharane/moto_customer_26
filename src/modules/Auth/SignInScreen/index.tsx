@@ -1,7 +1,7 @@
 import { useSendOtpMutation, useValidateOtpMutation } from '@api/Mutations';
 import CustomButton from '@components/Button';
 import { OtpInput } from '@components/OtpInput';
-import { navigate } from '@navigation/NavigationService';
+import { reset } from '@navigation/NavigationService';
 import { signIn } from '@store/slices/Auth/authSlice';
 import { COLORS } from '@theme/index';
 import { OTP_TIME } from '@utils/constants';
@@ -53,7 +53,7 @@ const SignInScreen = () => {
     }
 
     try {
-      await sendOtp({ mobile_number: mobileNumber }).unwrap();
+      await sendOtp({ mobile: mobileNumber }).unwrap();
 
       setIsOtpSent(true);
       startTimer();
@@ -70,28 +70,23 @@ const SignInScreen = () => {
 
     try {
       const resp = await validateOtp({
-        mobile_number: mobileNumber,
+        mobile: mobileNumber,
         otp,
       }).unwrap();
-
-      if (resp.status !== '00') {
-        Alert.alert(resp?.message);
-        return;
-      }
-
-      if (!resp.Customer_Details) {
-        navigate('SignUp', {
+      
+      if (resp?.status === '01') {
+       
+        reset('SignUp', {
           mobile: mobileNumber,
         });
         return;
       }
-
-      dispatch(signIn(resp.Customer_Details));
+      dispatch(signIn(resp?.data));
+     
     } catch (error) {
       console.log('OTP verify error:', error);
     }
   };
-
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Hi, Welcome To{'\n'}Motohelp</Text>

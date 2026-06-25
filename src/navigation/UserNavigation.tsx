@@ -1,11 +1,5 @@
-import React, { memo,  useMemo } from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useSelector, shallowEqual } from 'react-redux';
-import { RootState } from '@store/rootReducer';
-import { COLORS } from '@theme/index';
 import BackButton from '@components/NavigationComponents/BackButton';
 import HeaderTitle from '@components/NavigationComponents/HeaderTitle';
-import BottomNavigation from './BottomNavigation';
 import ReviewBookingScreen from '@modules/BookingConfirmation/ReviewBookingScreen';
 import SelectVehicleScreen from '@modules/BookingConfirmation/SelectVehicleScreen';
 import VehicleDhalaSizeScreen from '@modules/BookingConfirmation/VehicleDhalaSizeScreen';
@@ -13,19 +7,25 @@ import LiveTrackingScreen from '@modules/LiveTracking/LiveTrackingScreen';
 import MpinLogin from '@modules/Mpin/MpinLogin';
 import SetMPINScreen from '@modules/Mpin/SetMPIN';
 import FrightPayment from '@modules/Payment';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { RootState } from '@store/rootReducer';
+import { COLORS } from '@theme/index';
+import React, { memo, useMemo } from 'react';
+import { shallowEqual, useSelector } from 'react-redux';
+import BottomNavigation from './BottomNavigation';
 
 const Stack = createNativeStackNavigator();
 
 const UserNavigation = () => {
  
   const MPIN_Flag = useSelector(
-    (state: RootState) => state.auth.MPIN_Flag,
+    (state: RootState) => state.auth.isMPINSet,
     shallowEqual,
   );
 
 
   const initialRouteName = useMemo(() => {
-    return MPIN_Flag === 'Y' ? 'MpinLogin' : 'SetMPIN';
+    return MPIN_Flag ? 'MpinLogin' : 'SetMPIN';
   }, [MPIN_Flag]);
 
 

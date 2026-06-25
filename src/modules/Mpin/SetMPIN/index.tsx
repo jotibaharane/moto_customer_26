@@ -1,16 +1,14 @@
 import { useSetMpinMutation } from '@api/Mutations';
 import CustomButton from '@components/Button';
-import NumberPad from '@components/NumberPad';
 import { OtpInput } from '@components/OtpInput';
 import { navigate, reset } from '@navigation/NavigationService';
 import { RootState } from '@store/rootReducer';
 import { signIn } from '@store/slices/Auth/authSlice';
-import { COLORS, FONT_FAMILIES } from '@theme/index';
 import React, { useState } from 'react';
 import { Alert, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { styles } from './SetMpin.style';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 const SetMPINScreen = () => {
   const dispatch = useDispatch();
@@ -49,15 +47,12 @@ const SetMPINScreen = () => {
 
     try {
       const resp = await setMpin({
-        CustomerID: customer?.CustomerID || '',
-        ContactNo: customer?.ContactNo || '',
-        Customer_MPIN: pin,
+        mpin: pin,
       }).unwrap();
 
-      if (resp?.status_code === '00') {
-        dispatch(signIn({ ...customer, MPIN_Flag: 'Y' } as any));
-
-        reset('BottomNavigation');
+       if (resp?.Status === '00') {
+        reset('BottomNavigation', { Screen: 'home' });
+        dispatch(signIn({ ...customer, isMPINSet: true }));
       } else {
         Alert.alert('Error', resp?.status_desc || 'Failed to set MPIN');
       }

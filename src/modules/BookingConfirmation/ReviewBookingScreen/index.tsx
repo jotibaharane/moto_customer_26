@@ -2,7 +2,7 @@ import CustomButton from '@components/Button';
 import OverlayLoader from '@components/OverlayLoader';
 import CustomerSocket from '@socket/CustomerSocket';
 import { RootState } from '@store/rootReducer';
-import { s, vs, } from '@theme/index';
+import { s, vs } from '@theme/index';
 import { MapPin } from 'lucide-react-native';
 import React from 'react';
 import { Image, ScrollView, Text, View } from 'react-native';
@@ -11,57 +11,56 @@ import { styles } from './ReviewBooking.style';
 
 const ReviewBookingScreen = () => {
   const [watingDriver, setWaitingDriver] = React.useState(false);
-   
+  const { userId } = useSelector((state: RootState) => state.auth);
+  const {
+    customerId,
+    delivery,
+    pickup,
+    vehicleType,
+    weight,
+    vehicleImage,
+    distance,
+    expectedVehicleAvailability,
+    freightAmount,
+    selectedDriverId,
+    driverMobile,
+    driverName,
+    vehicleNumber,
+    weightRange,
+  } = useSelector((state: RootState) => state.booking);
 
-  const { customerId,delivery,pickup,vehicleType,weight,vehicleImage,distance,expectedVehicleAvailability,freightAmount,selectedDriverId,driverMobile,driverName,vehicleNumber,weightRange} = useSelector(
-    (state: RootState) => state.booking,
-  );
+  const handleBook = async () => {
+    try {
+      setWaitingDriver(true);
 
-
-  
-
-
-
-const handleBook = async () => {
-  try {
-    setWaitingDriver(true);
-
-    CustomerSocket.sendLoadOffer({
-      driverId: selectedDriverId,
-      loadId: `LOAD-${Date.now()}`,
-      customerId,
-      pickup,
-      delivery,
-      vehicleType,
-      weight,
-      fare: freightAmount,
-      distance: distance ?? 0,
-      eta: expectedVehicleAvailability,
-      driverName,
-      driverMobile,
-      vehicleNumber,
-      vehicleImage,
-      weightRange,
-    });
-
-  } catch (error) {
-    console.log(error);
-    setWaitingDriver(false);
-  }
-};
+      CustomerSocket.sendLoadOffer({
+        driverId: selectedDriverId,
+        customerId: userId,
+        pickup,
+        delivery,
+        vehicleType,
+        weight,
+        fare: freightAmount,
+        distance: distance ?? 0,
+        eta: expectedVehicleAvailability,
+        driverName,
+        driverMobile,
+        vehicleNumber,
+        vehicleImage,
+        weightRange,
+      });
+    } catch (error) {
+      console.log(error);
+      setWaitingDriver(false);
+    }
+  };
   return (
     <View style={styles.container}>
       <ScrollView style={{ flex: 1 }}>
         <View style={styles.vehicleCard}>
-          <Image
-            source={{ uri: vehicleImage}}
-            height={150}
-            width={150}
-          />
+          <Image source={{ uri: vehicleImage }} height={150} width={150} />
           <View style={styles.vehicleDetails}>
-            <Text style={styles.vehicleTitle}>
-              {vehicleNumber}
-            </Text>
+            <Text style={styles.vehicleTitle}>{vehicleNumber}</Text>
             {/* <Text style={styles.vehicleInfo}>
               Loading Capacity - {bookingVehicle?.unladen_weight}kg{'\n\n'}
               Length -{bookingVehicle?.length}ft{'\n\n'}
@@ -72,9 +71,7 @@ const handleBook = async () => {
         </View>
         <View style={styles.cardRow}>
           <Text style={styles.cardText}>Total Weight</Text>
-          <Text style={styles.cardText}>
-            {weight} KG
-          </Text>
+          <Text style={styles.cardText}>{weight} KG</Text>
         </View>
         <View style={styles.cardRow}>
           <Text style={styles.cardText}>Total Freight</Text>
@@ -85,35 +82,27 @@ const handleBook = async () => {
             <MapPin size={30} fill={'#4CAF50'} />
             <View>
               <Text style={styles.addressTitle}>Pick up Address</Text>
-              <Text style={styles.addressSubtitle}>
-                {pickup?.name}
-              </Text>
+              <Text style={styles.addressSubtitle}>{pickup?.name}</Text>
             </View>
           </View>
           <View style={styles.divider}>
-            <Text style={styles.distanceText}>
-             {distance|| 0} km
-            </Text>
+            <Text style={styles.distanceText}>{distance || 0} km</Text>
           </View>
           <View style={styles.row}>
             <MapPin size={30} fill={'#FF0A0A'} />
             <View>
               <Text style={styles.addressTitle}>Delivery Address</Text>
-              <Text style={styles.addressSubtitle}>
-                {delivery?.name}
-              </Text>
+              <Text style={styles.addressSubtitle}>{delivery?.name}</Text>
             </View>
           </View>
         </View>
         <Text style={styles.etaText}>
-          Expated Arrival Time -{' '}
-          {expectedVehicleAvailability}
+          Expated Arrival Time - {expectedVehicleAvailability}
         </Text>
         <OverlayLoader
           visible={watingDriver}
-         
           onClose={() => {
-            setWaitingDriver(false); 
+            setWaitingDriver(false);
           }}
         />
         <CustomButton
@@ -125,7 +114,6 @@ const handleBook = async () => {
             paddingHorizontal: s(40),
           }}
           onPress={handleBook}
-          
         />
       </ScrollView>
     </View>

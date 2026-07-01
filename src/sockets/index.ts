@@ -1,5 +1,5 @@
-export * from './socket.emitters';
-export * from './socket.events';
-export * from './socket.listeners';
-export * from './socket.manager';
-export * from './socket.service';
+export { default as SocketService } from './SocketService';
+
+export * from './SocketEvents';
+
+export * from './SocketTypes';

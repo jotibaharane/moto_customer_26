@@ -2,7 +2,13 @@ import { CreateLoadRequest } from '@api/type';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: CreateLoadRequest = {
-  customerId: '',
+   customerId: '',
+   selectedDriverId: '',
+   freightAmount: 0,
+   expectedVehicleAvailability: '',
+   distance: 0,
+   vehicleImage: '',
+  vehicleNumber: '',
   pickup: {
     name: '',
     fullAddress: '',
@@ -53,7 +59,40 @@ const bookingSlice = createSlice({
     ) => {
       state.weight = Number(action.payload.weight);
     },
+setSelectedDriver: (
+  state,
+  action: PayloadAction<{
+    driverId: string;
+    vehicleType: string;
+    freightAmount: number;
+    expectedVehicleAvailability: string;
+    vehicleImage: string;
+    vehicleNumber: string;
+    distance:any
+  }>
+) => {
 
+  state.selectedDriverId = action.payload.driverId;
+
+  state.vehicleType = action.payload.vehicleType;
+
+  state.freightAmount = action.payload.freightAmount;
+
+  state.expectedVehicleAvailability =
+    action.payload.expectedVehicleAvailability;
+
+  state.vehicleImage = action.payload.vehicleImage;
+
+  state.vehicleNumber = action.payload.vehicleNumber;
+  state.distance=action.payload.distance
+},setDistance: (
+  state,
+  action: PayloadAction<number>,
+) => {
+
+  state.distance = action.payload;
+
+},
     resetBooking: () => initialState,
   },
 });
@@ -63,6 +102,8 @@ export const {
   setDelivery,
   setWeight,
   resetBooking,
+  setDistance,
+  setSelectedDriver
 } = bookingSlice.actions;
 
 export default bookingSlice.reducer;

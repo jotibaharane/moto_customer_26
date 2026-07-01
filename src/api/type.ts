@@ -223,14 +223,39 @@ export interface MakePaymentResponse {
 
 
 
+// export interface CreateLoadRequest {
+//   customerId: string;
+//   pickup: LoadLocation;
+//   delivery: LoadLocation;
+//   vehicleType: string;
+//   weight: number;
+// }
+
+
 export interface CreateLoadRequest {
   customerId: string;
+
+  // Selected Driver
+  selectedDriverId: string;
+  driverName?: string;
+  driverMobile?: string;
+
+  // Vehicle
+  vehicleType: string;
+  vehicleNumber?: string;
+  vehicleImage?: string;
+  weight: number;
+  weightRange?: string;
+
+  // Freight
+  freightAmount: number;
+  distance: number;
+  expectedVehicleAvailability: string;
+
+  // Locations
   pickup: LoadLocation;
   delivery: LoadLocation;
-  vehicleType: string;
-  weight: number;
 }
-
 export interface LoadLocation {
   mapboxId?: string;
   name?: string;

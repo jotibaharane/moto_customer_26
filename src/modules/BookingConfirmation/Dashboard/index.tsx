@@ -77,15 +77,16 @@ const DashboardScreen = () => {
           <TouchableOpacity
             style={{ flexDirection: 'row', alignSelf: 'flex-end' }}
             onPress={() => {
-              if (
-                pickup &&
-                delivery &&
-                weight
-              ) {
-                navigate('SelectVehicleScreen');
-              } else {
-                Alert.alert('Pickup,Drop and weight required');
-              }
+              navigate('SelectVehicleScreen');
+              // if (
+              //   pickup &&
+              //   delivery &&
+              //   weight
+              // ) {
+              //   navigate('SelectVehicleScreen');
+              // } else {
+              //   Alert.alert('Pickup,Drop and weight required');
+              // }
             }}
           >
             <Text

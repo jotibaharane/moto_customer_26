@@ -23,7 +23,7 @@ export const baseApi = createApi({
   reducerPath: 'baseApi',
 
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://10.193.77.184:5000/api/v1',
+    baseUrl: 'https://stag.motohelpindia.com/api/v1',
 
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.accessToken;

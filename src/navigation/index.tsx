@@ -4,18 +4,44 @@ import {
   useReduxDevToolsExtension,
 } from '@react-navigation/devtools';
 import { NavigationContainer } from '@react-navigation/native';
-import { RootState } from '@store/rootReducer';
-import React, { memo, useEffect, useMemo, useState } from 'react';
-import { StatusBar, useColorScheme } from 'react-native';
-import { shallowEqual, useSelector } from 'react-redux';
-import AuthNavigation from './AuthNavigation';
+
+import AuthNavigation from '@navigation/AuthNavigation';
+import UserNavigation from '@navigation/UserNavigation';
 import { navigationRef } from './NavigationService';
-import UserNavigation from './UserNavigation';
+
+import { RootState } from '@store/rootReducer';
+
+import React, {
+  memo,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+
+import {
+  StatusBar,
+  useColorScheme,
+} from 'react-native';
+
+import CustomerSocketListener from '@socket/CustomerSocketListener';
+import SocketService from '@socket/SocketService';
+import { setConnected } from '@store/slices/customerSocket/customerSocketSlice';
+import {
+  shallowEqual,
+  useDispatch,
+  useSelector,
+} from 'react-redux';
 
 const RootNavigator = () => {
-  // ONLY REQUIRED VALUE
+  const dispatch = useDispatch();
+
   const CustomerID = useSelector(
     (state: RootState) => state.auth.userId,
+    shallowEqual,
+  );
+
+  const {accessToken} = useSelector(
+    (state: RootState) => state.auth,
     shallowEqual,
   );
 
@@ -24,29 +50,24 @@ const RootNavigator = () => {
   const isDarkMode = useColorScheme() === 'dark';
 
   useLogger(navigationRef);
-
   useReduxDevToolsExtension(navigationRef);
 
-  // MEMOIZE STATUSBAR STYLE
   const barStyle = useMemo(
     () => (isDarkMode ? 'light-content' : 'dark-content'),
     [isDarkMode],
   );
 
+  /**
+   * Splash Screen
+   */
   useEffect(() => {
     let mounted = true;
 
     const initApp = async () => {
-      try {
-        // SPLASH DELAY
-        await new Promise((resolve: any) => setTimeout(resolve, 2000));
+      await new Promise((resolve:any) => setTimeout(resolve, 2000));
 
-      
-        if (mounted) {
-          setLoading(false);
-        }
-      } catch (error) {
-        console.log('Init error:', error);
+      if (mounted) {
+        setLoading(false);
       }
     };
 
@@ -55,11 +76,44 @@ const RootNavigator = () => {
     return () => {
       mounted = false;
     };
-  }, [CustomerID]);
+  }, []);
 
-  // PREVENT UNNECESSARY RERENDER
+  /**
+   * Socket Connection
+   */
+  useEffect(() => {
+    if (!CustomerID || !accessToken) {
+      SocketService.disconnect();
+      dispatch(setConnected(false));
+      return;
+    }
+
+    console.log('Connecting Socket...');
+
+    SocketService.connect(accessToken);
+
+    CustomerSocketListener.initialize(dispatch);
+
+    return () => {
+      console.log('Disconnecting Socket...');
+
+      CustomerSocketListener.destroy();
+
+      SocketService.disconnect();
+
+      dispatch(setConnected(false));
+    };
+  }, [CustomerID, accessToken, dispatch]);
+
+  /**
+   * Navigation
+   */
   const Navigation = useMemo(() => {
-    return CustomerID ? <UserNavigation /> : <AuthNavigation />;
+    return CustomerID ? (
+      <UserNavigation />
+    ) : (
+      <AuthNavigation />
+    );
   }, [CustomerID]);
 
   if (loading) {

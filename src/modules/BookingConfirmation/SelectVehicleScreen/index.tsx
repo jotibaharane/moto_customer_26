@@ -1,12 +1,14 @@
 import CustomButton from '@components/Button';
 import { useDistance } from '@hooks/useDistance';
 import { navigate } from '@navigation/NavigationService';
+import CustomerSocket from '@socket/CustomerSocket';
 import { RootState } from '@store/rootReducer';
+import { setSelectedDriver } from '@store/slices/Booking/bookingSlice';
 import { MapPin } from 'lucide-react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  Alert,
   FlatList,
+  Image,
   Text,
   TouchableOpacity,
   View
@@ -27,16 +29,83 @@ const SelectVehicleScreen = () => {
     {lat:pickup?.latitude,lng:pickup?.longitude},
     {lat:delivery?.latitude,lng:delivery?.longitude},
   );
+  const [drivers, setDrivers] = useState<any[]>([]);
+  const [loadingDrivers, setLoadingDrivers] = useState(false);
 
-  // useEffect(() => {
-  //   if (!pickup || !vehicle?.approximateWeightKg) return;
-  //   emitCustomerLocation(
-  //     pickup?.coordinates?.lat!,
-  //     pickup?.coordinates?.lng!,
-  //     vehicle?.approximateWeightKg ?? 0,
-  //     CustomerID,
-  //   );
-  // }, [pickup, weight]);
+useEffect(() => {
+  if (!pickup?.latitude || !pickup?.longitude) {
+    return;
+  }
+
+  const fetchDrivers = async () => {
+    try {
+      setLoadingDrivers(true);
+      const response = await CustomerSocket.watchDrivers(
+        pickup.latitude,
+        pickup.longitude,
+        5,
+      );
+      setDrivers(response);
+      console.log('Drivers', response);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoadingDrivers(false);
+    }
+  };
+
+  fetchDrivers();
+}, [pickup?.latitude, pickup?.longitude]);
+
+
+
+useEffect(() => {
+  const handleDriverOnline = (driver: any) => {
+    setDrivers(prev => {
+      const exists = prev.some(
+        x => x.driverId === driver.driverId,
+      );
+      if (exists) {
+        return prev;
+      }
+      return [...prev, driver];
+    });
+
+  };
+
+  const handleDriverLocation = (driver: any) => {
+    console.log("LOCATION", driver);
+    setDrivers(prev =>
+      prev.map(item =>
+        item.driverId === driver.driverId
+          ? {
+              ...item,
+              ...driver,
+            }
+          : item,
+      ),
+    );
+
+  };
+
+  const handleDriverOffline = (driver: any) => {
+    console.log("OFFLINE", driver);
+    setDrivers(prev =>
+      prev.filter(
+        item => item.driverId !== driver.driverId,
+      ),
+    );
+  };
+  CustomerSocket.onDriverOnline(handleDriverOnline);
+  CustomerSocket.onDriverLocation(handleDriverLocation);
+  CustomerSocket.onDriverOffline(handleDriverOffline);
+  return () => {
+    CustomerSocket.removeDriverOnline(handleDriverOnline);
+    CustomerSocket.removeDriverLocation(handleDriverLocation);
+    CustomerSocket.removeDriverOffline(handleDriverOffline);
+  };
+}, []);
+console.log({drivers,pickup})
   const isFormValid =
     pickup &&
     delivery &&weight
@@ -91,7 +160,7 @@ const SelectVehicleScreen = () => {
 
       {/* Vehicle List */}
       <FlatList
-        data={[]}
+        data={drivers||[]}
         
         ListEmptyComponent={() => (
           <View style={styles.emptyContainer}>
@@ -109,23 +178,35 @@ const SelectVehicleScreen = () => {
           return (
             <TouchableOpacity
               style={[styles.card, isSelected && styles.selectedCard]}
-              onPress={() => {
-              
-              }}
+             onPress={() => {
+                        dispatch(
+                          setSelectedDriver({
+                            driverId: item.driverId,
+                            vehicleType: item.vehicleType,
+                            vehicleNumber: item.vehicleNumber,
+                            vehicleImage: item.vehicleImage,
+
+                            freightAmount: item.freightAmount,
+                            expectedVehicleAvailability:
+                              item.expectedVehicleAvailability,
+                            distance: item.distance,
+                          }),
+                        );
+                      }}
             >
               <TouchableOpacity
                 onPress={() => navigate('VehicleDhalaSizeScreen', { item })}
               >
-                {/* <Image source={{ uri: item?.Img }} style={styles.image} /> */}
+                <Image source={{ uri: item?.vehicleImage }} style={styles.image} />
               </TouchableOpacity>
 
-              {/* <View style={styles.cardContent}>
-                <Text style={styles.vehicleName}>{item?.VehicleName}</Text>
+              <View style={styles.cardContent}>
+                <Text style={styles.vehicleName}>{item?.vehicleType}</Text>
                 <Text style={styles.vehicleDetails}>
-                  {item?.WeightRange} , {item?.expectedVehicleAvailability} min
-                  {'\n'} Freight - {item?.freight_amount} ₹
+                  {item?.weightRange} , {item?.expectedVehicleAvailability}
+                  {'\n'} Freight - {item?.freightAmount} ₹
                 </Text>
-              </View> */}
+              </View>
             </TouchableOpacity>
           );
         }}
@@ -137,11 +218,11 @@ const SelectVehicleScreen = () => {
         variant="filled"
         style={styles.button}
         onPress={() => {
-          navigate('VehicleDhalaSizeScreen', { item: {} });
-          if (!isFormValid) {
-            Alert.alert('All Fields Mandetory');
-            return;
-          }
+          // navigate('VehicleDhalaSizeScreen', { item: {} });
+          // if (!isFormValid) {
+          //   Alert.alert('All Fields Mandetory');
+          //   return;
+          // }
           navigate('ReviewBookingScreen');
         }}
       />

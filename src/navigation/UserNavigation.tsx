@@ -6,7 +6,6 @@ import VehicleDhalaSizeScreen from '@modules/BookingConfirmation/VehicleDhalaSiz
 import LiveTrackingScreen from '@modules/LiveTracking/LiveTrackingScreen';
 import MpinLogin from '@modules/Mpin/MpinLogin';
 import SetMPINScreen from '@modules/Mpin/SetMPIN';
-import FrightPayment from '@modules/Payment';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootState } from '@store/rootReducer';
 import { COLORS } from '@theme/index';
@@ -79,13 +78,13 @@ const UserNavigation = () => {
           }}
         />
 
-        <Stack.Screen
+        {/* <Stack.Screen
           name="FrightPayment"
           component={FrightPayment}
           options={{
             headerTitle: () => <HeaderTitle title="Fright Payment" />,
           }}
-        />
+        /> */}
 
         <Stack.Screen
           name="SelectVehicleScreen"

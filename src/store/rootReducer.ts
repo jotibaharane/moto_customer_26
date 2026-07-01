@@ -1,12 +1,13 @@
 import { baseApi } from '@api/baseApi';
+import { paymentApi } from '@api/paymentApi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { combineReducers } from '@reduxjs/toolkit';
 import { persistReducer } from 'redux-persist';
 import authReducer from './slices/Auth/authSlice';
 import bookingSlice from './slices/Booking/bookingSlice';
+import customerSocketReducer from './slices/customerSocket/customerSocketSlice';
 import mapSlice from './slices/map/mapSlice';
-import paymentSlice from "./slices/payment/paymentSlice"
-import { paymentApi } from '@api/paymentApi';
+import paymentSlice from "./slices/payment/paymentSlice";
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   payment: paymentSlice,
   booking: bookingSlice,
   map: mapSlice,
+   customerSocket: customerSocketReducer,
   [baseApi.reducerPath]: baseApi.reducer,
   [paymentApi.reducerPath]: paymentApi.reducer,
 });

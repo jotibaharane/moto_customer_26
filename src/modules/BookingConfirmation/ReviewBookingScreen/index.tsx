@@ -1,124 +1,84 @@
-import {
-  useCreateLoadPostMutation,
-  useUpdateLoadPostMutation,
-} from '@api/Mutations';
 import CustomButton from '@components/Button';
 import OverlayLoader from '@components/OverlayLoader';
-import { useDistance } from '@hooks/useDistance';
-import { goBack, navigate } from '@navigation/NavigationService';
-import { emitCreateCustomerLoad } from '@socket/socket.emitters';
+import CustomerSocket from '@socket/CustomerSocket';
 import { RootState } from '@store/rootReducer';
-import {
-  resetBooking,
-  setDriverStates,
-  setLoadPost,
-} from '@store/slices/Booking/bookingSlice';
-import {  s, vs, } from '@theme/index';
-import {
-  transformBookingPayload,
-  transformSocketLocation,
-} from '@utils/transform.utils';
+import { s, vs, } from '@theme/index';
 import { MapPin } from 'lucide-react-native';
-import React, { useEffect } from 'react';
-import { Alert, Image, ScrollView, Text, View } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
+import { Image, ScrollView, Text, View } from 'react-native';
+import { useSelector } from 'react-redux';
 import { styles } from './ReviewBooking.style';
 
 const ReviewBookingScreen = () => {
   const [watingDriver, setWaitingDriver] = React.useState(false);
-  const dispatch = useDispatch();
-  const { booking, bookingVehicle, isConfirmed, DriverID } = useSelector(
+   
+
+  const { customerId,delivery,pickup,vehicleType,weight,vehicleImage,distance,expectedVehicleAvailability,freightAmount,selectedDriverId,driverMobile,driverName,vehicleNumber,weightRange} = useSelector(
     (state: RootState) => state.booking,
   );
-  const customerId = useSelector((state: RootState) => state?.auth?.CustomerID);
 
-  const [createLoadPost, { isLoading }] = useCreateLoadPostMutation();
-  const [updateLoadPost, { isLoading: updateLoading }] =
-    useUpdateLoadPostMutation();
-  const { distance, loading } = useDistance(
-    booking?.pickup?.coordinates,
-    booking?.delivery?.coordinates,
-  );
 
-  useEffect(() => {
-    if (isConfirmed?.loadstatus === 'accepted') {
-      navigate('BottomNavigation', {
-        screen: 'New Load',
-      });
-      dispatch(resetBooking());
-      setWaitingDriver(false);
-    } else if (isConfirmed?.loadstatus === 'rejected') {
-      setWaitingDriver(false);
-      dispatch(setDriverStates({ ...isConfirmed, loadstatus: 'waiting' }));
-      goBack();
-    }
-  }, [isConfirmed?.loadstatus]);
+  
 
 
 
-  const handleBook = async () => {
-    try {
-      const payload = transformBookingPayload(booking, customerId);
-      const resp =
-        booking?.LoadPost_ID !== ''
-          ? await updateLoadPost({
-              ...payload,
-              LoadPost_ID: booking?.LoadPost_ID,
-            }).unwrap()
-          : await createLoadPost(payload).unwrap();
+const handleBook = async () => {
+  try {
+    setWaitingDriver(true);
 
-      if (resp.status === '00') {
-        dispatch(
-          setLoadPost({
-            LoadPost_ID: resp?.data?.LoadPostID || booking?.LoadPost_ID,
-          }),
-        );
-        const socketPayload = transformSocketLocation(
-          booking,
-          resp?.data?.LoadPostID || booking?.LoadPost_ID,
-          distance,
-          DriverID,
-          customerId,
-        );
-        emitCreateCustomerLoad(socketPayload);
-        setWaitingDriver(true);
-      } else {
-        Alert.alert(resp?.message);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    CustomerSocket.sendLoadOffer({
+      driverId: selectedDriverId,
+      loadId: `LOAD-${Date.now()}`,
+      customerId,
+      pickup,
+      delivery,
+      vehicleType,
+      weight,
+      fare: freightAmount,
+      distance: distance ?? 0,
+      eta: expectedVehicleAvailability,
+      driverName,
+      driverMobile,
+      vehicleNumber,
+      vehicleImage,
+      weightRange,
+    });
+
+  } catch (error) {
+    console.log(error);
+    setWaitingDriver(false);
+  }
+};
   return (
     <View style={styles.container}>
       <ScrollView style={{ flex: 1 }}>
         <View style={styles.vehicleCard}>
           <Image
-            source={{ uri: bookingVehicle?.Img }}
+            source={{ uri: vehicleImage}}
             height={150}
             width={150}
           />
           <View style={styles.vehicleDetails}>
             <Text style={styles.vehicleTitle}>
-              {bookingVehicle?.VehicleName}
+              {vehicleNumber}
             </Text>
-            <Text style={styles.vehicleInfo}>
+            {/* <Text style={styles.vehicleInfo}>
               Loading Capacity - {bookingVehicle?.unladen_weight}kg{'\n\n'}
               Length -{bookingVehicle?.length}ft{'\n\n'}
               width - {bookingVehicle?.width} ft{'\n\n'}
               Height - {bookingVehicle?.height} ft
-            </Text>
+            </Text> */}
           </View>
         </View>
         <View style={styles.cardRow}>
           <Text style={styles.cardText}>Total Weight</Text>
           <Text style={styles.cardText}>
-            {bookingVehicle?.vehicle_gross_weight} KG
+            {weight} KG
           </Text>
         </View>
         <View style={styles.cardRow}>
           <Text style={styles.cardText}>Total Freight</Text>
-          <Text style={styles.cardText}>{booking?.load?.freight_amount} ₹</Text>
+          <Text style={styles.cardText}>{freightAmount} ₹</Text>
         </View>
         <View style={styles?.addressContainer}>
           <View style={styles.row}>
@@ -126,13 +86,13 @@ const ReviewBookingScreen = () => {
             <View>
               <Text style={styles.addressTitle}>Pick up Address</Text>
               <Text style={styles.addressSubtitle}>
-                {booking?.pickup?.name}
+                {pickup?.name}
               </Text>
             </View>
           </View>
           <View style={styles.divider}>
             <Text style={styles.distanceText}>
-              {loading ? 'Calculating...' : `${distance?.distanceKm || 0} km`}
+             {distance|| 0} km
             </Text>
           </View>
           <View style={styles.row}>
@@ -140,16 +100,14 @@ const ReviewBookingScreen = () => {
             <View>
               <Text style={styles.addressTitle}>Delivery Address</Text>
               <Text style={styles.addressSubtitle}>
-                {booking?.delivery?.name}
+                {delivery?.name}
               </Text>
             </View>
           </View>
         </View>
         <Text style={styles.etaText}>
           Expated Arrival Time -{' '}
-          {Math.round(distance?.durationMin! / 60) > 0 &&
-            `${Math.round(distance?.durationMin! / 60)} hr`}{' '}
-          {`${distance?.durationMin! % 60} min`}
+          {expectedVehicleAvailability}
         </Text>
         <OverlayLoader
           visible={watingDriver}
@@ -167,7 +125,7 @@ const ReviewBookingScreen = () => {
             paddingHorizontal: s(40),
           }}
           onPress={handleBook}
-          loading={isLoading || updateLoading}
+          
         />
       </ScrollView>
     </View>

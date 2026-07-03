@@ -11,26 +11,14 @@ import { navigationRef } from './NavigationService';
 
 import { RootState } from '@store/rootReducer';
 
-import React, {
-  memo,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import React, { memo, useEffect, useMemo, useState } from 'react';
 
-import {
-  StatusBar,
-  useColorScheme,
-} from 'react-native';
+import { StatusBar, useColorScheme } from 'react-native';
 
 import CustomerSocketListener from '@socket/CustomerSocketListener';
 import SocketService from '@socket/SocketService';
 import { setConnected } from '@store/slices/customerSocket/customerSocketSlice';
-import {
-  shallowEqual,
-  useDispatch,
-  useSelector,
-} from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
 const RootNavigator = () => {
   const dispatch = useDispatch();
@@ -40,7 +28,7 @@ const RootNavigator = () => {
     shallowEqual,
   );
 
-  const {accessToken} = useSelector(
+  const { accessToken } = useSelector(
     (state: RootState) => state.auth,
     shallowEqual,
   );
@@ -64,7 +52,7 @@ const RootNavigator = () => {
     let mounted = true;
 
     const initApp = async () => {
-      await new Promise((resolve:any) => setTimeout(resolve, 2000));
+      await new Promise((resolve: any) => setTimeout(resolve, 2000));
 
       if (mounted) {
         setLoading(false);
@@ -87,20 +75,12 @@ const RootNavigator = () => {
       dispatch(setConnected(false));
       return;
     }
-
-    console.log('Connecting Socket...');
-
     SocketService.connect(accessToken);
-
     CustomerSocketListener.initialize(dispatch);
-
     return () => {
       console.log('Disconnecting Socket...');
-
       CustomerSocketListener.destroy();
-
       SocketService.disconnect();
-
       dispatch(setConnected(false));
     };
   }, [CustomerID, accessToken, dispatch]);
@@ -109,11 +89,7 @@ const RootNavigator = () => {
    * Navigation
    */
   const Navigation = useMemo(() => {
-    return CustomerID ? (
-      <UserNavigation />
-    ) : (
-      <AuthNavigation />
-    );
+    return CustomerID ? <UserNavigation /> : <AuthNavigation />;
   }, [CustomerID]);
 
   if (loading) {

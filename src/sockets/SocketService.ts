@@ -8,17 +8,21 @@ class SocketService {
       return this.socket;
     }
 
-    this.socket = io('http://192.168.1.111:5005', {
-      transports: ['websocket'],
-      auth: {
-        token,
+    this.socket = io(
+      // 'http://192.168.1.111:5005',
+      'https://stag.motohelpindia.com',
+      {
+        transports: ['websocket'],
+        auth: {
+          token,
+        },
+        reconnection: true,
+        reconnectionAttempts: Infinity,
+        reconnectionDelay: 1000,
+        timeout: 20000,
+        forceNew: true,
       },
-      reconnection: true,
-      reconnectionAttempts: Infinity,
-      reconnectionDelay: 1000,
-      timeout: 20000,
-      forceNew: true,
-    });
+    );
 
     return this.socket;
   }

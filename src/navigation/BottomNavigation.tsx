@@ -1,14 +1,13 @@
-
 import MyTabBar from '@components/NavigationComponents/CustomBottomTab';
 import DashboardScreen from '@modules/BookingConfirmation/Dashboard';
 import Profile from '@modules/Profile';
+import ReportingScreen from '@modules/ReportingAndLoading/Reporting';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { memo } from 'react';
 
 const Tab = createBottomTabNavigator();
 
 function BottomNavigation() {
-  
   return (
     <Tab.Navigator tabBar={props => <MyTabBar {...props} />}>
       <Tab.Screen
@@ -16,13 +15,13 @@ function BottomNavigation() {
         options={{ headerShown: false }}
         component={DashboardScreen}
       />
-      <Tab.Screen name="OPS" component={()=><></>} />
-      {/* <Tab.Screen
+      <Tab.Screen name="OPS" component={() => <></>} />
+      <Tab.Screen
         name="New Load"
         options={{ headerShown: false }}
         component={ReportingScreen}
-      /> */}
-      <Tab.Screen name="History" component={()=><></>} />
+      />
+      <Tab.Screen name="History" component={() => <></>} />
       <Tab.Screen
         name="Profile"
         options={{ headerShown: false }}

@@ -1,3 +1,5 @@
+import { navigate } from '@navigation/NavigationService';
+import { resetBooking } from '@store/slices/Booking/bookingSlice';
 import {
   clearActiveTrip,
   setActiveTrip,
@@ -10,18 +12,24 @@ import SocketService from './SocketService';
 
 class CustomerSocketListener {
   initialize(dispatch: any) {
+    console.log('========== INITIALIZE ==========');
+
     const socket = SocketService.getSocket();
 
     if (!socket) {
+      console.log('Socket is NULL');
       return;
     }
 
+    socket.onAny((event, ...args) => {
+      console.log(`🟢 Socket Event: ${event}`, ...args);
+    });
     /**
      * Connected
      */
     socket.on(SOCKET_EVENTS.CONNECT, () => {
       console.log('🟢 Socket Connected');
-
+      console.log('Socket ID:', socket.id);
       dispatch(setConnected(true));
     });
 
@@ -101,7 +109,13 @@ class CustomerSocketListener {
       SOCKET_EVENTS.LOAD_ACCEPTED,
 
       load => {
+        console.log('LOAD_ACCEPTED =', { load });
+        dispatch(resetBooking());
         dispatch(setActiveTrip(load));
+        navigate('BottomNavigation', {
+          screen: 'New Load',
+          params: { load },
+        });
       },
     );
 
@@ -109,16 +123,13 @@ class CustomerSocketListener {
       SOCKET_EVENTS.LOAD_REJECTED,
 
       load => {
-        console.log(load);
+        console.log('LOAD_REJECTED =', { load });
       },
     );
-    socket.on(
-      SOCKET_EVENTS.OFFER_EXPIRED,
-
-      load => {
-        console.log(load);
-      },
-    );
+    socket.on(SOCKET_EVENTS.OFFER_EXPIRED, load => {
+      navigate('SelectVehicleScreen');
+      console.log(load);
+    });
 
     /**
      * Trip Completed

@@ -1,8 +1,5 @@
 // ReportingScreen.tsx
 
-import { useGetLoadPostsQuery } from '@api/Mutations';
-
-import { emitJoinRoom } from '@socket/socket.emitters';
 import { RootState } from '@store/rootReducer';
 import { COLORS } from '@theme/index';
 import { handleCall } from '@utils/helperfunctions.utils';
@@ -18,40 +15,20 @@ import { navigate } from '@navigation/NavigationService';
 import MapComponent from './components/MapComponent';
 
 const ReportingScreen = () => {
-  const {  CustomerID } = useSelector((state: RootState) => state.auth);
-   const { status ,tracking} = useSelector((state: RootState) => state.map);
-  const { PaymentStatus,BalanceAmount } = useSelector((state: RootState) => state.payment);
-  const { driverMobile, loadId } =tracking ||{}
-
-
-
-  const { data } = useGetLoadPostsQuery(
-    { CustomerID: CustomerID! },
-    { skip: !CustomerID },
+  const { status, tracking } = useSelector((state: RootState) => state.map);
+  const { PaymentStatus, BalanceAmount } = useSelector(
+    (state: RootState) => state.payment,
   );
-
-  const trips = data?.data ?? [];
-
-  // =========================
-  // SOCKET JOIN
-  // =========================
-
-  useEffect(() => {
-    if (trips?.length) {
-      emitJoinRoom(trips[0]?.LoadPostID);
-    }
-  }, [trips]);
+  const { driverMobile, loadId } = tracking || {};
 
   useEffect(() => {
     if (
       status === 'loaded' ||
-      (status === 'reached' && PaymentStatus !== 'FULL'&&BalanceAmount!==0)
+      (status === 'reached' && PaymentStatus !== 'FULL' && BalanceAmount !== 0)
     ) {
       navigate('FrightPayment');
-      
     }
   }, [status]);
-  
 
   return (
     <SafeAreaView style={styles.container}>
@@ -59,7 +36,7 @@ const ReportingScreen = () => {
       <Header />
 
       {/* MAP */}
-     <MapComponent />
+      <MapComponent />
       {/* ========================= */}
       {/* CALL BUTTON */}
       {/* ========================= */}

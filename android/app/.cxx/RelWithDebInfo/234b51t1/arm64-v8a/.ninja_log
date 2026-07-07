@@ -243,3 +243,5 @@
 89778	89822	1783081808655462505	/home/motohelp2/Desktop/jotiba/moto_customer_26/android/app/build/intermediates/cxx/RelWithDebInfo/234b51t1/obj/arm64-v8a/libreact_codegen_rnsvg.so	679dd6a6daf143
 7	93663	1783081812391567456	CMakeFiles/appmodules.dir/home/motohelp2/Desktop/jotiba/moto_customer_26/android/app/build/generated/autolinking/src/main/jni/autolinking.cpp.o	5bfd8ac387d5f830
 93663	93753	1783081812574572597	/home/motohelp2/Desktop/jotiba/moto_customer_26/android/app/build/intermediates/cxx/RelWithDebInfo/234b51t1/obj/arm64-v8a/libappmodules.so	8eb6b16e834688a0
+0	5	0	/home/motohelp2/Desktop/jotiba/moto_customer_26/android/app/.cxx/RelWithDebInfo/234b51t1/arm64-v8a/CMakeFiles/cmake.verify_globs	6f4e74939c882f83
+0	12	0	clean	cedd25176f63b035

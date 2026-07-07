@@ -23,29 +23,32 @@ interface Props {
 }
 
 const DropModal: React.FC<Props> = ({ onOpen, open }) => {
-  const currentLocation=useCurrentLocation();
+  const currentLocation = useCurrentLocation();
   const refScrollable = useRef<any>(null);
-  const [search,setSearch]=useState('');
-  const {data:locationData}=useGetSearchLocationQuery({search:search,latitude:currentLocation?.lat,longitude:currentLocation?.lng});
+  const [search, setSearch] = useState('');
+  const { data: locationData } = useGetSearchLocationQuery({
+    search: search,
+    latitude: currentLocation?.lat,
+    longitude: currentLocation?.lng,
+  });
   const dispatch = useDispatch();
   const [openGoogleAddress, setOpenGoogleAddress] = useState(false);
-  const {delivery} = useSelector((state: RootState) => state.booking);
+  const { delivery } = useSelector((state: RootState) => state.booking);
 
-  
   /* 🔥 FORM */
   const formik = useFormik<LoadLocation>({
     enableReinitialize: true,
-    initialValues: delivery||{
-      fullAddress:"",
-      latitude:  0,
-      longitude:  0,
-      plotBuilding:  '',
+    initialValues: delivery || {
+      fullAddress: '',
+      latitude: 0,
+      longitude: 0,
+      plotBuilding: '',
       streetArea: '',
       contactName: '',
       contactMobile: '',
     },
     onSubmit: values => {
-      dispatch(setDelivery({delivery:values}));
+      dispatch(setDelivery({ delivery: values }));
       onOpen?.(false);
     },
   });
@@ -55,8 +58,6 @@ const DropModal: React.FC<Props> = ({ onOpen, open }) => {
     if (open) refScrollable?.current?.open();
     else refScrollable?.current?.close();
   }, [open]);
-
- 
 
   return (
     <RBSheet
@@ -76,7 +77,7 @@ const DropModal: React.FC<Props> = ({ onOpen, open }) => {
       onOpen={() => onOpen?.(true)}
       onClose={() => onOpen?.(false)}
     >
-      {!formik?.values?.fullAddress||openGoogleAddress ? (
+      {!formik?.values?.fullAddress || openGoogleAddress ? (
         /* 🔍 SEARCH SCREEN */
         <View style={styles.gridContainer}>
           <SearchField
@@ -88,27 +89,25 @@ const DropModal: React.FC<Props> = ({ onOpen, open }) => {
             containerStyle={{ borderWidth: 1 }}
           />
 
-         
-
           <FlatList
             data={locationData?.data}
             keyExtractor={(item, index) => item?.mapboxId || index.toString()}
             renderItem={({ item }) => (
               <Pressable
                 onPress={() => {
-                    formik?.setFieldValue("name",item.name)
-                    formik?.setFieldValue("fullAddress",item.fullAddress)
-                    setOpenGoogleAddress(false)
-                  }}
+                  formik?.setFieldValue('name', item.name);
+                  formik?.setFieldValue('fullAddress', item.fullAddress);
+                  formik?.setFieldValue('latitude', item.latitude);
+                  formik?.setFieldValue('longitude', item.longitude);
+                  setOpenGoogleAddress(false);
+                }}
                 style={styles.listItem}
               >
                 {search ? <MapPin size={20} /> : <Timer size={20} />}
 
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.title}>{item.name }</Text>
-                  <Text style={styles.subtitle}>
-                    {item.fullAddress}
-                  </Text>
+                  <Text style={styles.title}>{item.name}</Text>
+                  <Text style={styles.subtitle}>{item.fullAddress}</Text>
                 </View>
               </Pressable>
             )}

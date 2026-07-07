@@ -18,7 +18,6 @@ class CustomerSocket {
         (response: any) => {
           if (!response) {
             reject();
-
             return;
           }
 

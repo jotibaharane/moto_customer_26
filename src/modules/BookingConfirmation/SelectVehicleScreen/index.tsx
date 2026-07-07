@@ -6,13 +6,7 @@ import { RootState } from '@store/rootReducer';
 import { setSelectedDriver } from '@store/slices/Booking/bookingSlice';
 import { MapPin } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
-import {
-  FlatList,
-  Image,
-  Text,
-  TouchableOpacity,
-  View
-} from 'react-native';
+import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import DropModal from '../Dashboard/components/DropModal';
 import PickupModal from '../Dashboard/components/PickupModal';
@@ -24,91 +18,85 @@ const SelectVehicleScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [pickupModalVisible, setPickupModalVisible] = useState(false);
   const [dropModalVisible, setDropModalVisible] = useState(false);
-  const {  pickup, delivery, vehicleType,weight} = useSelector((state: RootState) => state.booking);
+  const { pickup, delivery, vehicleType, weight } = useSelector(
+    (state: RootState) => state.booking,
+  );
   const { distance, loading } = useDistance(
-    {lat:pickup?.latitude,lng:pickup?.longitude},
-    {lat:delivery?.latitude,lng:delivery?.longitude},
+    { lat: pickup?.latitude, lng: pickup?.longitude },
+    { lat: delivery?.latitude, lng: delivery?.longitude },
   );
   const [drivers, setDrivers] = useState<any[]>([]);
   const [loadingDrivers, setLoadingDrivers] = useState(false);
 
-useEffect(() => {
-  if (!pickup?.latitude || !pickup?.longitude) {
-    return;
-  }
-
-  const fetchDrivers = async () => {
-    try {
-      setLoadingDrivers(true);
-      const response = await CustomerSocket.watchDrivers(
-        pickup.latitude,
-        pickup.longitude,
-        5,
-      );
-      setDrivers(response);
-      console.log('Drivers', response);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoadingDrivers(false);
+  console.log({ pickup, delivery });
+  useEffect(() => {
+    if (!pickup?.latitude || !pickup?.longitude) {
+      return;
     }
-  };
 
-  fetchDrivers();
-}, [pickup?.latitude, pickup?.longitude]);
+    const fetchDrivers = async () => {
+      try {
+        setLoadingDrivers(true);
 
-
-
-useEffect(() => {
-  const handleDriverOnline = (driver: any) => {
-    setDrivers(prev => {
-      const exists = prev.some(
-        x => x.driverId === driver.driverId,
-      );
-      if (exists) {
-        return prev;
+        const response = await CustomerSocket.watchDrivers(
+          pickup.latitude,
+          pickup.longitude,
+          5,
+        );
+        setDrivers(response);
+        console.log('Drivers', response);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoadingDrivers(false);
       }
-      return [...prev, driver];
-    });
+    };
 
-  };
+    fetchDrivers();
+  }, [pickup?.latitude, pickup?.longitude]);
 
-  const handleDriverLocation = (driver: any) => {
-    console.log("LOCATION", driver);
-    setDrivers(prev =>
-      prev.map(item =>
-        item.driverId === driver.driverId
-          ? {
-              ...item,
-              ...driver,
-            }
-          : item,
-      ),
-    );
+  useEffect(() => {
+    const handleDriverOnline = (driver: any) => {
+      setDrivers(prev => {
+        const exists = prev.some(x => x.driverId === driver.driverId);
+        if (exists) {
+          return prev;
+        }
+        return [...prev, driver];
+      });
+    };
 
-  };
+    const handleDriverLocation = (driver: any) => {
+      console.log('LOCATION', driver);
+      setDrivers(prev =>
+        prev.map(item =>
+          item.driverId === driver.driverId
+            ? {
+                ...item,
+                ...driver,
+              }
+            : item,
+        ),
+      );
+    };
 
-  const handleDriverOffline = (driver: any) => {
-    console.log("OFFLINE", driver);
-    setDrivers(prev =>
-      prev.filter(
-        item => item.driverId !== driver.driverId,
-      ),
-    );
-  };
-  CustomerSocket.onDriverOnline(handleDriverOnline);
-  CustomerSocket.onDriverLocation(handleDriverLocation);
-  CustomerSocket.onDriverOffline(handleDriverOffline);
-  return () => {
-    CustomerSocket.removeDriverOnline(handleDriverOnline);
-    CustomerSocket.removeDriverLocation(handleDriverLocation);
-    CustomerSocket.removeDriverOffline(handleDriverOffline);
-  };
-}, []);
-console.log({drivers,pickup})
-  const isFormValid =
-    pickup &&
-    delivery &&weight
+    const handleDriverOffline = (driver: any) => {
+      console.log('OFFLINE', driver);
+      setDrivers(prev =>
+        prev.filter(item => item.driverId !== driver.driverId),
+      );
+    };
+    CustomerSocket.onDriverOnline(handleDriverOnline);
+    CustomerSocket.onDriverLocation(handleDriverLocation);
+    CustomerSocket.onDriverOffline(handleDriverOffline);
+    return () => {
+      CustomerSocket.removeDriverOnline(handleDriverOnline);
+      CustomerSocket.removeDriverLocation(handleDriverLocation);
+      CustomerSocket.removeDriverOffline(handleDriverOffline);
+    };
+  }, []);
+  console.log({ drivers, pickup });
+  const isFormValid = pickup && delivery && weight;
   return (
     <View style={styles.container}>
       {/* Pickup */}
@@ -153,15 +141,12 @@ console.log({drivers,pickup})
         style={styles.weightBox}
         onPress={() => setModalVisible(true)}
       >
-        <Text style={styles.weightText}>
-          Approx Weight - {weight|| 0} KG
-        </Text>
+        <Text style={styles.weightText}>Approx Weight - {weight || 0} KG</Text>
       </TouchableOpacity>
 
       {/* Vehicle List */}
       <FlatList
-        data={drivers||[]}
-        
+        data={drivers || []}
         ListEmptyComponent={() => (
           <View style={styles.emptyContainer}>
             <View style={styles.emptyCard}>
@@ -173,31 +158,34 @@ console.log({drivers,pickup})
           </View>
         )}
         renderItem={({ item }) => {
-          const isSelected =false
+          const isSelected = false;
 
           return (
             <TouchableOpacity
               style={[styles.card, isSelected && styles.selectedCard]}
-             onPress={() => {
-                        dispatch(
-                          setSelectedDriver({
-                            driverId: item.driverId,
-                            vehicleType: item.vehicleType,
-                            vehicleNumber: item.vehicleNumber,
-                            vehicleImage: item.vehicleImage,
+              onPress={() => {
+                dispatch(
+                  setSelectedDriver({
+                    driverId: item.driverId,
+                    vehicleType: item.vehicleType,
+                    vehicleNumber: item.vehicleNumber,
+                    vehicleImage: item.vehicleImage,
 
-                            freightAmount: item.freightAmount,
-                            expectedVehicleAvailability:
-                              item.expectedVehicleAvailability,
-                            distance: item.distance,
-                          }),
-                        );
-                      }}
+                    freightAmount: item.freightAmount,
+                    expectedVehicleAvailability:
+                      item.expectedVehicleAvailability,
+                    distance: item.distance,
+                  }),
+                );
+              }}
             >
               <TouchableOpacity
                 onPress={() => navigate('VehicleDhalaSizeScreen', { item })}
               >
-                <Image source={{ uri: item?.vehicleImage }} style={styles.image} />
+                <Image
+                  source={{ uri: item?.vehicleImage }}
+                  style={styles.image}
+                />
               </TouchableOpacity>
 
               <View style={styles.cardContent}>

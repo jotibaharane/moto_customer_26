@@ -7,8 +7,11 @@ import { Bookmark, Edit, MapPin, Timer } from 'lucide-react-native';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
 
-
-import { useGetAddressLabelsQuery, useGetSavedLocationQuery, useGetSearchLocationQuery } from '@api/query';
+import {
+  useGetAddressLabelsQuery,
+  useGetSavedLocationQuery,
+  useGetSearchLocationQuery,
+} from '@api/query';
 import { LoadLocation } from '@api/type';
 import { useCurrentLocation } from '@hooks/useCurrentLocation';
 import { RootState } from '@store/rootReducer';
@@ -23,32 +26,37 @@ interface Props {
 }
 
 const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
-const {pickup}=useSelector((state:RootState)=>state?.booking)
+  const { pickup } = useSelector((state: RootState) => state?.booking);
   const dispatch = useDispatch();
-   /* ---------------- FORM ---------------- */
+  /* ---------------- FORM ---------------- */
   const formik = useFormik<LoadLocation>({
     enableReinitialize: true,
-    initialValues: pickup||{
-        plotBuilding:"",
-        streetArea:"",
-        contactMobile:"",
-        tag:"",
-        latitude:0,
-        longitude:0,
-        fullAddress:"",
+    initialValues: pickup || {
+      plotBuilding: '',
+      streetArea: '',
+      contactMobile: '',
+      tag: '',
+      latitude: 0,
+      longitude: 0,
+      fullAddress: '',
     },
     onSubmit: async values => {
-      dispatch(setPickup({pickup:values}));
+      dispatch(setPickup({ pickup: values }));
       onOpen?.(false);
     },
-    
   });
-  const currentLocation=useCurrentLocation();
+  const currentLocation = useCurrentLocation();
+
   const refScrollable = useRef<any>(null);
-  const [search,setSearch]=useState('');
-  const {data:locationData}=useGetSearchLocationQuery({search:search,latitude:currentLocation?.lat,longitude:currentLocation?.lng});
+  const [search, setSearch] = useState('');
+  const { data: locationData } = useGetSearchLocationQuery({
+    search: search,
+    latitude: currentLocation?.lat,
+    longitude: currentLocation?.lng,
+  });
+  console.log({ currentLocation, locationData });
   const { data: savedLocationData, refetch } = useGetSavedLocationQuery();
-  const {data:addressTag,refetch:refetchTags}=useGetAddressLabelsQuery()
+  const { data: addressTag, refetch: refetchTags } = useGetAddressLabelsQuery();
   const [isCustomBookmark, setIsCustomBookmark] = useState(false);
   const [openGoogleAddress, setOpenGoogleAddress] = useState(false);
   /* ---------------- MODAL OPEN CLOSE ---------------- */
@@ -56,7 +64,7 @@ const {pickup}=useSelector((state:RootState)=>state?.booking)
     if (open) {
       refScrollable?.current?.open();
       refetch();
-      refetchTags()
+      refetchTags();
     } else {
       refScrollable?.current?.close();
     }
@@ -82,8 +90,7 @@ const {pickup}=useSelector((state:RootState)=>state?.booking)
       onOpen={() => onOpen?.(true)}
       onClose={() => onOpen?.(false)}
     >
-     
-      {!formik?.values?.fullAddress||openGoogleAddress ? (
+      {!formik?.values?.fullAddress || openGoogleAddress ? (
         /* 🔍 SEARCH SCREEN */
         <View style={styles.gridContainer}>
           <SearchField
@@ -99,7 +106,7 @@ const {pickup}=useSelector((state:RootState)=>state?.booking)
           />
 
           <View style={{ height: 10 }} />
-         {/* {locationData?.data?.length > 0 &&  <FlatList
+          {/* {locationData?.data?.length > 0 &&  <FlatList
             data={locationData?.data||[]}
             keyExtractor={(item, index) => item?.mapboxId || index.toString()}
             renderItem={({ item }) => {
@@ -129,70 +136,79 @@ const {pickup}=useSelector((state:RootState)=>state?.booking)
             style={{ flex: 1 }}
             contentContainerStyle={{ paddingBottom: vs(100) }}
           />} */}
-          {savedLocationData?.data?.length > 0 &&locationData?.data?.length === 0 && (
-            <FlatList
-              data={savedLocationData?.data||[]}
-              keyExtractor={(item, index) => item?.mapboxId || index.toString()}
-              renderItem={({ item }) => {
+          {savedLocationData?.data?.length > 0 &&
+            locationData?.data?.length === 0 && (
+              <FlatList
+                data={savedLocationData?.data || []}
+                keyExtractor={(item, index) =>
+                  item?.mapboxId || index.toString()
+                }
+                renderItem={({ item }) => {
                   return (
                     <Pressable
-                    onPress={() => {
-                       formik?.setValues({
-                        name: item?.PlaceName,
-                        fullAddress: item?.FullAddress,
-                        latitude: item?.Latitude,
-                        longitude: item?.Longitude,
-                        plotBuilding: item?.PlotBuilding,
-                        streetArea: item?.StreetArea,
-                        contactMobile: item?.ContactMobile,
-                        tag: item?.Tag, 
-                       })
-                      setOpenGoogleAddress(false)
-                    }}
-                  >
-                    <View style={styles.bookmarkListContiner}>
-                      <Text style={styles.listLabel}>{item.Tag}</Text>
+                      onPress={() => {
+                        formik?.setValues({
+                          name: item?.PlaceName,
+                          fullAddress: item?.FullAddress,
+                          latitude: item?.Latitude,
+                          longitude: item?.Longitude,
+                          plotBuilding: item?.PlotBuilding,
+                          streetArea: item?.StreetArea,
+                          contactMobile: item?.ContactMobile,
+                          tag: item?.Tag,
+                        });
+                        setOpenGoogleAddress(false);
+                      }}
+                    >
+                      <View style={styles.bookmarkListContiner}>
+                        <Text style={styles.listLabel}>{item.Tag}</Text>
 
-                      <View style={{ flexDirection: 'row' }}>
-                        <View style={{ flex: 1 }}>
-                          <Text style={styles.title}>{item.PlaceName}</Text>
-                          <Text style={styles.subtitle}>{item.FullAddress}</Text>
+                        <View style={{ flexDirection: 'row' }}>
+                          <View style={{ flex: 1 }}>
+                            <Text style={styles.title}>{item.PlaceName}</Text>
+                            <Text style={styles.subtitle}>
+                              {item.FullAddress}
+                            </Text>
+                          </View>
+                          <Bookmark size={20} fill={COLORS.primary[500]} />
                         </View>
-                        <Bookmark size={20} fill={COLORS.primary[500]} />
                       </View>
+                    </Pressable>
+                  );
+                }}
+                style={{ flex: 1 }}
+                contentContainerStyle={{ paddingBottom: vs(100) }}
+              />
+            )}
+          {locationData?.data?.length > 0 && (
+            <FlatList
+              data={locationData?.data || []}
+              keyExtractor={(item, index) => item?.mapboxId || index.toString()}
+              renderItem={({ item }) => {
+                return (
+                  <Pressable
+                    onPress={() => {
+                      formik?.setFieldValue('name', item.name);
+                      formik?.setFieldValue('fullAddress', item.fullAddress);
+                      formik?.setFieldValue('latitude', item.latitude);
+                      formik?.setFieldValue('longitude', item.longitude);
+
+                      setOpenGoogleAddress(false);
+                    }}
+                    style={styles.listItem}
+                  >
+                    {search ? <MapPin size={20} /> : <Timer size={20} />}
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.title}>{item.name}</Text>
+                      <Text style={styles.subtitle}>{item.fullAddress}</Text>
                     </View>
                   </Pressable>
-                )
-            }}
-            style={{ flex: 1 }}
-            contentContainerStyle={{ paddingBottom: vs(100) }}
-          />)}
-         {locationData?.data?.length > 0 &&  <FlatList
-            data={locationData?.data||[]}
-            keyExtractor={(item, index) => item?.mapboxId || index.toString()}
-            renderItem={({ item }) => {
-              return (
-                <Pressable
-                  onPress={() => {
-                    formik?.setFieldValue("name",item.name)
-                    formik?.setFieldValue("fullAddress",item.fullAddress)
-                    setOpenGoogleAddress(false)
-                  }}
-                  style={styles.listItem}
-                >
-                  {search ? <MapPin size={20} /> : <Timer size={20} />}
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.title}>{item.name}</Text>
-                    <Text style={styles.subtitle}>
-                      {item.fullAddress}
-                    </Text>
-                  </View>
-                </Pressable>
-              );
-            }}
-            style={{ flex: 1 }}
-            contentContainerStyle={{ paddingBottom: vs(100) }}
-          />}
+                );
+              }}
+              style={{ flex: 1 }}
+              contentContainerStyle={{ paddingBottom: vs(100) }}
+            />
+          )}
         </View>
       ) : (
         /* 📍 SELECTED SCREEN */
@@ -249,10 +265,14 @@ const {pickup}=useSelector((state:RootState)=>state?.booking)
                       style={[
                         styles.gridButtonContainer,
                         {
-                          borderColor: formik?.values?.tag===item?.Tag
-                            ? COLORS.primary[500]
-                            : '#ccc',
-                          backgroundColor: formik?.values?.tag===item?.Tag ? '#E8F5E9' : 'white',
+                          borderColor:
+                            formik?.values?.tag === item?.Tag
+                              ? COLORS.primary[500]
+                              : '#ccc',
+                          backgroundColor:
+                            formik?.values?.tag === item?.Tag
+                              ? '#E8F5E9'
+                              : 'white',
                         },
                       ]}
                     >
@@ -260,7 +280,10 @@ const {pickup}=useSelector((state:RootState)=>state?.booking)
                         style={[
                           styles.gridLabel,
                           {
-                            color: formik?.values?.tag===item?.Tag ? COLORS.primary[500] : '#333',
+                            color:
+                              formik?.values?.tag === item?.Tag
+                                ? COLORS.primary[500]
+                                : '#333',
                             width: '100%',
                             textAlign: 'center',
                           },
@@ -272,33 +295,36 @@ const {pickup}=useSelector((state:RootState)=>state?.booking)
                     </Pressable>
                   );
                 })}
-                 
-                {!isCustomBookmark ? <Pressable
-                      
-                      onPress={() => {formik.setFieldValue('tag', "");setIsCustomBookmark(true)}}
+
+                {!isCustomBookmark ? (
+                  <Pressable
+                    onPress={() => {
+                      formik.setFieldValue('tag', '');
+                      setIsCustomBookmark(true);
+                    }}
+                    style={[
+                      styles.gridButtonContainer,
+                      {
+                        borderColor: '#ccc',
+                        backgroundColor: 'white',
+                      },
+                    ]}
+                  >
+                    <Text
                       style={[
-                        styles.gridButtonContainer,
+                        styles.gridLabel,
                         {
-                          borderColor:'#ccc',
-                          backgroundColor: 'white',
+                          color: '#333',
+                          width: '100%',
+                          textAlign: 'center',
                         },
                       ]}
+                      numberOfLines={1}
                     >
-                      <Text
-                        style={[
-                          styles.gridLabel,
-                          {
-                            color: '#333',
-                            width: '100%',
-                            textAlign: 'center',
-                          },
-                        ]}
-                        numberOfLines={1}
-
-                      >
-                        + Add New
-                      </Text>
-                    </Pressable>: (
+                      + Add New
+                    </Text>
+                  </Pressable>
+                ) : (
                   <View style={styles.customeBookmarkFieldContiner}>
                     <TextInput
                       placeholder="Enter custom label (e.g. Shop, Office 2)"

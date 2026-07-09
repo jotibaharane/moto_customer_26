@@ -42,6 +42,31 @@ class CustomerSocket {
       );
     });
   }
+
+  trackLoad(payload: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      SocketService.emit('track-load', payload, (response: any) => {
+        if (!response) {
+          reject();
+          return;
+        }
+
+        resolve(response);
+      });
+    });
+  }
+  stopTracking(payload: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      SocketService.emit('stop-tracking', payload, (response: any) => {
+        if (!response) {
+          reject();
+          return;
+        }
+
+        resolve(response);
+      });
+    });
+  }
   onDriverOnline(callback: (driver: any) => void) {
     SocketService.on('driver-online', callback);
   }
@@ -88,6 +113,34 @@ class CustomerSocket {
 
   removeOfferExpired(callback: any) {
     SocketService.off(SOCKET_EVENTS.OFFER_EXPIRED, callback);
+  }
+
+  trackingDriverLocation(callback: any) {
+    SocketService.on('tracking-driver-location', callback);
+  }
+
+  loadStatusChanged(callback: any) {
+    SocketService.on('load-status-changed', callback);
+  }
+
+  nearDriverPickup(callback: any) {
+    SocketService.on('driver-near-pickup', callback);
+  }
+
+  driverArrivedPickup(callback: any) {
+    SocketService.on('driver-arrived-pickup', callback);
+  }
+
+  nearDriverDelivery(callback: any) {
+    SocketService.on('driver-near-delivery', callback);
+  }
+
+  driverArrivedDelivery(callback: any) {
+    SocketService.on('driver-arrived-delivery', callback);
+  }
+
+  tripCompleted(callback: any) {
+    SocketService.on('trip-completed', callback);
   }
 }
 

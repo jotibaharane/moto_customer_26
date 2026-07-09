@@ -8,25 +8,31 @@ export const authApi = baseApi.injectEndpoints({
     >({
       query: body => ({
         url: '/location/search',
-        params:body,
+        params: body,
       }),
     }),
-    getSavedLocation: builder.query<any,void>({
+    getSavedLocation: builder.query<any, void>({
       query: () => `/load/saved-addresses`,
     }),
-    getAddressByTag: builder.query<
-      any,
-      {tag: string;}
-    >({
+    getAddressByTag: builder.query<any, { tag: string }>({
       query: body => ({
         url: '/load/address-by-tag',
-        params:body,
+        params: body,
       }),
     }),
-    getAddressLabels: builder.query<any,void>({
+    getAddressLabels: builder.query<any, void>({
       query: () => `/load/address-labels`,
+    }),
+    getLoads: builder.query<any, void>({
+      query: () => `/load/loads`,
     }),
   }),
 });
 
-export const {useGetSearchLocationQuery, useGetSavedLocationQuery,useGetAddressByTagQuery,useGetAddressLabelsQuery} = authApi;
+export const {
+  useGetSearchLocationQuery,
+  useGetSavedLocationQuery,
+  useGetAddressByTagQuery,
+  useGetAddressLabelsQuery,
+  useGetLoadsQuery,
+} = authApi;

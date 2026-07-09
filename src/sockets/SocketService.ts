@@ -9,7 +9,7 @@ class SocketService {
     }
 
     this.socket = io(
-      // 'http://192.168.1.111:5005',
+      // 'http://192.168.1.111:5000',
       'https://stag.motohelpindia.com',
       {
         transports: ['websocket'],

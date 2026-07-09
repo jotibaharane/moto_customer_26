@@ -7,6 +7,7 @@ import {
   updateDriver,
   updateDriverStatus,
 } from '@store/slices/customerSocket/customerSocketSlice';
+import { Alert } from 'react-native';
 import { SOCKET_EVENTS } from './SocketEvents';
 import SocketService from './SocketService';
 
@@ -144,15 +145,42 @@ class CustomerSocketListener {
     socket.on(SOCKET_EVENTS.TRIP_CANCELLED, () => {
       dispatch(clearActiveTrip());
     });
+
+    // new
+
+    socket.on('tracking-driver-location', data => {
+      console.log('Tracking Location : ', { data });
+    });
+
+    socket.on('load-status-changed', data => {
+      console.log('Load Status Changed : ', { data });
+    });
+    socket.on('driver-near-pickup', data => {
+      Alert.alert('Driver reached within 500m.');
+      console.log('Driver Near Pickup : ', { data });
+    });
+    socket.on('driver-arrived-pickup', data => {
+      Alert.alert('Driver Arrived at Pickup Location.');
+      console.log('Driver Arrived at Pickup : ', { data });
+    });
+    socket.on('driver-near-delivery', data => {
+      Alert.alert('Driver reached within 500m.');
+      console.log('Driver Near Delivery : ', { data });
+    });
+    socket.on('driver-arrived-delivery', data => {
+      Alert.alert('Driver Arrived at Delivery Location.');
+      console.log('Driver Arrived at Delivery : ', { data });
+    });
+    socket.on('trip-completed', data => {
+      console.log('Trip Completed : ', { data });
+    });
   }
 
   destroy() {
     const socket = SocketService.getSocket();
-
     if (!socket) {
       return;
     }
-
     socket.removeAllListeners();
   }
 }

@@ -11,7 +11,7 @@ import {
   ValidateOtpResponse
 } from './type';
 
-export const authApi = baseApi.injectEndpoints({
+export const authApiMutations = baseApi.injectEndpoints({
   endpoints: builder => ({
      sendOtp: builder.mutation<any, SendOtpRequest>({
       query: body => ({
@@ -218,4 +218,4 @@ export const {
   useGetLoadTrakingQuery,
   useGetLoadsQuery,
   useProfileMutation,
-} = authApi;
+} = authApiMutations;

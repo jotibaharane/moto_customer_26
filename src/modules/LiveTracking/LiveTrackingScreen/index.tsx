@@ -1,4 +1,5 @@
-import { useGetLoadsQuery, useGetLoadTrakingQuery } from '@api/Mutations';
+import { useGetLoadTrakingQuery } from '@api/Mutations';
+import { useGetLoadsQuery } from '@api/query';
 import Dropdown from '@components/Dropdown';
 import { RootState } from '@store/rootReducer';
 import { setLPStatus, setTripDetails } from '@store/slices/map/mapSlice';
@@ -12,35 +13,33 @@ import { useDispatch, useSelector } from 'react-redux';
 const LiveTracking = () => {
   const dispatch = useDispatch();
   const [loadID, setLoadId] = useState<any>('');
-  const { CustomerID } = useSelector((state: RootState) => state.auth);
+  const CustomerID  = useSelector((state: RootState) => state.auth.userId);
 
-  const { data: loads } = useGetLoadsQuery({
-    customer_id: CustomerID!,
-  });
+  const { data: loads } = useGetLoadsQuery();
   console.log({ loads });
 
-  const { data } = useGetLoadTrakingQuery({
-    customer_id: CustomerID!,
-    load_id: loadID || loads?.[0]?.value,
-  });
+  // const { data } = useGetLoadTrakingQuery({
+  //   customer_id: CustomerID!,
+  //   load_id: loadID || loads?.[0]?.value,
+  // });
 
-  useEffect(() => {
-    if (data?.data?.length) {
-      const load = data?.data?.[0];
-      dispatch(
-        setTripDetails({
-          loadId: load?.load_id,
-          DriverID: load?.driver_id,
-          distance_km: load?.distance,
-          driverMobile: '',
-          eta_minutes: 0,
-          message: load?.message,
-          status: load?.status,
-        }),
-      );
-      dispatch(setLPStatus(load?.status));
-    }
-  }, [data]);
+  // useEffect(() => {
+  //   if (data?.data?.length) {
+  //     const load = data?.data?.[0];
+  //     dispatch(
+  //       setTripDetails({
+  //         loadId: load?.load_id,
+  //         DriverID: load?.driver_id,
+  //         distance_km: load?.distance,
+  //         driverMobile: '',
+  //         eta_minutes: 0,
+  //         message: load?.message,
+  //         status: load?.status,
+  //       }),
+  //     );
+  //     dispatch(setLPStatus(load?.status));
+  //   }
+  // }, [data]);
 
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.white[100], padding: 16 }}>
@@ -73,7 +72,7 @@ const LiveTracking = () => {
             fontSize: 20,
           }}
         >
-          {data?.data?.[0]?.vehicle_id}
+          {/* {data?.data?.[0]?.vehicle_id} */}
         </Text>
 
         <Text
@@ -83,7 +82,7 @@ const LiveTracking = () => {
             fontSize: 20,
           }}
         >
-          - {data?.data?.[0]?.load_id}
+          {/* - {data?.data?.[0]?.load_id} */}
         </Text>
       </View>
       <Dropdown
@@ -95,8 +94,9 @@ const LiveTracking = () => {
         value={loadID}
       />
       <FlatList
-        data={data?.data || []}
-        keyExtractor={item => item?.id}
+        // data={data?.data || []}
+        data={[]}
+        // keyExtractor={item => item?.id}
         ItemSeparatorComponent={() => (
           <View style={{ flexDirection: 'row', gap: 13, alignItems: 'center' }}>
             <View
@@ -112,7 +112,7 @@ const LiveTracking = () => {
         renderItem={({ item }) => (
           <View style={{ flexDirection: 'row', gap: 13, alignItems: 'center' }}>
             <Text style={{ fontSize: 12, fontFamily: FONT_FAMILIES.regular }}>
-              {formatTimeAMPM(item?.insert_date)}
+              {/* {formatTimeAMPM(item?.insert_date)} */}
             </Text>
 
             <CheckCircle2
@@ -127,7 +127,7 @@ const LiveTracking = () => {
                 color: COLORS.primary[500],
               }}
             >
-              {item?.status}
+              {/* {item?.status} */}
             </Text>
           </View>
         )}

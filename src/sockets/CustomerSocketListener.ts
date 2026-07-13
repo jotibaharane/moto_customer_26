@@ -10,17 +10,32 @@ import {
 import { Alert } from 'react-native';
 import { SOCKET_EVENTS } from './SocketEvents';
 import SocketService from './SocketService';
+import { store } from '@store/index';
+import CustomerSocket from './CustomerSocket';
 
 class CustomerSocketListener {
-  initialize(dispatch: any) {
-    console.log('========== INITIALIZE ==========');
+ private authenticatedCallback:
+    | ((data: any) => void)
+    | null = null;
 
+  setAuthenticatedCallback(callback: (data: any) => void) {
+    this.authenticatedCallback = callback;
+  }
+
+  clearAuthenticatedCallback() {
+    this.authenticatedCallback = null;
+  }
+
+  initialize(dispatch: any) {
     const socket = SocketService.getSocket();
 
-    if (!socket) {
-      console.log('Socket is NULL');
-      return;
-    }
+    if (!socket) return;
+
+    socket.on(SOCKET_EVENTS.AUTHENTICATED, data => {
+      console.log('Authenticated', data);
+
+      this.authenticatedCallback?.(data);
+    });
 
     socket.onAny((event, ...args) => {
       console.log(`🟢 Socket Event: ${event}`, ...args);
@@ -43,13 +58,7 @@ class CustomerSocketListener {
       dispatch(setConnected(false));
     });
 
-    /**
-     * Authentication Success
-     */
-    socket.on(SOCKET_EVENTS.AUTHENTICATED, data => {
-      console.log('Authenticated', data);
-    });
-
+ 
     /**
      * Live Driver Location
      */

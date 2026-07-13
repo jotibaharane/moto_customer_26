@@ -18,7 +18,7 @@ const SelectVehicleScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [pickupModalVisible, setPickupModalVisible] = useState(false);
   const [dropModalVisible, setDropModalVisible] = useState(false);
-  const { pickup, delivery, vehicleType, weight } = useSelector(
+  const { pickup, delivery, vehicleType, weight ,selectedDriverId} = useSelector(
     (state: RootState) => state.booking,
   );
   const { distance, loading } = useDistance(
@@ -158,7 +158,7 @@ const SelectVehicleScreen = () => {
           </View>
         )}
         renderItem={({ item }) => {
-          const isSelected = false;
+          const isSelected = item?.driverId===selectedDriverId;
 
           return (
             <TouchableOpacity

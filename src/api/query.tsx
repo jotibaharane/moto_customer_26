@@ -1,6 +1,6 @@
 import { baseApi } from './baseApi';
 
-export const authApi = baseApi.injectEndpoints({
+export const authApiQuery = baseApi.injectEndpoints({
   endpoints: builder => ({
     getSearchLocation: builder.query<
       any,
@@ -27,6 +27,7 @@ export const authApi = baseApi.injectEndpoints({
       query: () => `/load/loads`,
     }),
   }),
+  overrideExisting: true,
 });
 
 export const {
@@ -35,4 +36,4 @@ export const {
   useGetAddressByTagQuery,
   useGetAddressLabelsQuery,
   useGetLoadsQuery,
-} = authApi;
+} = authApiQuery;

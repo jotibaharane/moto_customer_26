@@ -1,45 +1,55 @@
 import { useGetLoadTrakingQuery } from '@api/Mutations';
 import { useGetLoadsQuery } from '@api/query';
 import Dropdown from '@components/Dropdown';
+import { useFocusEffect } from '@react-navigation/native';
+import CustomerSocket from '@socket/CustomerSocket';
+import CustomerSocketListener from '@socket/CustomerSocketListener';
 import { RootState } from '@store/rootReducer';
 import { setLPStatus, setTripDetails } from '@store/slices/map/mapSlice';
 import { COLORS, FONT_FAMILIES, fp, hp, wp } from '@theme/index';
 import { formatTimeAMPM } from '@utils/datetime.utils';
 import { CheckCircle2 } from 'lucide-react-native';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, Text, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 const LiveTracking = () => {
-  const dispatch = useDispatch();
   const [loadID, setLoadId] = useState<any>('');
-  const CustomerID  = useSelector((state: RootState) => state.auth.userId);
+  const { data: loads ,refetch} = useGetLoadsQuery();
 
-  const { data: loads } = useGetLoadsQuery();
-  console.log({ loads });
+const loadData=useMemo(()=>loads?.data?.map((load:any) => ({
+          label: load?.LoadId,
+          value: load?.LoadId,
+        })),[loads])
 
-  // const { data } = useGetLoadTrakingQuery({
-  //   customer_id: CustomerID!,
-  //   load_id: loadID || loads?.[0]?.value,
-  // });
+  console.log({ loadData ,loadID});
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+     
+    }, [refetch]),
+  );
 
-  // useEffect(() => {
-  //   if (data?.data?.length) {
-  //     const load = data?.data?.[0];
-  //     dispatch(
-  //       setTripDetails({
-  //         loadId: load?.load_id,
-  //         DriverID: load?.driver_id,
-  //         distance_km: load?.distance,
-  //         driverMobile: '',
-  //         eta_minutes: 0,
-  //         message: load?.message,
-  //         status: load?.status,
-  //       }),
-  //     );
-  //     dispatch(setLPStatus(load?.status));
-  //   }
-  // }, [data]);
+
+
+
+
+useEffect(() => {
+  CustomerSocketListener.setAuthenticatedCallback(() => {
+    if (!loadID) return;
+    console.log('Track Load After Auth:', loadID);
+    CustomerSocket.trackLoad({
+      loadId: loadID,
+    });
+  });
+
+  return () => {
+    CustomerSocketListener.clearAuthenticatedCallback();
+  };
+}, [loadID]);
+
+
+
 
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.white[100], padding: 16 }}>
@@ -82,12 +92,14 @@ const LiveTracking = () => {
             fontSize: 20,
           }}
         >
-          {/* - {data?.data?.[0]?.load_id} */}
+          - {loadID||loads?.data?.[0]?.LoadId}
         </Text>
       </View>
       <Dropdown
         label="Your Load"
-        data={loads?.data}
+        data={loadData}
+        placeholder="Select Load"
+        
         onChange={value => {
           setLoadId(value);
         }}
@@ -96,7 +108,7 @@ const LiveTracking = () => {
       <FlatList
         // data={data?.data || []}
         data={[]}
-        // keyExtractor={item => item?.id}
+        // keyExtractor={item => item?.LoadId}
         ItemSeparatorComponent={() => (
           <View style={{ flexDirection: 'row', gap: 13, alignItems: 'center' }}>
             <View

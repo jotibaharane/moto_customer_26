@@ -6,15 +6,14 @@ import { isValidLocation } from '@utils/location.utils'
 import { useSelector } from 'react-redux'
 import { RootState } from '@store/rootReducer'
 import { animateMarker, getSmoothHeading } from '@utils/animation.utils'
-import { getDirections } from '@api/mapbox/mapbox.api'
 
 const MapComponent = () => {
   const cameraRef = useRef<any>(null);
 
-  const { status,tracking,driver, pickup, destination} = useSelector(
+  const { driver} = useSelector(
     (state: RootState) => state.map,
   );
-const { distance_km, eta_minutes } =tracking || { distance_km: 0, eta_minutes: 0 }
+
 const [routeGeoJSON, setRouteGeoJSON] = useState<any>(null);
   const [animatedCoords, setAnimatedCoords] = useState<[number, number] | null>(
     null,
@@ -47,30 +46,9 @@ const [routeGeoJSON, setRouteGeoJSON] = useState<any>(null);
 
     const newCoords: [number, number] = [lng, lat];
 
-    // FIRST TIME
-    if (!prevCoords.current) {
-      prevCoords.current = newCoords;
-
-      setAnimatedCoords(newCoords);
-
-      // FOLLOW VEHICLE BEFORE START
-      if (status !== 'started') {
-        cameraRef.current?.setCamera({
-          centerCoordinate: newCoords,
-          zoomLevel: 17,
-          pitch: 60,
-          heading: driver.heading || 0,
-          animationMode: 'easeTo',
-          animationDuration: 1000,
-        });
-      }
-
-      return;
-    }
-
+  
     // SMOOTH ANIMATION
-    animateMarker(prevCoords.current, newCoords, setAnimatedCoords);
-
+    
     prevCoords.current = newCoords;
 
     const smoothHeading = getSmoothHeading(
@@ -80,8 +58,6 @@ const [routeGeoJSON, setRouteGeoJSON] = useState<any>(null);
 
     prevHeading.current = smoothHeading;
 
-    // FOLLOW ONLY BEFORE START
-    if (status !== 'started') {
       cameraRef.current?.setCamera({
         centerCoordinate: newCoords,
 
@@ -95,71 +71,12 @@ const [routeGeoJSON, setRouteGeoJSON] = useState<any>(null);
 
         animationDuration: 1000,
       });
-    }
-  }, [driver, status]);
+    
+  }, [driver]);
 
  
 
-  // =========================
-  // NAVIGATION
-  // =========================
 
-      useEffect(() => {
-        if (!pickup || !driver) return;
-    
-        const loadRoute = async () => {
-          try {
-            // BEFORE START
-            // DRIVER -> PICKUP
-    
-            const from =
-              status === 'started'
-                ? [Number(pickup?.lng), Number(pickup?.lat)]
-                : [Number(driver?.longitude), Number(driver?.latitude)];
-    
-            // AFTER START
-            // PICKUP -> DESTINATION
-    
-            const to =
-              status === 'started'
-                ? [Number(destination?.lng), Number(destination?.lat)]
-                : [Number(pickup?.lng), Number(pickup?.lat)];
-    
-            const res = await getDirections(from, to);
-    
-            if (!res) return;
-    
-            // SET ROUTE
-            setRouteGeoJSON(res);
-    
-            // =========================
-            // FULL ROUTE AFTER START
-            // =========================
-    
-            if (status === 'started') {
-              const coords = res?.geometry?.coordinates;
-    
-              if (!coords?.length) return;
-    
-              const lats = coords.map((c: any) => c[1]);
-    
-              const lngs = coords.map((c: any) => c[0]);
-    
-              const ne: [number, number] = [Math.max(...lngs), Math.max(...lats)];
-    
-              const sw: [number, number] = [Math.min(...lngs), Math.min(...lats)];
-    
-              // SHOW FULL ROUTE
-              cameraRef.current?.fitBounds(ne, sw, 120, 1000);
-            }
-          } catch (e) {
-            console.log('Route error', e);
-          }
-        };
-    
-        loadRoute();
-      }, [pickup, driver, destination, status]);
-    
   return (
      <View style={styles.mapContainer}>
         <MapView
@@ -175,9 +92,7 @@ const [routeGeoJSON, setRouteGeoJSON] = useState<any>(null);
           <Images
             images={{
               carIcon: require('@assets/images/carIcon.png'),
-
               pickupIcon: require('@assets/images/marker.png'),
-
               dropIcon: require('@assets/images/drop_marker.png'),
             }}
           />
@@ -192,7 +107,6 @@ const [routeGeoJSON, setRouteGeoJSON] = useState<any>(null);
                 id="routeLine"
                 style={{
                   lineColor: '#2563eb',
-
                   lineWidth: [
                     'interpolate',
                     ['linear'],
@@ -204,9 +118,7 @@ const [routeGeoJSON, setRouteGeoJSON] = useState<any>(null);
                     18,
                     12,
                   ],
-
                   lineCap: 'round',
-
                   lineJoin: 'round',
                 }}
               />
@@ -222,19 +134,15 @@ const [routeGeoJSON, setRouteGeoJSON] = useState<any>(null);
               id="driverSource"
               shape={{
                 type: 'Feature',
-
                 geometry: {
                   type: 'Point',
-
                   coordinates: animatedCoords,
                 },
-
                 properties: {},
               }}
             >
               <SymbolLayer
                 id="driverSymbol"
-
                 style={{
                   iconImage: 'carIcon',
 
@@ -249,13 +157,9 @@ const [routeGeoJSON, setRouteGeoJSON] = useState<any>(null);
                     18,
                     0.1,
                   ],
-
                   iconAnchor: 'center',
-
                   iconRotationAlignment: 'map',
-
                   iconAllowOverlap: true,
-
                   iconRotate: prevHeading.current,
                 }}
               />
@@ -270,11 +174,10 @@ const [routeGeoJSON, setRouteGeoJSON] = useState<any>(null);
             <MarkerView coordinate={animatedCoords} anchor={{ x: 0.5, y: 1.8 }}>
               <View style={styles.tooltipContainer}>
                 <Text style={styles.tooltipTitle}>
-                  Distance {distance_km || 0} Km
+                  Distance {driver?.pickupDistance || 0} Km
                 </Text>
-
                 <Text style={styles.tooltipText}>
-                  Time {eta_minutes || 0} min
+                  Time {0} min
                 </Text>
               </View>
             </MarkerView>
@@ -284,18 +187,15 @@ const [routeGeoJSON, setRouteGeoJSON] = useState<any>(null);
           {/* PICKUP */}
           {/* ========================= */}
 
-          {isValidLocation(pickup) && (
+          {isValidLocation(driver?.pickupCoordinate) && (
             <ShapeSource
               id="pickupSource"
               shape={{
                 type: 'Feature',
-
                 geometry: {
                   type: 'Point',
-
-                  coordinates: [Number(pickup?.lng), Number(pickup?.lat)],
+                  coordinates: [driver?.pickupCoordinate?.longitude,driver?.pickupCoordinate?.latitude],
                 },
-
                 properties: {},
               }}
             >
@@ -303,49 +203,14 @@ const [routeGeoJSON, setRouteGeoJSON] = useState<any>(null);
                 id="pickupSymbol"
                 style={{
                   iconImage: 'pickupIcon',
-
                   iconSize: 0.3,
-
                   iconAnchor: 'bottom',
                 }}
               />
             </ShapeSource>
           )}
 
-          {/* ========================= */}
-          {/* DESTINATION */}
-          {/* ========================= */}
-
-          {status === 'started' && isValidLocation(destination) && (
-            <ShapeSource
-              id="dropSource"
-              shape={{
-                type: 'Feature',
-
-                geometry: {
-                  type: 'Point',
-
-                  coordinates: [
-                    Number(destination?.lng),
-                    Number(destination?.lat),
-                  ],
-                },
-
-                properties: {},
-              }}
-            >
-              <SymbolLayer
-                id="dropSymbol"
-                style={{
-                  iconImage: 'dropIcon',
-
-                  iconSize: 0.4,
-
-                  iconAnchor: 'bottom',
-                }}
-              />
-            </ShapeSource>
-          )}
+         
         </MapView>
       </View>
   )

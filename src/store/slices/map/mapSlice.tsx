@@ -26,6 +26,8 @@ export interface DriverLocationUpdate {
   deliveryDistance: number;
   tripStatus: string;
   updatedAt: string;
+  destinationCoordinate: {latitude: any, longitude:any},
+  pickupCoordinate: {latitude: any, longitude:any}
 }
 export interface MapState {
   customer: Coordinates | null;

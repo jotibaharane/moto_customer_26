@@ -29,31 +29,12 @@ const ReportingScreen = () => {
     refetchOnMountOrArgChange: true,
   });
 
-  const { status, tracking } = useSelector(
+  const {driver} = useSelector(
     (state: RootState) => state.map,
   );
 
-  const { PaymentStatus, BalanceAmount } = useSelector(
-    (state: RootState) => state.payment,
-  );
-
-  const { driverMobile, loadId } = tracking || {};
 
   const currentLoadId = loads?.data?.[0]?.LoadId;
-console.log({currentLoadId})
-  /**
-   * Navigate to payment screen
-   */
-  useEffect(() => {
-    if (
-      status === 'loaded' ||
-      (status === 'reached' &&
-        PaymentStatus !== 'FULL' &&
-        BalanceAmount !== 0)
-    ) {
-      navigate('FrightPayment');
-    }
-  }, [status, PaymentStatus, BalanceAmount]);
 
   /**
    * Refetch whenever screen is focused
@@ -90,29 +71,17 @@ useEffect(() => {
 }, [currentLoadId]);
 
 
-// useEffect(() => {
-//   CustomerSocketListener.setAuthenticatedCallback(() => {
-//     if (!currentLoadId) return;
-//     console.log('Track Load After Auth:', currentLoadId);
-//     CustomerSocket.trackLoad({
-//       loadId: currentLoadId,
-//     });
-//   });
 
-//   return () => {
-//     CustomerSocketListener.clearAuthenticatedCallback();
-//   };
-// }, [currentLoadId]);
   return (
     <SafeAreaView style={styles.container}>
       <Header />
 
       <MapComponent />
 
-      {loadId && (
+      {driver?.loadId && (
         <TouchableOpacity
           style={styles.callButton}
-          onPress={() => handleCall(driverMobile)}
+          onPress={() => handleCall("driverMobile")}
         >
           <View style={styles.callRows}>
             <View style={styles.phoneRotate}>
@@ -128,7 +97,7 @@ useEffect(() => {
           </View>
 
           <Text style={styles.postIdText}>
-            Post id {loadId}
+            Post id {driver?.loadId}
           </Text>
         </TouchableOpacity>
       )}

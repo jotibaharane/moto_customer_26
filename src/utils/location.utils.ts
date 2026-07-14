@@ -1,14 +1,14 @@
 export interface Location {
-  lat?: number;
-  lng?: number;
-}
+    latitude: any;
+    longitude: any;
+} 
 
 export const isValidLocation = (loc?: Location | null): boolean => {
   return (
     !!loc &&
-    loc.lat !== undefined &&
-    loc.lng !== undefined &&
-    loc.lat !== 0 &&
-    loc.lng !== 0
+    loc.latitude !== undefined &&
+    loc.longitude !== undefined &&
+    loc.latitude !== 0 &&
+    loc.longitude !== 0
   );
 };

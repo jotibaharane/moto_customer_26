@@ -12,6 +12,7 @@ import { SOCKET_EVENTS } from './SocketEvents';
 import SocketService from './SocketService';
 import { store } from '@store/index';
 import CustomerSocket from './CustomerSocket';
+import { setDrivers } from '@store/slices/map/mapSlice';
 
 class CustomerSocketListener {
  private authenticatedCallback:
@@ -120,6 +121,9 @@ class CustomerSocketListener {
 
       load => {
         console.log('LOAD_ACCEPTED =', { load });
+        //  CustomerSocket.trackLoad({
+        //       loadId: load?.loadId,
+        //     });
         dispatch(resetBooking());
         dispatch(setActiveTrip(load));
         navigate('BottomNavigation', {
@@ -159,6 +163,7 @@ class CustomerSocketListener {
 
     socket.on('tracking-driver-location', data => {
       console.log('Tracking Location : ', { data });
+      dispatch(setDrivers(data))
     });
 
     socket.on('load-status-changed', data => {

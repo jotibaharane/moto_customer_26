@@ -29,6 +29,7 @@ const OverlayLoader = ({
         goBack();
         onClose()
       }
+     
     }, [visible, timeLeft]);
   return (
     <Modal

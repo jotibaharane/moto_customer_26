@@ -13,7 +13,6 @@ const ReviewBookingScreen = () => {
   const [watingDriver, setWaitingDriver] = React.useState(false);
   const { userId } = useSelector((state: RootState) => state.auth);
   const {
-    customerId,
     delivery,
     pickup,
     vehicleType,

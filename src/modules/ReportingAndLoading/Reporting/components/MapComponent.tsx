@@ -34,9 +34,9 @@ const [routeGeoJSON, setRouteGeoJSON] = useState<any>(null);
   useEffect(() => {
     if (!driver) return;
 
-    const lng = Number(driver?.lng);
+    const lng = Number(driver?.longitude);
 
-    const lat = Number(driver?.lat);
+    const lat = Number(driver?.latitude);
 
     // INVALID COORDS
     if (isNaN(lng) || isNaN(lat)) {
@@ -57,15 +57,10 @@ const [routeGeoJSON, setRouteGeoJSON] = useState<any>(null);
       if (status !== 'started') {
         cameraRef.current?.setCamera({
           centerCoordinate: newCoords,
-
           zoomLevel: 17,
-
           pitch: 60,
-
           heading: driver.heading || 0,
-
           animationMode: 'easeTo',
-
           animationDuration: 1000,
         });
       }
@@ -120,7 +115,7 @@ const [routeGeoJSON, setRouteGeoJSON] = useState<any>(null);
             const from =
               status === 'started'
                 ? [Number(pickup?.lng), Number(pickup?.lat)]
-                : [Number(driver?.lng), Number(driver?.lat)];
+                : [Number(driver?.longitude), Number(driver?.latitude)];
     
             // AFTER START
             // PICKUP -> DESTINATION
@@ -239,6 +234,7 @@ const [routeGeoJSON, setRouteGeoJSON] = useState<any>(null);
             >
               <SymbolLayer
                 id="driverSymbol"
+
                 style={{
                   iconImage: 'carIcon',
 
@@ -331,7 +327,6 @@ const [routeGeoJSON, setRouteGeoJSON] = useState<any>(null);
 
                   coordinates: [
                     Number(destination?.lng),
-
                     Number(destination?.lat),
                   ],
                 },

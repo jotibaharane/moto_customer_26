@@ -19,6 +19,7 @@ import { navigate } from '@navigation/NavigationService';
 import CustomerSocket from '@socket/CustomerSocket';
 import { useGetLoadsQuery } from '@api/query';
 import CustomerSocketListener from '@socket/CustomerSocketListener';
+import SocketService from '@socket/SocketService';
 
 const ReportingScreen = () => {
   const {
@@ -39,7 +40,7 @@ const ReportingScreen = () => {
   const { driverMobile, loadId } = tracking || {};
 
   const currentLoadId = loads?.data?.[0]?.LoadId;
-
+console.log({currentLoadId})
   /**
    * Navigate to payment screen
    */
@@ -64,22 +65,44 @@ const ReportingScreen = () => {
     }, [refetch]),
   );
 
-
-
-
 useEffect(() => {
-  CustomerSocketListener.setAuthenticatedCallback(() => {
+  const socket = SocketService.getSocket();
+
+  if (!socket) return;
+
+  const track = () => {
     if (!currentLoadId) return;
-    console.log('Track Load After Auth:', currentLoadId);
+
     CustomerSocket.trackLoad({
       loadId: currentLoadId,
     });
-  });
+  };
+
+  socket.on("connect", track);
+
+  if (socket.connected) {
+    track();
+  }
 
   return () => {
-    CustomerSocketListener.clearAuthenticatedCallback();
+    socket.off("connect", track);
   };
 }, [currentLoadId]);
+
+
+// useEffect(() => {
+//   CustomerSocketListener.setAuthenticatedCallback(() => {
+//     if (!currentLoadId) return;
+//     console.log('Track Load After Auth:', currentLoadId);
+//     CustomerSocket.trackLoad({
+//       loadId: currentLoadId,
+//     });
+//   });
+
+//   return () => {
+//     CustomerSocketListener.clearAuthenticatedCallback();
+//   };
+// }, [currentLoadId]);
   return (
     <SafeAreaView style={styles.container}>
       <Header />

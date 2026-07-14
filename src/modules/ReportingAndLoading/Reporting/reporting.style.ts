@@ -1,4 +1,4 @@
-import { COLORS, FONT_FAMILIES, fp, hp, wp } from '@theme/index';
+import { COLORS, FONT_FAMILIES } from '@theme/index';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -12,7 +12,6 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     alignItems: 'center',
     paddingBottom: 8,
- 
   },
   messageContainer: {
     alignItems: 'center',
@@ -150,5 +149,6 @@ export const styles = StyleSheet.create({
   postIdText: {
     fontSize: 8,
     fontFamily: FONT_FAMILIES.semiBold,
+    maxWidth: 100,
   },
 });

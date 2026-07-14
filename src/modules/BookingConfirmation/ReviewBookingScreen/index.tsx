@@ -8,6 +8,7 @@ import React from 'react';
 import { Image, ScrollView, Text, View } from 'react-native';
 import { useSelector } from 'react-redux';
 import { styles } from './ReviewBooking.style';
+import { useDistance } from '@hooks/useDistance';
 
 const ReviewBookingScreen = () => {
   const [watingDriver, setWaitingDriver] = React.useState(false);
@@ -18,7 +19,6 @@ const ReviewBookingScreen = () => {
     vehicleType,
     weight,
     vehicleImage,
-    distance,
     expectedVehicleAvailability,
     freightAmount,
     selectedDriverId,
@@ -27,7 +27,10 @@ const ReviewBookingScreen = () => {
     vehicleNumber,
     weightRange,
   } = useSelector((state: RootState) => state.booking);
-
+  const { distance, loading } = useDistance(
+    { lat: pickup?.latitude, lng: pickup?.longitude },
+    { lat: delivery?.latitude, lng: delivery?.longitude },
+  );
   const handleBook = async () => {
     try {
       setWaitingDriver(true);
@@ -40,7 +43,7 @@ const ReviewBookingScreen = () => {
         vehicleType,
         weight,
         fare: freightAmount,
-        distance: distance ?? 0,
+        distance: distance?.distanceKm ?? 0,
         eta: expectedVehicleAvailability,
         driverName,
         driverMobile,
@@ -85,7 +88,7 @@ const ReviewBookingScreen = () => {
             </View>
           </View>
           <View style={styles.divider}>
-            <Text style={styles.distanceText}>{distance || 0} km</Text>
+            <Text style={styles.distanceText}>{distance?.distanceKm || 0} km</Text>
           </View>
           <View style={styles.row}>
             <MapPin size={30} fill={'#FF0A0A'} />

@@ -9,8 +9,8 @@ import { RootState } from './rootReducer';
 import { signIn, signOut } from './slices/Auth/authSlice';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: 'https://stag.motohelpindia.com/api/v1',
-  // baseUrl: 'http://192.168.1.111:5000/api/v1',
+  // baseUrl: 'https://stag.motohelpindia.com/api/v1',
+  baseUrl: 'http://192.168.1.112:5000/api/v1',
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.accessToken;
 

@@ -188,6 +188,11 @@ class CustomerSocketListener {
     socket.on('trip-completed', data => {
       console.log('Trip Completed : ', { data });
     });
+
+     socket.on('payment-notification', data => {
+      console.log('payment-notification: ', { data });
+     Alert.alert(data?.message)
+    });
   }
 
   destroy() {

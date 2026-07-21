@@ -5,6 +5,7 @@ export type SendOtpRequest = {
 export type ValidateOtpRequest = {
   mobile: string;
   otp: string;
+  Role:string
 };
 
 export type SendOtpResponse = {

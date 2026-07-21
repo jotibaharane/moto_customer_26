@@ -72,6 +72,7 @@ const SignInScreen = () => {
       const resp = await validateOtp({
         mobile: mobileNumber,
         otp,
+        Role:"CUSTOMER"
       }).unwrap();
       
       if (resp?.status === '01') {

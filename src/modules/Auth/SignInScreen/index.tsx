@@ -72,18 +72,15 @@ const SignInScreen = () => {
       const resp = await validateOtp({
         mobile: mobileNumber,
         otp,
-        Role:"CUSTOMER"
+        Role: 'CUSTOMER',
       }).unwrap();
-      
+      dispatch(signIn(resp?.data));
       if (resp?.status === '01') {
-       
         reset('SignUp', {
           mobile: mobileNumber,
         });
         return;
       }
-      dispatch(signIn(resp?.data));
-     
     } catch (error) {
       console.log('OTP verify error:', error);
     }

@@ -28,6 +28,11 @@ const RootNavigator = () => {
     shallowEqual,
   );
 
+  const isProfileCompleted = useSelector(
+    (state: RootState) => state.auth.isProfileCompleted,
+    shallowEqual,
+  );
+
   const { accessToken } = useSelector(
     (state: RootState) => state.auth,
     shallowEqual,
@@ -89,8 +94,8 @@ const RootNavigator = () => {
    * Navigation
    */
   const Navigation = useMemo(() => {
-    return CustomerID ? <UserNavigation /> : <AuthNavigation />;
-  }, [CustomerID]);
+    return isProfileCompleted ? <UserNavigation /> : <AuthNavigation />;
+  }, [isProfileCompleted]);
 
   if (loading) {
     return <SplashScreen />;

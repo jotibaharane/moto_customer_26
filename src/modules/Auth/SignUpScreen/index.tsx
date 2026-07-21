@@ -10,7 +10,7 @@ import { useOnboardingMutation } from '@api/Mutations';
 import { OnboardingRequest } from '@api/type';
 import Dropdown from '@components/Dropdown';
 import { useRoute } from '@react-navigation/native';
-import { signIn } from '@store/slices/Auth/authSlice';
+import { isProfileCompleted } from '@store/slices/Auth/authSlice';
 import { companyTypedata } from '@utils/constants';
 import { Formik } from 'formik';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
@@ -38,7 +38,7 @@ const SignUpScreen = () => {
         Alert.alert('Error', response?.message || 'Sign up failed');
         return;
       }
-      dispatch(signIn(response?.data as any));
+      dispatch(isProfileCompleted(true));
     } catch (error) {
       console.error('Sign Up Error:', error);
     }

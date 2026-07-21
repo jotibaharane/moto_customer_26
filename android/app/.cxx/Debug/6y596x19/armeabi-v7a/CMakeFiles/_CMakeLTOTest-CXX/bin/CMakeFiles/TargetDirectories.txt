@@ -1,4 +1,0 @@
-/home/motohelp/jotiba/New/moto_customer_26/android/app/.cxx/Debug/6y596x19/armeabi-v7a/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/foo.dir
-/home/motohelp/jotiba/New/moto_customer_26/android/app/.cxx/Debug/6y596x19/armeabi-v7a/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/boo.dir
-/home/motohelp/jotiba/New/moto_customer_26/android/app/.cxx/Debug/6y596x19/armeabi-v7a/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/edit_cache.dir
-/home/motohelp/jotiba/New/moto_customer_26/android/app/.cxx/Debug/6y596x19/armeabi-v7a/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/rebuild_cache.dir

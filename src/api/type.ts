@@ -5,7 +5,7 @@ export type SendOtpRequest = {
 export type ValidateOtpRequest = {
   mobile: string;
   otp: string;
-  Role:string
+  Role: string;
 };
 
 export type SendOtpResponse = {
@@ -29,12 +29,12 @@ export type ValidateOtpResponse = {
 };
 
 export type OnboardingRequest = {
-    mobile: string,
-  fullName: string,
-  email: string,
-  customerType: string,
-  organizationName: string,
-  organizationType: string
+  mobile: string;
+  fullName: string;
+  email: string;
+  customerType: string;
+  organizationName: string;
+  organizationType: string;
 };
 
 export type OnboardingResponse = {
@@ -122,7 +122,6 @@ export interface PaymentTransaction {
   DriverID: string;
   PaymentStage?: any;
   GatewayResponse?: 'SUCCESS' | 'FAILED' | 'PENDING';
-  
 }
 
 export interface PaymentData {
@@ -143,7 +142,7 @@ export interface PaymentData {
   insert_date: string;
   update_date: string;
   driver_id: string;
-  ShowAmount?:any
+  ShowAmount?: any;
 }
 
 export interface PaymentResponse {
@@ -220,10 +219,6 @@ export interface MakePaymentResponse {
   data: PaymentTransactionData;
 }
 
-
-
-
-
 // export interface CreateLoadRequest {
 //   customerId: string;
 //   pickup: LoadLocation;
@@ -231,7 +226,6 @@ export interface MakePaymentResponse {
 //   vehicleType: string;
 //   weight: number;
 // }
-
 
 export interface CreateLoadRequest {
   customerId: string;
@@ -261,18 +255,13 @@ export interface LoadLocation {
   mapboxId?: string;
   name?: string;
   fullAddress: string;
-  latitude: number;
-  longitude: number;
+  latitude?: number;
+  longitude?: number;
   plotBuilding: string;
   streetArea: string;
   contactName?: string;
   contactMobile?: string;
-  tag?: LocationTag|string;
+  tag?: LocationTag | string;
 }
 
-export type LocationTag =
-  | 'HOME'
-  | 'OFFICE'
-  | 'WAREHOUSE'
-  | 'OTHER';
-
+export type LocationTag = 'HOME' | 'OFFICE' | 'WAREHOUSE' | 'OTHER';

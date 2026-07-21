@@ -1,12 +1,6 @@
 import SearchField from '@components/SearchField';
 import React, { useState } from 'react';
-import {
-  Alert,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Alert, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { RootState } from '@store/rootReducer';
@@ -22,7 +16,9 @@ import MapComponent from './components/MapComponent';
 import PickupModal from './components/PickupModal';
 
 const DashboardScreen = () => {
-  const { pickup ,delivery,weight} = useSelector((state: RootState) => state.booking);
+  const { pickup, delivery, weight } = useSelector(
+    (state: RootState) => state.booking,
+  );
   const dispatch = useDispatch();
   const [pickupModalVisible, setPickupModalVisible] = useState(false);
   const [dropModalVisible, setDropModalVisible] = useState(false);
@@ -49,7 +45,7 @@ const DashboardScreen = () => {
             <SearchField
               placeholder="Delivery Address"
               onPress={() => {
-               pickup?.name
+                pickup?.name
                   ? setDropModalVisible(true)
                   : Alert.alert('Select pickup first');
               }}
@@ -67,9 +63,7 @@ const DashboardScreen = () => {
               style={styles.weight_input}
               value={weight?.toString()}
               keyboardType="number-pad"
-              onChangeText={i =>
-                dispatch(setWeight({ weight: i }))
-              }
+              onChangeText={i => dispatch(setWeight({ weight: i }))}
             />
 
             <Text style={styles.kg}>Kg</Text>
@@ -104,7 +98,7 @@ const DashboardScreen = () => {
       </View>
 
       {/* ================= MAP ================= */}
-     <MapComponent />
+      <MapComponent />
 
       {/* ================= MODALS ================= */}
       <PickupModal open={pickupModalVisible} onOpen={setPickupModalVisible} />

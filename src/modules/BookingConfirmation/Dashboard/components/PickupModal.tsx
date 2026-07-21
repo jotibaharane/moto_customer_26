@@ -3,7 +3,7 @@ import CustomButton from '@components/Button';
 import { InputOutline } from '@components/Input';
 import SearchField from '@components/SearchField';
 import { COLORS, s, vs } from '@theme/index';
-import { Bookmark, Edit, MapPin, Timer } from 'lucide-react-native';
+import { Bookmark, Edit, Locate, MapPin, Timer } from 'lucide-react-native';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
 
@@ -45,16 +45,16 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
       onOpen?.(false);
     },
   });
-  const currentLocation = useCurrentLocation();
+  const { location, currentLocationData } = useCurrentLocation();
 
   const refScrollable = useRef<any>(null);
   const [search, setSearch] = useState('');
   const { data: locationData } = useGetSearchLocationQuery({
     search: search,
-    latitude: currentLocation?.lat,
-    longitude: currentLocation?.lng,
+    latitude: location?.lat,
+    longitude: location?.lng,
   });
-  console.log({ currentLocation, locationData });
+  console.log({ location, currentLocationData });
   const { data: savedLocationData, refetch } = useGetSavedLocationQuery();
   const { data: addressTag, refetch: refetchTags } = useGetAddressLabelsQuery();
   const [isCustomBookmark, setIsCustomBookmark] = useState(false);
@@ -106,15 +106,22 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
           />
 
           <View style={{ height: 10 }} />
-          {/* {locationData?.data?.length > 0 &&  <FlatList
-            data={locationData?.data||[]}
-            keyExtractor={(item, index) => item?.mapboxId || index.toString()}
-            renderItem={({ item }) => {
+          {currentLocationData?.data && (
+            <FlatList
+              data={
+                currentLocationData?.data ? [currentLocationData?.data] : []
+              }
+              keyExtractor={(item, index) => item?.mapboxId || index.toString()}
+              renderItem={({ item }) => {
                 return (
                   <Pressable
                     onPress={() => {
-                      formik?.setFieldValue("name",item.name)
-                      formik?.setFieldValue("fullAddress",item.fullAddress)
+                      formik?.setFieldValue('name', item.name);
+                      formik?.setFieldValue('fullAddress', item.fullAddress);
+                      formik?.setFieldValue('latitude', item.latitude);
+                      formik?.setFieldValue('longitude', item.longitude);
+
+                      setOpenGoogleAddress(false);
                     }}
                     style={styles.currentLoactionButton}
                   >
@@ -122,20 +129,17 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
                     <View style={styles.listContainer}>
                       <Locate size={20} />
                       <View style={{ flex: 1 }}>
-                        <Text style={styles.title}>
-                          {item.name }
-                        </Text>
-                        <Text style={styles.subtitle}>
-                          {item.fullAddress}
-                        </Text>
+                        <Text style={styles.title}>{item.name}</Text>
+                        <Text style={styles.subtitle}>{item.fullAddress}</Text>
                       </View>
                     </View>
                   </Pressable>
-                );  
-            }}
-            style={{ flex: 1 }}
-            contentContainerStyle={{ paddingBottom: vs(100) }}
-          />} */}
+                );
+              }}
+              style={{ flex: 1 }}
+              contentContainerStyle={{ paddingBottom: vs(100) }}
+            />
+          )}
           {savedLocationData?.data?.length > 0 &&
             locationData?.data?.length === 0 && (
               <FlatList

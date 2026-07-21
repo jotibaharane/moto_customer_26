@@ -63,38 +63,15 @@ export const styles = StyleSheet.create({
 
   card: {
     flexDirection: 'row',
-    gap: ms(24),
-    marginTop: vs(24),
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.gray[250],
-    paddingBottom: vs(24),
-  },
-
-  selectedCard: {
-    borderWidth: 2,
-    borderColor: COLORS.primary[500],
+    borderWidth: 1,
+    borderColor: COLORS.gray[250],
+    borderRadius: 20,
+    overflow: 'hidden',
   },
 
   image: {
     height: vs(150),
     width: s(150),
-  },
-
-  cardContent: {
-    justifyContent: 'center',
-    gap: vs(4),
-  },
-
-  vehicleName: {
-    fontSize: ms(16),
-    fontFamily: FONT_FAMILIES.semiBold,
-    color: COLORS.black[500],
-  },
-
-  vehicleDetails: {
-    fontSize: ms(16),
-    fontFamily: FONT_FAMILIES.regular,
-    color: COLORS.gray[500],
   },
 
   button: {
@@ -134,5 +111,65 @@ export const styles = StyleSheet.create({
     color: COLORS.gray[500],
     textAlign: 'center',
     marginTop: vs(4),
+  },
+
+  listContainer: {
+    paddingVertical: 20,
+    paddingBottom: 120,
+  },
+
+  selectedCard: {
+    borderColor: COLORS.primary[500],
+    borderWidth: 2,
+  },
+
+  imageContainer: {
+    width: 150,
+    height: 150,
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+
+  circle: {
+    position: 'absolute',
+    width: 220,
+    height: 220,
+    borderRadius: 110,
+    backgroundColor: COLORS.primary[50],
+    left: -90,
+    top: -30,
+  },
+
+  truckImage: {
+    width: 150,
+    height: 110,
+    alignSelf: 'flex-end',
+    marginRight: -30,
+  },
+
+  cardContent: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 12,
+  },
+
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+    marginLeft: 40,
+  },
+
+  vehicleName: {
+    fontSize: 16,
+    fontFamily: FONT_FAMILIES.bold,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+
+  vehicleDetails: {
+    marginLeft: 8,
+    fontSize: 13,
+    color: COLORS.gray[600],
   },
 });

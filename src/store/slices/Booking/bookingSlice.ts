@@ -2,18 +2,18 @@ import { CreateLoadRequest } from '@api/type';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: CreateLoadRequest = {
-   customerId: '',
-   selectedDriverId: '',
-   freightAmount: 0,
-   expectedVehicleAvailability: '',
-   distance: 0,
-   vehicleImage: '',
+  customerId: '',
+  selectedDriverId: '',
+  freightAmount: 0,
+  expectedVehicleAvailability: '',
+  distance: 0,
+  vehicleImage: '',
   vehicleNumber: '',
   pickup: {
     name: '',
     fullAddress: '',
-    latitude: 0,
-    longitude: 0,
+    latitude: undefined,
+    longitude: undefined,
     plotBuilding: '',
     streetArea: '',
     contactName: '',
@@ -23,8 +23,8 @@ const initialState: CreateLoadRequest = {
   delivery: {
     name: '',
     fullAddress: '',
-    latitude: 0,
-    longitude: 0,
+    latitude: undefined,
+    longitude: undefined,
     plotBuilding: '',
     streetArea: '',
     contactName: '',
@@ -41,58 +41,50 @@ const bookingSlice = createSlice({
   reducers: {
     setPickup: (
       state,
-      action: PayloadAction<{ pickup: CreateLoadRequest['pickup'] }>
+      action: PayloadAction<{ pickup: CreateLoadRequest['pickup'] }>,
     ) => {
       state.pickup = action.payload.pickup;
     },
 
     setDelivery: (
       state,
-      action: PayloadAction<{ delivery: CreateLoadRequest['delivery'] }>
+      action: PayloadAction<{ delivery: CreateLoadRequest['delivery'] }>,
     ) => {
       state.delivery = action.payload.delivery;
     },
 
-    setWeight: (
-      state,
-      action: PayloadAction<{ weight: string }>
-    ) => {
+    setWeight: (state, action: PayloadAction<{ weight: string }>) => {
       state.weight = Number(action.payload.weight);
     },
-setSelectedDriver: (
-  state,
-  action: PayloadAction<{
-    driverId: string;
-    vehicleType: string;
-    freightAmount: number;
-    expectedVehicleAvailability: string;
-    vehicleImage: string;
-    vehicleNumber: string;
-    distance:any
-  }>
-) => {
+    setSelectedDriver: (
+      state,
+      action: PayloadAction<{
+        driverId: string;
+        vehicleType: string;
+        freightAmount: number;
+        expectedVehicleAvailability: string;
+        vehicleImage: string;
+        vehicleNumber: string;
+        distance: any;
+      }>,
+    ) => {
+      state.selectedDriverId = action.payload.driverId;
 
-  state.selectedDriverId = action.payload.driverId;
+      state.vehicleType = action.payload.vehicleType;
 
-  state.vehicleType = action.payload.vehicleType;
+      state.freightAmount = action.payload.freightAmount;
 
-  state.freightAmount = action.payload.freightAmount;
+      state.expectedVehicleAvailability =
+        action.payload.expectedVehicleAvailability;
 
-  state.expectedVehicleAvailability =
-    action.payload.expectedVehicleAvailability;
+      state.vehicleImage = action.payload.vehicleImage;
 
-  state.vehicleImage = action.payload.vehicleImage;
-
-  state.vehicleNumber = action.payload.vehicleNumber;
-  state.distance=action.payload.distance
-},setDistance: (
-  state,
-  action: PayloadAction<number>,
-) => {
-
-  state.distance = action.payload;
-
-},
+      state.vehicleNumber = action.payload.vehicleNumber;
+      state.distance = action.payload.distance;
+    },
+    setDistance: (state, action: PayloadAction<number>) => {
+      state.distance = action.payload;
+    },
     resetBooking: () => initialState,
   },
 });
@@ -103,7 +95,7 @@ export const {
   setWeight,
   resetBooking,
   setDistance,
-  setSelectedDriver
+  setSelectedDriver,
 } = bookingSlice.actions;
 
 export default bookingSlice.reducer;

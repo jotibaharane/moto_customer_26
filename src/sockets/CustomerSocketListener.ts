@@ -7,17 +7,13 @@ import {
   updateDriver,
   updateDriverStatus,
 } from '@store/slices/customerSocket/customerSocketSlice';
+import { setDrivers } from '@store/slices/map/mapSlice';
 import { Alert } from 'react-native';
 import { SOCKET_EVENTS } from './SocketEvents';
 import SocketService from './SocketService';
-import { store } from '@store/index';
-import CustomerSocket from './CustomerSocket';
-import { setDrivers } from '@store/slices/map/mapSlice';
 
 class CustomerSocketListener {
- private authenticatedCallback:
-    | ((data: any) => void)
-    | null = null;
+  private authenticatedCallback: ((data: any) => void) | null = null;
 
   setAuthenticatedCallback(callback: (data: any) => void) {
     this.authenticatedCallback = callback;
@@ -59,7 +55,6 @@ class CustomerSocketListener {
       dispatch(setConnected(false));
     });
 
- 
     /**
      * Live Driver Location
      */
@@ -75,33 +70,23 @@ class CustomerSocketListener {
     /**
      * Driver Status
      */
-    socket.on(
-      SOCKET_EVENTS.DRIVER_ONLINE,
+    socket.on(SOCKET_EVENTS.DRIVER_ONLINE, driver => {
+      dispatch(
+        updateDriver({
+          ...driver,
+          lastSeen: Date.now(),
+        }),
+      );
+    });
 
-      driver => {
-        dispatch(
-          updateDriver({
-            ...driver,
-
-            lastSeen: Date.now(),
-          }),
-        );
-      },
-    );
-
-    socket.on(
-      SOCKET_EVENTS.DRIVER_OFFLINE,
-
-      driver => {
-        dispatch(
-          updateDriverStatus({
-            driverId: driver.driverId,
-
-            status: 'OFFLINE',
-          }),
-        );
-      },
-    );
+    socket.on(SOCKET_EVENTS.DRIVER_OFFLINE, driver => {
+      dispatch(
+        updateDriverStatus({
+          driverId: driver.driverId,
+          status: 'OFFLINE',
+        }),
+      );
+    });
 
     /**
      * Trip Started
@@ -163,7 +148,7 @@ class CustomerSocketListener {
 
     socket.on('tracking-driver-location', data => {
       console.log('Tracking Location : ', { data });
-      dispatch(setDrivers(data))
+      dispatch(setDrivers(data));
     });
 
     socket.on('load-status-changed', data => {
@@ -189,9 +174,9 @@ class CustomerSocketListener {
       console.log('Trip Completed : ', { data });
     });
 
-     socket.on('payment-notification', data => {
+    socket.on('payment-notification', data => {
       console.log('payment-notification: ', { data });
-     Alert.alert(data?.message)
+      Alert.alert(data?.message);
     });
   }
 

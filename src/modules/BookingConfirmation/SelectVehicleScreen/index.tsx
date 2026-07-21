@@ -4,26 +4,33 @@ import { navigate } from '@navigation/NavigationService';
 import CustomerSocket from '@socket/CustomerSocket';
 import { RootState } from '@store/rootReducer';
 import { setSelectedDriver } from '@store/slices/Booking/bookingSlice';
+import { COLORS } from '@theme/index';
 import { MapPin } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
-import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import DropModal from '../Dashboard/components/DropModal';
 import PickupModal from '../Dashboard/components/PickupModal';
 import WeightModal from '../Dashboard/components/WeightModal';
 import { styles } from './SelectVehicle.styles';
+import VehicleCard from './component/VehicleCard';
 
 const SelectVehicleScreen = () => {
   const dispatch = useDispatch();
   const [modalVisible, setModalVisible] = useState(false);
   const [pickupModalVisible, setPickupModalVisible] = useState(false);
   const [dropModalVisible, setDropModalVisible] = useState(false);
-  const { pickup, delivery, vehicleType, weight ,selectedDriverId} = useSelector(
-    (state: RootState) => state.booking,
-  );
+  const { pickup, delivery, vehicleType, weight, selectedDriverId } =
+    useSelector((state: RootState) => state.booking);
   const { distance, loading } = useDistance(
-    { lat: pickup?.latitude, lng: pickup?.longitude },
-    { lat: delivery?.latitude, lng: delivery?.longitude },
+    { lat: pickup?.latitude!, lng: pickup?.longitude! },
+    { lat: delivery?.latitude!, lng: delivery?.longitude! },
   );
   const [drivers, setDrivers] = useState<any[]>([]);
   const [loadingDrivers, setLoadingDrivers] = useState(false);
@@ -39,8 +46,8 @@ const SelectVehicleScreen = () => {
         setLoadingDrivers(true);
 
         const response = await CustomerSocket.watchDrivers(
-          pickup.latitude,
-          pickup.longitude,
+          pickup.latitude!,
+          pickup.longitude!,
           5,
         );
         setDrivers(response);
@@ -146,58 +153,49 @@ const SelectVehicleScreen = () => {
 
       {/* Vehicle List */}
       <FlatList
-        data={drivers || []}
-        ListEmptyComponent={() => (
-          <View style={styles.emptyContainer}>
-            <View style={styles.emptyCard}>
-              <Text style={styles.emptyTitle}>No Vehicles Available 🚚</Text>
-              <Text style={styles.emptySubText}>
-                Try changing pickup location or weight to see available vehicles
-              </Text>
-            </View>
-          </View>
-        )}
-        renderItem={({ item }) => {
-          const isSelected = item?.driverId===selectedDriverId;
+        data={drivers}
+        keyExtractor={item => item.driverId.toString()}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.listContainer}
+        ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
+        ListEmptyComponent={
+          loadingDrivers ? (
+            <ActivityIndicator
+              size="large"
+              color={COLORS.primary[500]}
+              style={{ marginTop: 50 }}
+            />
+          ) : (
+            <View style={styles.emptyContainer}>
+              <View style={styles.emptyCard}>
+                <Text style={styles.emptyTitle}>No Vehicles Available 🚚</Text>
 
-          return (
-            <TouchableOpacity
-              style={[styles.card, isSelected && styles.selectedCard]}
-              onPress={() => {
-                dispatch(
-                  setSelectedDriver({
-                    driverId: item.driverId,
-                    vehicleType: item.vehicleType,
-                    vehicleNumber: item.vehicleNumber,
-                    vehicleImage: item.vehicleImage,
-
-                    freightAmount: item.freightAmount,
-                    expectedVehicleAvailability:
-                      item.expectedVehicleAvailability,
-                    distance: item.distance,
-                  }),
-                );
-              }}
-            >
-              <TouchableOpacity
-                onPress={() => navigate('VehicleDhalaSizeScreen', { item })}
-              >
-                <Image
-                  source={{ uri: item?.vehicleImage }}
-                  style={styles.image}
-                />
-              </TouchableOpacity>
-
-              <View style={styles.cardContent}>
-                <Text style={styles.vehicleName}>{item?.vehicleType}</Text>
-                <Text style={styles.vehicleDetails}>
-                  {item?.weightRange} , {item?.expectedVehicleAvailability}
-                  {'\n'} Freight - {item?.freightAmount} ₹
+                <Text style={styles.emptySubText}>
+                  Try changing pickup location or weight.
                 </Text>
               </View>
-            </TouchableOpacity>
-          );
-        }}
+            </View>
+          )
+        }
+        renderItem={({ item }) => (
+          <VehicleCard
+            item={item}
+            selected={item.driverId === selectedDriverId}
+            onSelect={() =>
+              dispatch(
+                setSelectedDriver({
+                  driverId: item.driverId,
+                  vehicleType: item.vehicleType,
+                  vehicleNumber: item.vehicleNumber,
+                  vehicleImage: item.vehicleImage,
+                  freightAmount: item.freightAmount,
+                  expectedVehicleAvailability: item.expectedVehicleAvailability,
+                  distance: item.distance,
+                }),
+              )
+            }
+          />
+        )}
       />
 
       {/* Button */}
@@ -206,11 +204,6 @@ const SelectVehicleScreen = () => {
         variant="filled"
         style={styles.button}
         onPress={() => {
-          // navigate('VehicleDhalaSizeScreen', { item: {} });
-          // if (!isFormValid) {
-          //   Alert.alert('All Fields Mandetory');
-          //   return;
-          // }
           navigate('ReviewBookingScreen');
         }}
       />

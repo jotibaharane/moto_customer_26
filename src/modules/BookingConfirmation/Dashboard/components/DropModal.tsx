@@ -23,13 +23,13 @@ interface Props {
 }
 
 const DropModal: React.FC<Props> = ({ onOpen, open }) => {
-  const currentLocation = useCurrentLocation();
+  const { location } = useCurrentLocation();
   const refScrollable = useRef<any>(null);
   const [search, setSearch] = useState('');
   const { data: locationData } = useGetSearchLocationQuery({
     search: search,
-    latitude: currentLocation?.lat,
-    longitude: currentLocation?.lng,
+    latitude: location?.lat,
+    longitude: location?.lng,
   });
   const dispatch = useDispatch();
   const [openGoogleAddress, setOpenGoogleAddress] = useState(false);

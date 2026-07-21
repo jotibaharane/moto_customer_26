@@ -26,6 +26,15 @@ export const authApiQuery = baseApi.injectEndpoints({
     getLoads: builder.query<any, void>({
       query: () => `/load/loads`,
     }),
+    getLocationByLatLng: builder.query<
+      any,
+      { latitude: number; longitude: number }
+    >({
+      query: body => ({
+        url: '/location/reverse',
+        params: body,
+      }),
+    }),
   }),
   overrideExisting: true,
 });
@@ -36,4 +45,5 @@ export const {
   useGetAddressByTagQuery,
   useGetAddressLabelsQuery,
   useGetLoadsQuery,
+  useGetLocationByLatLngQuery,
 } = authApiQuery;

@@ -18,12 +18,15 @@ import { styles } from '../reporting.style';
 
 const MapComponent = () => {
   const cameraRef = useRef<any>(null);
-  const { driver } = useSelector((state: RootState) => state.map);
+  const { driver, status, tracking } = useSelector(
+    (state: RootState) => state.map,
+  );
   const [routeGeoJSON, setRouteGeoJSON] = useState<any>(null);
   const [animatedCoords, setAnimatedCoords] = useState<[number, number] | null>(
     null,
   );
 
+  console.log({ driver, status, tracking });
   const prevCoords = useRef<[number, number] | null>(null);
   const prevHeading = useRef(0);
 
@@ -117,10 +120,16 @@ const MapComponent = () => {
     const loadRoute = async () => {
       try {
         const from = [driver?.longitude, driver?.latitude];
-        const to = [
-          driver?.pickupCoordinate?.longitude,
-          driver?.pickupCoordinate?.latitude,
-        ];
+        const to =
+          driver?.tripStatus === 'DRIVER_ACCEPTED'
+            ? [
+                driver?.pickupCoordinate?.longitude,
+                driver?.pickupCoordinate?.latitude,
+              ]
+            : [
+                driver?.destinationCoordinate?.longitude,
+                driver?.destinationCoordinate?.latitude,
+              ];
         const res = await getDirections(from, to);
         if (!res) return;
         setRouteGeoJSON(res);
@@ -229,9 +238,19 @@ const MapComponent = () => {
           <MarkerView coordinate={animatedCoords} anchor={{ x: 0.5, y: 1.8 }}>
             <View style={styles.tooltipContainer}>
               <Text style={styles.tooltipTitle}>
-                Distance {driver?.pickupDistance || 0} Km
+                Distance{' '}
+                {driver?.tripStatus !== 'DRIVER_ACCEPTED'
+                  ? driver?.deliveryDistance?.distanceKm || 0
+                  : driver?.pickupDistance?.distanceKm || 0}{' '}
+                Km
               </Text>
-              <Text style={styles.tooltipText}>Time {0} min</Text>
+              <Text style={styles.tooltipText}>
+                Time{' '}
+                {driver?.tripStatus !== 'DRIVER_ACCEPTED'
+                  ? driver?.deliveryDistance?.durationMin || 0
+                  : driver?.pickupDistance?.durationMin || 0}{' '}
+                min
+              </Text>
             </View>
           </MarkerView>
         )}
@@ -259,6 +278,36 @@ const MapComponent = () => {
               id="pickupSymbol"
               style={{
                 iconImage: 'pickupIcon',
+                iconSize: 0.3,
+                iconAnchor: 'bottom',
+              }}
+            />
+          </ShapeSource>
+        )}
+
+        {/* ========================= */}
+        {/* DELEVERY */}
+        {/* ========================= */}
+
+        {isValidLocation(driver?.destinationCoordinate) && (
+          <ShapeSource
+            id="pickupSource"
+            shape={{
+              type: 'Feature',
+              geometry: {
+                type: 'Point',
+                coordinates: [
+                  driver?.destinationCoordinate?.longitude,
+                  driver?.destinationCoordinate?.latitude,
+                ],
+              },
+              properties: {},
+            }}
+          >
+            <SymbolLayer
+              id="pickupSymbol"
+              style={{
+                iconImage: 'dropIcon',
                 iconSize: 0.3,
                 iconAnchor: 'bottom',
               }}

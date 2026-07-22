@@ -14,6 +14,12 @@ export interface BookingState {
   status?: string;
 }
 
+interface LocationDistance {
+  distanceKm: number;
+  durationMin: number;
+  durationText: Text;
+}
+
 export interface DriverLocationUpdate {
   status: string;
   loadId: string;
@@ -22,20 +28,20 @@ export interface DriverLocationUpdate {
   longitude: number;
   heading: number;
   speed: number;
-  pickupDistance: number;
-  deliveryDistance: number;
+  pickupDistance: LocationDistance;
+  deliveryDistance: LocationDistance;
   tripStatus: string;
   updatedAt: string;
-  destinationCoordinate: {latitude: any, longitude:any},
-  pickupCoordinate: {latitude: any, longitude:any}
+  destinationCoordinate: { latitude: any; longitude: any };
+  pickupCoordinate: { latitude: any; longitude: any };
 }
 export interface MapState {
   customer: Coordinates | null;
   pickup: Coordinates | null;
   destination: Coordinates | null;
-  driver: DriverLocationUpdate| null;
-  tracking?:BookingState;
-  status: string
+  driver: DriverLocationUpdate | null;
+  tracking?: BookingState;
+  status: string;
 }
 
 /* =========================
@@ -47,7 +53,7 @@ const initialState: MapState = {
   destination: null,
   driver: null,
   customer: null,
-  tracking:undefined,
+  tracking: undefined,
   status: '',
 };
 
@@ -63,7 +69,7 @@ const mapSlice = createSlice({
       state.customer = action.payload;
     },
     setTripDetails: (state, action: PayloadAction<BookingState>) => {
-      state.tracking=action.payload;
+      state.tracking = action.payload;
     },
     setPickup: (state, action: PayloadAction<Coordinates | null>) => {
       state.pickup = action.payload;
@@ -72,21 +78,20 @@ const mapSlice = createSlice({
     setDestination: (state, action: PayloadAction<Coordinates | null>) => {
       state.destination = action.payload;
     },
-   setLPStatus: (state, action: PayloadAction<string>) => {
+    setLPStatus: (state, action: PayloadAction<string>) => {
       state.status = action.payload;
     },
-    setDrivers: (
-      state,
-      action: PayloadAction<DriverLocationUpdate| null>,
-    ) => {
+    setDrivers: (state, action: PayloadAction<DriverLocationUpdate | null>) => {
       state.driver = action.payload;
     },
-      setMessageAndDistance(
+    setMessageAndDistance(
       state,
       action: PayloadAction<{ distance: any; message: string }>,
     ) {
-      if(state.tracking){state.tracking.message = action.payload.message;
-      state.tracking.distance_km = action.payload.distance;}
+      if (state.tracking) {
+        state.tracking.message = action.payload.message;
+        state.tracking.distance_km = action.payload.distance;
+      }
     },
     setFromDriver: (
       state,
@@ -95,8 +100,10 @@ const mapSlice = createSlice({
         eta_minutes: any;
       }>,
     ) => {
-     if(state.tracking){ state.tracking.distance_km = action.payload.distance_km;
-      state.tracking.eta_minutes = action.payload.eta_minutes;}
+      if (state.tracking) {
+        state.tracking.distance_km = action.payload.distance_km;
+        state.tracking.eta_minutes = action.payload.eta_minutes;
+      }
     },
   },
 });
@@ -105,7 +112,15 @@ const mapSlice = createSlice({
    EXPORTS
 ========================= */
 
-export const { setCustomerLocation, setPickup, setDestination, setDrivers ,setLPStatus,setTripDetails,setMessageAndDistance,setFromDriver} =
-  mapSlice.actions;
+export const {
+  setCustomerLocation,
+  setPickup,
+  setDestination,
+  setDrivers,
+  setLPStatus,
+  setTripDetails,
+  setMessageAndDistance,
+  setFromDriver,
+} = mapSlice.actions;
 
 export default mapSlice.reducer;

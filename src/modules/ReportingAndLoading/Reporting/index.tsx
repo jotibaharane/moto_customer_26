@@ -3,11 +3,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import CustomerSocket from '@socket/CustomerSocket';
 import SocketService from '@socket/SocketService';
 import { RootState } from '@store/rootReducer';
-import { COLORS } from '@theme/index';
-import { handleCall } from '@utils/helperfunctions.utils';
-import { Phone, User } from 'lucide-react-native';
 import React, { useCallback, useEffect } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import Header from './components/Header';
@@ -53,7 +49,7 @@ const ReportingScreen = () => {
 
       <MapComponent />
 
-      {driver?.loadId && (
+      {/* {driver?.loadId && (
         <TouchableOpacity
           style={styles.callButton}
           onPress={() => handleCall('driverMobile')}
@@ -72,7 +68,7 @@ const ReportingScreen = () => {
             Post id {driver?.loadId}
           </Text>
         </TouchableOpacity>
-      )}
+      )} */}
     </SafeAreaView>
   );
 };

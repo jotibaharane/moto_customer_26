@@ -12,27 +12,24 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     alignItems: 'center',
     paddingBottom: 8,
+    // width: '100%',
   },
   messageContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'absolute',
-    top: 150,
-    zIndex: 999,
-    left: '12%',
-    right: '12%',
+    flex: 1,
   },
   trackingBtn: {
-    backgroundColor: COLORS.primary[500],
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    backgroundColor: COLORS.primary[100],
     borderRadius: 4,
     marginTop: 4,
+    padding: 5,
+    flexDirection: 'row',
+    gap: 5,
   },
 
   trackingText: {
-    color: COLORS.white[100],
-    flex: 1,
+    color: COLORS.primary[500],
+    fontSize: 12,
+    textAlign: 'center',
   },
 
   headerCenter: {
@@ -42,11 +39,14 @@ export const styles = StyleSheet.create({
 
   mapContainer: {
     flex: 1,
+    borderRadius: 30,
+    padding: 5,
   },
 
   map: {
     flex: 1,
     marginBottom: -30,
+    borderRadius: 30,
   },
 
   bottomCard: {
@@ -94,10 +94,8 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: FONT_FAMILIES.semiBold,
     textAlign: 'center',
-    backgroundColor: COLORS.white[100],
     paddingVertical: 5,
     paddingHorizontal: 15,
-    borderWidth: 0.5,
   },
   tooltipContainer: {
     backgroundColor: '#fff',

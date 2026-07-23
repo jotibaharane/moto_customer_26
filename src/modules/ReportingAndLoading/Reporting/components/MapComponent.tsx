@@ -34,44 +34,6 @@ const MapComponent = () => {
   // DRIVER LIVE MOVEMENT
   // =========================
 
-  // useEffect(() => {
-  //   if (!driver) return;
-  //   const lng = Number(driver?.longitude);
-  //   const lat = Number(driver?.latitude);
-
-  //   // INVALID COORDS
-  //   if (isNaN(lng) || isNaN(lat)) {
-  //     console.log('Invalid driver coordinates', driver);
-  //     return;
-  //   }
-
-  //   const newCoords: [number, number] = [lng, lat];
-
-  //   // SMOOTH ANIMATION
-
-  //   prevCoords.current = newCoords;
-
-  //   const smoothHeading = getSmoothHeading(
-  //     prevHeading.current,
-  //     driver.heading || 0,
-  //   );
-
-  //   prevHeading.current = smoothHeading;
-
-  //   cameraRef.current?.setCamera({
-  //     centerCoordinate: newCoords,
-  //     zoomLevel: 17,
-  //     pitch: 60,
-  //     heading: smoothHeading,
-  //     animationMode: 'easeTo',
-  //     animationDuration: 1000,
-  //   });
-  // }, [driver]);
-
-  // =========================
-  // DRIVER LIVE MOVEMENT
-  // =========================
-
   useEffect(() => {
     if (!driver) return;
 
@@ -121,7 +83,8 @@ const MapComponent = () => {
       try {
         const from = [driver?.longitude, driver?.latitude];
         const to =
-          driver?.tripStatus === 'DRIVER_ACCEPTED'
+          driver?.tripStatus === 'DRIVER_ACCEPTED' ||
+          driver?.tripStatus === 'DRIVER_NEAR_PICKUP'
             ? [
                 driver?.pickupCoordinate?.longitude,
                 driver?.pickupCoordinate?.latitude,
@@ -239,16 +202,18 @@ const MapComponent = () => {
             <View style={styles.tooltipContainer}>
               <Text style={styles.tooltipTitle}>
                 Distance{' '}
-                {driver?.tripStatus !== 'DRIVER_ACCEPTED'
-                  ? driver?.deliveryDistance?.distanceKm || 0
-                  : driver?.pickupDistance?.distanceKm || 0}{' '}
+                {driver?.tripStatus === 'DRIVER_ACCEPTED' ||
+                driver?.tripStatus === 'DRIVER_NEAR_PICKUP'
+                  ? driver?.pickupDistance?.distanceKm || 0
+                  : driver?.deliveryDistance?.distanceKm || 0}{' '}
                 Km
               </Text>
               <Text style={styles.tooltipText}>
                 Time{' '}
-                {driver?.tripStatus !== 'DRIVER_ACCEPTED'
-                  ? driver?.deliveryDistance?.durationMin || 0
-                  : driver?.pickupDistance?.durationMin || 0}{' '}
+                {driver?.tripStatus === 'DRIVER_ACCEPTED' ||
+                driver?.tripStatus === 'DRIVER_NEAR_PICKUP'
+                  ? driver?.pickupDistance?.durationMin || 0
+                  : driver?.deliveryDistance?.durationMin || 0}{' '}
                 min
               </Text>
             </View>

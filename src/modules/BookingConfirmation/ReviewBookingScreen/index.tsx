@@ -1,14 +1,21 @@
 import CustomButton from '@components/Button';
 import OverlayLoader from '@components/OverlayLoader';
+import { useDistance } from '@hooks/useDistance';
 import CustomerSocket from '@socket/CustomerSocket';
 import { RootState } from '@store/rootReducer';
-import { s, vs } from '@theme/index';
+import { vs } from '@theme/index';
 import { MapPin } from 'lucide-react-native';
 import React from 'react';
-import { Image, ScrollView, Text, View } from 'react-native';
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { useSelector } from 'react-redux';
 import { styles } from './ReviewBooking.style';
-import { useDistance } from '@hooks/useDistance';
 
 const ReviewBookingScreen = () => {
   const [watingDriver, setWaitingDriver] = React.useState(false);
@@ -28,8 +35,8 @@ const ReviewBookingScreen = () => {
     weightRange,
   } = useSelector((state: RootState) => state.booking);
   const { distance, loading } = useDistance(
-    { lat: pickup?.latitude, lng: pickup?.longitude },
-    { lat: delivery?.latitude, lng: delivery?.longitude },
+    { lat: pickup?.latitude!, lng: pickup?.longitude! },
+    { lat: delivery?.latitude!, lng: delivery?.longitude! },
   );
   const handleBook = async () => {
     try {
@@ -59,18 +66,39 @@ const ReviewBookingScreen = () => {
   return (
     <View style={styles.container}>
       <ScrollView style={{ flex: 1 }}>
-        <View style={styles.vehicleCard}>
-          <Image source={{ uri: vehicleImage }} height={150} width={150} />
-          <View style={styles.vehicleDetails}>
-            <Text style={styles.vehicleTitle}>{vehicleNumber}</Text>
-            {/* <Text style={styles.vehicleInfo}>
-              Loading Capacity - {bookingVehicle?.unladen_weight}kg{'\n\n'}
-              Length -{bookingVehicle?.length}ft{'\n\n'}
-              width - {bookingVehicle?.width} ft{'\n\n'}
-              Height - {bookingVehicle?.height} ft
-            </Text> */}
+        <TouchableOpacity activeOpacity={0.9} style={[styles.card]}>
+          <Pressable style={styles.imageContainer}>
+            <View style={styles.circle} />
+
+            <Image
+              source={require('@assets/images/truck.png')}
+              resizeMode="contain"
+              style={styles.truckImage}
+            />
+          </Pressable>
+
+          <View style={styles.cardContent}>
+            <View style={styles.detailRow}>
+              <Text style={styles.vehicleName}>Tata Ace</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.vehicleDetails}>
+                Loading Capacity - 750 kg
+              </Text>
+            </View>
+
+            <View style={styles.detailRow}>
+              <Text style={styles.vehicleDetails}>Length - 7 ft</Text>
+            </View>
+
+            <View style={styles.detailRow}>
+              <Text style={styles.vehicleDetails}>width - 5 ft </Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.vehicleDetails}>Height - 5 ft </Text>
+            </View>
           </View>
-        </View>
+        </TouchableOpacity>
         <View style={styles.cardRow}>
           <Text style={styles.cardText}>Total Weight</Text>
           <Text style={styles.cardText}>{weight} KG</Text>
@@ -88,7 +116,9 @@ const ReviewBookingScreen = () => {
             </View>
           </View>
           <View style={styles.divider}>
-            <Text style={styles.distanceText}>{distance?.distanceKm || 0} km</Text>
+            <Text style={styles.distanceText}>
+              {distance?.distanceKm || 0} km
+            </Text>
           </View>
           <View style={styles.row}>
             <MapPin size={30} fill={'#FF0A0A'} />
@@ -112,8 +142,6 @@ const ReviewBookingScreen = () => {
           variant="filled"
           style={{
             marginTop: vs(49),
-            alignSelf: 'center',
-            paddingHorizontal: s(40),
           }}
           onPress={handleBook}
         />

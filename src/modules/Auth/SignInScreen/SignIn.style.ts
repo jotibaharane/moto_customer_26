@@ -28,7 +28,7 @@ export const styles = StyleSheet.create({
     marginTop: verticalScale(32),
     fontSize: moderateScale(16),
     fontFamily: FONT_FAMILIES.semiBold,
-    color: COLORS.black[500],
+    color: '#132235',
   },
 
   expiryText: {
@@ -37,6 +37,7 @@ export const styles = StyleSheet.create({
     fontSize: moderateScale(12),
     fontFamily: FONT_FAMILIES.regular,
     color: COLORS.gray[500],
+    letterSpacing: 1,
   },
 
   /* ================= INPUT ================= */
@@ -49,7 +50,7 @@ export const styles = StyleSheet.create({
   input: {
     flex: 1,
     borderWidth: 1,
-    borderColor: COLORS.gray[250],
+    borderColor: '#2E5A99',
     borderRadius: scale(16),
     paddingHorizontal: scale(16),
     fontSize: moderateScale(16),
@@ -66,7 +67,7 @@ export const styles = StyleSheet.create({
     height: verticalScale(54),
 
     borderWidth: 1,
-    borderColor: COLORS.gray[250],
+    borderColor: '#D3DDE7',
     borderRadius: scale(16),
   },
 
@@ -102,10 +103,10 @@ export const styles = StyleSheet.create({
   },
 
   filledPinCodeContainerStyle: {
-    width: scale(56),
-    height: scale(56),
-    borderWidth: 1,
-    borderColor: COLORS.primary[500],
+    width: scale(40),
+    height: scale(42),
+    borderWidth: 2,
+    borderColor: '#2E5A99',
     borderRadius: scale(16),
   },
 

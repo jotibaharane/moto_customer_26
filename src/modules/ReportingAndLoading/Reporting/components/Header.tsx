@@ -8,7 +8,7 @@ import { styles } from '../reporting.style';
 
 const Header = () => {
   const { message } = useSelector(
-    (state: RootState) => state.map?.tracking || { message: null },
+    (state: RootState) => state.map || { message: null },
   );
 
   return (

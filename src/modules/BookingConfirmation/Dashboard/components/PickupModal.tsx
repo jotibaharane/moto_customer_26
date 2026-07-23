@@ -54,7 +54,7 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
     latitude: location?.lat,
     longitude: location?.lng,
   });
-  console.log({ location, currentLocationData });
+
   const { data: savedLocationData, refetch } = useGetSavedLocationQuery();
   const { data: addressTag, refetch: refetchTags } = useGetAddressLabelsQuery();
   const [isCustomBookmark, setIsCustomBookmark] = useState(false);
@@ -69,6 +69,7 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
       refScrollable?.current?.close();
     }
   }, [open]);
+
   return (
     <RBSheet
       ref={refScrollable}

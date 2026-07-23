@@ -44,7 +44,7 @@ const SelectVehicleScreen = () => {
     const fetchDrivers = async () => {
       try {
         setLoadingDrivers(true);
-debugger
+
         const response = await CustomerSocket.watchDrivers(
           pickup.latitude!,
           pickup.longitude!,
@@ -202,7 +202,6 @@ debugger
       <CustomButton
         title="Confirm & Proceed"
         variant="filled"
-        style={styles.button}
         onPress={() => {
           navigate('ReviewBookingScreen');
         }}

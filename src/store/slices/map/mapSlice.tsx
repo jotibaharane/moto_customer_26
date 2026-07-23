@@ -42,6 +42,7 @@ export interface MapState {
   driver: DriverLocationUpdate | null;
   tracking?: BookingState;
   status: string;
+  message?: string;
 }
 
 /* =========================
@@ -105,6 +106,9 @@ const mapSlice = createSlice({
         state.tracking.eta_minutes = action.payload.eta_minutes;
       }
     },
+    setMessage: (state, action: PayloadAction<string>) => {
+      state.message = action.payload;
+    },
   },
 });
 
@@ -121,6 +125,7 @@ export const {
   setTripDetails,
   setMessageAndDistance,
   setFromDriver,
+  setMessage,
 } = mapSlice.actions;
 
 export default mapSlice.reducer;

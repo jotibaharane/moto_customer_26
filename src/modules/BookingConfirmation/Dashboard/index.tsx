@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { navigate } from '@navigation/NavigationService';
 import { setWeight } from '@store/slices/Booking/bookingSlice';
-import { COLORS, FONT_FAMILIES, ms } from '@theme/index';
+import { COLORS, FONT_FAMILIES, ms, s, vs } from '@theme/index';
 import { ArrowRight } from 'lucide-react-native';
 import { styles } from './Dashboard.style';
 import DropModal from './components/DropModal';
@@ -23,82 +23,91 @@ const DashboardScreen = () => {
   const [pickupModalVisible, setPickupModalVisible] = useState(false);
   const [dropModalVisible, setDropModalVisible] = useState(false);
 
+  console.log({ pickupModalVisible, dropModalVisible });
   return (
     <SafeAreaView style={styles.container}>
       {/* ================= TOP ================= */}
 
-      <View style={styles.topWrapper}>
-        <View style={styles.card}>
-          <View style={styles.row}>
-            <SearchField
-              placeholder="Pick up Address"
-              onPress={() => setPickupModalVisible(true)}
-              iconColor="#4CAF50"
-              editable={false}
-              value={pickup?.fullAddress}
-              iconType="location"
-            />
-            {/* <Bell size={30} /> */}
-          </View>
+      {(!pickupModalVisible || !dropModalVisible) && (
+        <View style={styles.topWrapper}>
+          <View style={styles.card}>
+            <View style={styles.row}>
+              <SearchField
+                placeholder="Pick up Address"
+                onPress={() => setPickupModalVisible(true)}
+                iconColor="#4CAF50"
+                editable={false}
+                value={pickup?.fullAddress}
+                iconType="location"
+              />
+              {/* <Bell size={30} /> */}
+            </View>
 
-          <View style={styles.row}>
-            <SearchField
-              placeholder="Delivery Address"
-              onPress={() => {
-                pickup?.name
-                  ? setDropModalVisible(true)
-                  : Alert.alert('Select pickup first');
-              }}
-              iconColor="#FF0A0A"
-              editable={false}
-              value={delivery?.fullAddress}
-              iconType="location"
-            />
-            {/* <View style={styles.emptyBox} /> */}
-          </View>
-          <View style={styles.declare_weight_container}>
-            <Text style={styles.declare_weight}>Declare Weight</Text>
-            <TextInput
-              placeholder="eg. 1000"
-              style={styles.weight_input}
-              value={weight?.toString()}
-              keyboardType="number-pad"
-              onChangeText={i => dispatch(setWeight({ weight: i }))}
-            />
+            {pickup?.fullAddress && (
+              <View style={styles.row}>
+                <SearchField
+                  placeholder="Delivery Address"
+                  onPress={() => {
+                    pickup?.name
+                      ? setDropModalVisible(true)
+                      : Alert.alert('Select pickup first');
+                  }}
+                  iconColor="#FF0A0A"
+                  editable={false}
+                  value={delivery?.fullAddress}
+                  iconType="location"
+                />
+                {/* <View style={styles.emptyBox} /> */}
+              </View>
+            )}
+            {pickup?.fullAddress && delivery?.fullAddress && (
+              <>
+                <View style={styles.declare_weight_container}>
+                  <Text style={styles.declare_weight}>Declare Weight</Text>
+                  <TextInput
+                    placeholder="eg. 1000"
+                    style={styles.weight_input}
+                    value={weight?.toString()}
+                    keyboardType="number-pad"
+                    onChangeText={i => dispatch(setWeight({ weight: i }))}
+                  />
 
-            <Text style={styles.kg}>Kg</Text>
+                  <Text style={styles.kg}>Kg</Text>
+                </View>
+                <TouchableOpacity
+                  style={{ flexDirection: 'row', alignSelf: 'flex-end' }}
+                  onPress={() => {
+                    navigate('SelectVehicleScreen');
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: ms(18),
+                      fontFamily: FONT_FAMILIES.bold,
+                      color: COLORS.primary[500],
+                    }}
+                  >
+                    Next
+                  </Text>
+                  <ArrowRight size={30} color={COLORS.primary[500]} />
+                </TouchableOpacity>
+              </>
+            )}
           </View>
-          <TouchableOpacity
-            style={{ flexDirection: 'row', alignSelf: 'flex-end' }}
-            onPress={() => {
-              navigate('SelectVehicleScreen');
-              // if (
-              //   pickup &&
-              //   delivery &&
-              //   weight
-              // ) {
-              //   navigate('SelectVehicleScreen');
-              // } else {
-              //   Alert.alert('Pickup,Drop and weight required');
-              // }
-            }}
-          >
-            <Text
-              style={{
-                fontSize: ms(18),
-                fontFamily: FONT_FAMILIES.bold,
-                color: COLORS.primary[500],
-              }}
-            >
-              Next
-            </Text>
-            <ArrowRight size={30} color={COLORS.primary[500]} />
-          </TouchableOpacity>
         </View>
-      </View>
+      )}
 
       {/* ================= MAP ================= */}
-      <MapComponent />
+      <View
+        style={{
+          padding: vs(16),
+          flex: 1,
+          borderRadius: s(30),
+          overflow: 'hidden',
+        }}
+      >
+        <MapComponent />
+      </View>
 
       {/* ================= MODALS ================= */}
       <PickupModal open={pickupModalVisible} onOpen={setPickupModalVisible} />

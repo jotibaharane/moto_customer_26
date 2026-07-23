@@ -50,7 +50,7 @@ const SetMPINScreen = () => {
         mpin: pin,
       }).unwrap();
 
-       if (resp?.Status === '00') {
+      if (resp?.Status === '00') {
         reset('BottomNavigation', { Screen: 'home' });
         dispatch(signIn({ ...customer, isMPINSet: true }));
       } else {
@@ -75,6 +75,10 @@ const SetMPINScreen = () => {
           pinCodeContainerStyle: styles.filledPinCodeContainerStyle,
           pinCodeTextStyle: styles.pinCodeTextStyle,
           filledPinCodeContainerStyle: styles.filledPinCodeContainerStyle,
+          containerStyle: {
+            alignItems: 'flex-start',
+            justifyContent: 'flex-start',
+          },
         }}
         autoFocus={false}
       />
@@ -89,6 +93,10 @@ const SetMPINScreen = () => {
           pinCodeContainerStyle: styles.filledPinCodeContainerStyle,
           pinCodeTextStyle: styles.pinCodeTextStyle,
           filledPinCodeContainerStyle: styles.filledPinCodeContainerStyle,
+          containerStyle: {
+            alignItems: 'flex-start',
+            justifyContent: 'flex-start',
+          },
         }}
         autoFocus={false}
       />
@@ -96,17 +104,17 @@ const SetMPINScreen = () => {
       <View style={styles.buttonRow}>
         <CustomButton
           title="Skip"
-          style={styles.button}
           variant="outline"
           onPress={() => navigate('BottomNavigation')}
+          style={{ width: 148 }}
         />
 
         <CustomButton
           title="Submit"
-          style={styles.button}
           variant="filled"
           onPress={handleSubmit}
           loading={isLoading}
+          style={{ width: 148 }}
         />
       </View>
     </SafeAreaView>

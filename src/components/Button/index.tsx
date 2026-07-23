@@ -74,10 +74,10 @@ export default CustomButton;
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: BORDER_RADIUS.lg,
+    borderRadius: BORDER_RADIUS.md,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: verticalScale(12),
+    paddingVertical: verticalScale(9),
     paddingHorizontal: moderateScale(16),
   },
 

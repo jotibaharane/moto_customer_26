@@ -1,48 +1,62 @@
-import { COLORS, FONT_FAMILIES } from '@theme/index';
+import {
+  COLORS,
+  FONT_FAMILIES,
+  moderateScale,
+  scale,
+  verticalScale,
+} from '@theme/index';
 import { StyleSheet } from 'react-native';
-import { s, vs, ms } from '@theme/index'; // path as per your project
 
 export const styles = StyleSheet.create({
   constainer: {
     flex: 1,
-    paddingHorizontal: s(16),
+    paddingLeft: scale(43),
+    paddingRight: scale(42),
     backgroundColor: COLORS.white[100],
   },
 
+  logoContainer: {
+    marginTop: verticalScale(31),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  logo: {
+    width: scale(343),
+    height: verticalScale(408),
+  },
+
   title: {
-    marginTop: vs(79),
     fontFamily: FONT_FAMILIES.bold,
-    fontSize: ms(24), // Figma font size
-    color: COLORS.black[500],
+    fontSize: moderateScale(24),
+    color: COLORS.primary[500],
   },
 
   subtitle: {
-    marginTop: vs(29),
     fontFamily: FONT_FAMILIES.regular,
     color: COLORS.gray[400],
-    fontSize: ms(14), // Figma font size
+    fontSize: moderateScale(14),
   },
 
   radioContainer: {
-    marginTop: vs(45),
+    marginVertical: verticalScale(23),
+    maxHeight: verticalScale(240),
   },
 
   buttonContainer: {
-    marginTop: vs(65),
-    width: '60%',
-    alignSelf: 'center',
+    marginHorizontal: scale(79),
   },
 
   infoRow: {
-    marginTop: vs(32),
+    marginTop: verticalScale(45),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: s(18),
+    gap: scale(18),
   },
 
   infoText: {
-    fontSize: ms(12), // Figma font size
+    fontSize: moderateScale(12),
     fontFamily: FONT_FAMILIES.regular,
     color: COLORS.primary[400],
   },
@@ -51,21 +65,22 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: vs(37),
-    gap: s(10),
+    marginTop: verticalScale(37),
+    gap: scale(10),
   },
 
   stepDot: {
-    width: s(10),
-    height: s(10),
-    borderRadius: s(5),
+    height: scale(10),
+    width: scale(10),
     backgroundColor: COLORS.gray[150],
+    borderRadius: scale(5),
   },
 
   stepActive: {
-    width: s(20),
-    height: s(10),
-    borderRadius: s(5),
+    height: scale(10),
+    width: scale(20),
     backgroundColor: COLORS.primary[500],
+    borderRadius: scale(5),
   },
+  button: { alignSelf: 'center', width: scale(213) },
 });

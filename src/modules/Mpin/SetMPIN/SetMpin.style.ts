@@ -25,9 +25,9 @@ export const styles = StyleSheet.create({
   fieldLabel: {
     marginTop: verticalScale(33),
     marginBottom: verticalScale(16),
-    fontSize: moderateScale(12), // Figma font size same
+    fontSize: moderateScale(16), // Figma font size same
     fontFamily: FONT_FAMILIES.regular,
-    color: COLORS.gray[650],
+    color: '#111112',
   },
 
   otpContainer: {
@@ -48,11 +48,11 @@ export const styles = StyleSheet.create({
   },
 
   filledPinCodeContainerStyle: {
-    height: scale(56),
-    width: scale(56),
+    height: scale(40),
+    width: scale(42),
     borderColor: COLORS.primary[500],
     borderWidth: 1,
-    borderRadius: scale(16),
+    borderRadius: scale(8),
   },
 
   pinBox: {
@@ -84,8 +84,7 @@ export const styles = StyleSheet.create({
 
   buttonRow: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    gap: scale(12),
+    gap: scale(43),
     marginTop: verticalScale(94),
   },
 

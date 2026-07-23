@@ -16,12 +16,6 @@ export const styles = StyleSheet.create({
     padding: s(10),
   },
 
-  vehicleDetails: {
-    justifyContent: 'center',
-    paddingHorizontal: s(32),
-    borderLeftWidth: 1,
-  },
-
   vehicleTitle: {
     fontSize: ms(12),
     fontFamily: FONT_FAMILIES.semiBold,
@@ -104,7 +98,115 @@ export const styles = StyleSheet.create({
     shadowColor: COLORS.black[500],
   },
 
+  card: {
+    flexDirection: 'row',
+    borderWidth: 1,
+    borderColor: COLORS.gray[250],
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+
+  image: {
+    height: vs(150),
+    width: s(150),
+  },
+
   button: {
-    marginTop: vs(49),
+    marginTop: vs(24),
+    alignSelf: 'center',
+    paddingHorizontal: s(40),
+  },
+
+  /* ================= EMPTY STATE ================= */
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: vs(40),
+  },
+
+  emptyCard: {
+    width: '100%',
+    padding: ms(20),
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: COLORS.gray[250],
+    backgroundColor: COLORS.white[100],
+    alignItems: 'center',
+  },
+
+  emptyTitle: {
+    fontSize: ms(16),
+    fontFamily: FONT_FAMILIES.semiBold,
+    color: COLORS.black[500],
+    marginTop: vs(10),
+  },
+
+  emptySubText: {
+    fontSize: ms(14),
+    fontFamily: FONT_FAMILIES.regular,
+    color: COLORS.gray[500],
+    textAlign: 'center',
+    marginTop: vs(4),
+  },
+
+  listContainer: {
+    paddingVertical: 20,
+    paddingBottom: 120,
+  },
+
+  selectedCard: {
+    borderColor: COLORS.primary[500],
+    borderWidth: 2,
+  },
+
+  imageContainer: {
+    width: 150,
+    height: 150,
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+
+  circle: {
+    position: 'absolute',
+    width: 220,
+    height: 220,
+    borderRadius: 110,
+    backgroundColor: COLORS.primary[50],
+    left: -90,
+    top: -30,
+  },
+
+  truckImage: {
+    width: 150,
+    height: 110,
+    alignSelf: 'flex-end',
+    marginRight: -30,
+  },
+
+  cardContent: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 12,
+  },
+
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+    marginLeft: 40,
+    justifyContent: 'center',
+  },
+
+  vehicleName: {
+    fontSize: 16,
+    fontFamily: FONT_FAMILIES.bold,
+    textAlign: 'center',
+  },
+
+  vehicleDetails: {
+    marginLeft: 8,
+    fontSize: 13,
+    color: COLORS.gray[600],
   },
 });

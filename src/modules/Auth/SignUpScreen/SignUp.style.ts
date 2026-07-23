@@ -1,4 +1,4 @@
-import { COLORS, hp, wp } from '@theme/index';
+import { COLORS, vs } from '@theme/index';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -10,6 +10,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     gap: 24,
+    marginTop: vs(46),
   },
 
   headerWrapper: {

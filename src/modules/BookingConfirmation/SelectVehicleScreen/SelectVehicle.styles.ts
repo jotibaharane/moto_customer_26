@@ -37,6 +37,8 @@ export const styles = StyleSheet.create({
     borderLeftColor: COLORS.black[500],
     marginLeft: ms(15),
     justifyContent: 'center',
+
+    alignSelf: 'flex-start',
   },
 
   distanceText: {
@@ -44,11 +46,15 @@ export const styles = StyleSheet.create({
     fontSize: ms(16),
     fontFamily: FONT_FAMILIES.semiBold,
     color: COLORS.primary[500],
+    backgroundColor: '#F2F5FB',
+    paddingHorizontal: 16,
+    paddingVertical: 7,
+    borderRadius: 6,
   },
 
   weightBox: {
     padding: ms(8),
-    backgroundColor: COLORS.gray[75],
+    backgroundColor: '#F2F5FB',
     borderRadius: 8,
     height: vs(38),
     alignSelf: 'flex-start',

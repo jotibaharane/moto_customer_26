@@ -19,14 +19,17 @@ import {
   LogBox,
   Platform,
   ScrollView,
+  StyleProp,
   StyleSheet,
   Text,
   TextInput,
   TextInputProps,
   TouchableWithoutFeedback,
   View,
+  ViewStyle,
 } from 'react-native';
 import Animated, {
+  AnimatedStyle,
   Extrapolate,
   interpolate,
   interpolateColor,
@@ -179,6 +182,7 @@ export interface InputOutlineProps extends TextInputProps {
    * @type string
    */
   errorFontFamily?: string;
+  placeStyle?: StyleProp<AnimatedStyle<StyleProp<ViewStyle>>>;
 }
 
 type InputOutline = InputOutlineMethods;
@@ -232,9 +236,10 @@ const InputOutlineComponent = forwardRef<InputOutline, InputOutlineProps>(
       placeholder = 'Placeholder',
       TrailingIcon,
       editable,
-
+      placeStyle,
       value: _providedValue = '',
       onChangeText,
+
       ...inputProps
     } = props;
     // value of input
@@ -385,7 +390,6 @@ const InputOutlineComponent = forwardRef<InputOutline, InputOutlineProps>(
         position: 'absolute',
         top: paddingVertical,
         left: paddingHorizontal,
-        backgroundColor, // '#fff' काढा
       },
 
       placeholderText: {
@@ -435,7 +439,7 @@ const InputOutlineComponent = forwardRef<InputOutline, InputOutlineProps>(
       },
     });
     const placeholderStyle = useMemo(() => {
-      return [styles.placeholder, animatedPlaceholderStyles];
+      return [styles.placeholder, animatedPlaceholderStyles, placeStyle];
     }, [styles.placeholder, animatedPlaceholderStyles]);
 
     return (

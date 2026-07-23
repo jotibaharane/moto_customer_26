@@ -80,6 +80,8 @@ const SignInScreen = () => {
           mobile: mobileNumber,
         });
         return;
+      } else {
+        Alert.alert(resp?.message);
       }
     } catch (error) {
       console.log('OTP verify error:', error);
@@ -119,8 +121,9 @@ const SignInScreen = () => {
       </View>
       <CustomButton
         title={'Send OTP'}
-        variant="filled"
+        variant="outline"
         style={styles.button}
+        textStyle={{ color: '#2E5A99', fontSize: 22 }}
         onPress={handleSendOtp}
         disbled={isTimerRunning}
         loading={isSendingOtp}
@@ -154,9 +157,9 @@ const SignInScreen = () => {
           <CustomButton
             title={'Verify'}
             variant="filled"
-            style={styles.button}
             onPress={handleVerifyOtp}
             loading={isVerifyingOtp}
+            style={{ marginTop: 24 }}
           />
         </>
       )}

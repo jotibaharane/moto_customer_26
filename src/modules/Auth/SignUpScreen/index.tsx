@@ -1,19 +1,22 @@
-import Wave from '@assets/Svg/Wave';
 import CustomButton from '@components/Button';
 import { InputOutline } from '@components/Input';
-import { hp } from '@theme/index';
 import React from 'react';
-import { Alert, Image, StatusBar, View } from 'react-native';
+import { Alert, StatusBar, Text, TouchableOpacity, View } from 'react-native';
 import { styles } from './SignUp.style';
 
 import { useOnboardingMutation } from '@api/Mutations';
 import { OnboardingRequest } from '@api/type';
 import Dropdown from '@components/Dropdown';
+import { goBack } from '@navigation/NavigationService';
 import { useRoute } from '@react-navigation/native';
 import { isProfileCompleted } from '@store/slices/Auth/authSlice';
+import { FONT_FAMILIES } from '@theme/index';
+import { ms, vs } from '@theme/scaling-utils';
 import { companyTypedata } from '@utils/constants';
 import { Formik } from 'formik';
+import { ArrowLeft } from 'lucide-react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 import { SignUpSchema } from './SignUp.validation';
 const SignUpScreen = () => {
@@ -44,7 +47,7 @@ const SignUpScreen = () => {
     }
   };
   return (
-    <>
+    <SafeAreaView>
       <StatusBar
         translucent
         backgroundColor="transparent"
@@ -73,22 +76,26 @@ const SignUpScreen = () => {
         }) => (
           <KeyboardAwareScrollView scrollEnabled>
             <View style={styles.constainer}>
-              <View style={styles.headerWrapper}>
-                <Wave width={'100%'} height={hp(235)} />
-
-                <CustomButton
-                  title="SIGN UP"
-                  variant="outline"
-                  style={styles.signUpButton}
-                  onPress={() => {}}
-                />
-
-                <Image
-                  source={require('@assets/images/signUpCar.png')}
-                  style={styles.image}
-                  resizeMode="cover"
-                />
-              </View>
+              <TouchableOpacity
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: vs(4),
+                  marginTop: vs(68),
+                  marginHorizontal: 24,
+                }}
+                onPress={() => goBack()}
+              >
+                <ArrowLeft size={24} />
+                <Text
+                  style={{
+                    fontSize: ms(20),
+                    fontFamily: FONT_FAMILIES.semiBold,
+                  }}
+                >
+                  SIGN UP
+                </Text>
+              </TouchableOpacity>
 
               <View style={styles.content}>
                 {/* Full Name */}
@@ -97,6 +104,8 @@ const SignUpScreen = () => {
                   value={values.fullName}
                   onChangeText={handleChange('fullName')}
                   error={errors?.fullName}
+                  style={{ backgroundColor: 'transparent' }}
+                  placeStyle={{ backgroundColor: 'transparent' }}
                 />
 
                 {/* Mobile */}
@@ -106,6 +115,8 @@ const SignUpScreen = () => {
                   keyboardType="numeric"
                   onChangeText={handleChange('mobile')}
                   editable={false}
+                  style={{ backgroundColor: 'transparent' }}
+                  placeStyle={{ backgroundColor: 'transparent' }}
                 />
 
                 {/* Email */}
@@ -114,6 +125,8 @@ const SignUpScreen = () => {
                   value={values.email}
                   onChangeText={handleChange('email')}
                   error={errors?.email}
+                  style={{ backgroundColor: 'transparent' }}
+                  placeStyle={{ backgroundColor: 'transparent' }}
                 />
 
                 {/* Toggle */}
@@ -124,6 +137,8 @@ const SignUpScreen = () => {
                       value={values.organizationName}
                       onChangeText={handleChange('organizationName')}
                       error={errors?.organizationName}
+                      style={{ backgroundColor: 'transparent' }}
+                      placeStyle={{ backgroundColor: 'transparent' }}
                     />
 
                     <Dropdown
@@ -133,7 +148,7 @@ const SignUpScreen = () => {
                         setFieldValue('organizationType', value)
                       }
                       value={values.organizationType}
-                      error={errors?.organizationType}
+                      inputeStyle={{ backgroundColor: 'transparent' }}
                     />
                   </>
                 )}
@@ -167,7 +182,6 @@ const SignUpScreen = () => {
                 <CustomButton
                   title="Continue"
                   variant="filled"
-                  style={styles.continueBtn}
                   onPress={handleSubmit as any}
                   loading={isLoading}
                 />
@@ -176,7 +190,7 @@ const SignUpScreen = () => {
           </KeyboardAwareScrollView>
         )}
       </Formik>
-    </>
+    </SafeAreaView>
   );
 };
 

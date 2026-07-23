@@ -6,8 +6,10 @@ import {
   FlatList,
   Modal,
   TextInput as RNTextInput,
+  StyleProp,
   StyleSheet,
   Text,
+  TextStyle,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
@@ -34,6 +36,7 @@ export interface DropdownProps {
 
   disabled?: boolean;
   error?: string;
+  inputeStyle?: StyleProp<TextStyle>;
 }
 
 /* ================= COMPONENT ================= */
@@ -49,6 +52,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   emptyMessage = 'No options found',
   disabled = false,
   error,
+  inputeStyle,
 }) => {
   const [visible, setVisible] = useState(false);
   const [search, setSearch] = useState('');
@@ -153,6 +157,7 @@ const Dropdown: React.FC<DropdownProps> = ({
             editable={false}
             TrailingIcon={() => <ChevronDown />}
             error={error}
+            style={inputeStyle}
           />
 
           {/* ✅ FULL CLICKABLE OVERLAY */}

@@ -8,12 +8,11 @@ import {
   PincodeDataResponse,
   SendOtpRequest,
   ValidateOtpRequest,
-  ValidateOtpResponse
 } from './type';
 
 export const authApiMutations = baseApi.injectEndpoints({
   endpoints: builder => ({
-     sendOtp: builder.mutation<any, SendOtpRequest>({
+    sendOtp: builder.mutation<any, SendOtpRequest>({
       query: body => ({
         url: '/auth/send-otp',
         method: 'POST',
@@ -21,7 +20,7 @@ export const authApiMutations = baseApi.injectEndpoints({
       }),
     }),
 
-    validateOtp: builder.mutation<ValidateOtpResponse, ValidateOtpRequest>({
+    validateOtp: builder.mutation<any, ValidateOtpRequest>({
       query: body => ({
         url: '/auth/verify-otp',
         method: 'POST',
@@ -37,15 +36,14 @@ export const authApiMutations = baseApi.injectEndpoints({
       }),
     }),
 
-
-     setMpin: builder.mutation<any, any>({
+    setMpin: builder.mutation<any, any>({
       query: body => ({
         url: '/mpin/create-mpin',
         method: 'POST',
         body,
       }),
     }),
-       mpinLogin: builder.mutation<
+    mpinLogin: builder.mutation<
       any,
       {
         mpin: string;
@@ -64,8 +62,7 @@ export const authApiMutations = baseApi.injectEndpoints({
         body,
       }),
     }),
-   
- 
+
     createLoadPost: builder.mutation<any, any>({
       query: body => ({
         url: '/Insert_customer_load_post',

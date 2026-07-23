@@ -8,7 +8,8 @@ export const styles = StyleSheet.create({
 
   topWrapper: {
     paddingHorizontal: s(16),
-    marginVertical: vs(24),
+    marginTop: vs(24),
+    shadowOpacity: 1,
   },
 
   card: {
@@ -31,6 +32,8 @@ export const styles = StyleSheet.create({
 
   mapContainer: {
     flex: 1,
+    borderRadius: vs(30),
+    overflow: 'hidden',
   },
 
   map: {

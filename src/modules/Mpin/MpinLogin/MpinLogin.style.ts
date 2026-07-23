@@ -1,4 +1,4 @@
-import { COLORS, FONT_FAMILIES, fp, hp, wp } from '@theme/index';
+import { COLORS, FONT_FAMILIES } from '@theme/index';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -24,23 +24,23 @@ export const styles = StyleSheet.create({
   },
 
   otpContainer: {
-    gap: 16,
+    gap: 4,
   },
 
   pinBox: {
-    height: 45,
-    width: 45,
+    height: 40,
+    width: 42,
     borderColor: COLORS.gray[250],
     borderWidth: 1,
-    borderRadius: 16,
+    borderRadius: 8,
   },
 
   filledPinBox: {
     borderColor: COLORS.primary[500],
-    height: 45,
-    width: 45,
+    height: 40,
+    width: 42,
     borderWidth: 2,
-    borderRadius: 16,
+    borderRadius: 8,
   },
 
   pinText: {

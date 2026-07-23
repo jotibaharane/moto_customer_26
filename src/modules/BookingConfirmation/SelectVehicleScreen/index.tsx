@@ -44,7 +44,7 @@ const SelectVehicleScreen = () => {
     const fetchDrivers = async () => {
       try {
         setLoadingDrivers(true);
-
+debugger
         const response = await CustomerSocket.watchDrivers(
           pickup.latitude!,
           pickup.longitude!,

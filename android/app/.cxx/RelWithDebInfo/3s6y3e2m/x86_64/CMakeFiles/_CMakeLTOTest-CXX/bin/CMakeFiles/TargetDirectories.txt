@@ -1,0 +1,4 @@
+/home/motohelp/Desktop/moto_customer_26/android/app/.cxx/RelWithDebInfo/3s6y3e2m/x86_64/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/foo.dir
+/home/motohelp/Desktop/moto_customer_26/android/app/.cxx/RelWithDebInfo/3s6y3e2m/x86_64/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/boo.dir
+/home/motohelp/Desktop/moto_customer_26/android/app/.cxx/RelWithDebInfo/3s6y3e2m/x86_64/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/edit_cache.dir
+/home/motohelp/Desktop/moto_customer_26/android/app/.cxx/RelWithDebInfo/3s6y3e2m/x86_64/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/rebuild_cache.dir

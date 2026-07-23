@@ -75,7 +75,8 @@ const RootNavigator = () => {
    * Socket Connection
    */
   useEffect(() => {
-    if (!CustomerID || !accessToken) {
+    debugger
+    if (!accessToken) {
       SocketService.disconnect();
       dispatch(setConnected(false));
       return;
@@ -88,7 +89,7 @@ const RootNavigator = () => {
       SocketService.disconnect();
       dispatch(setConnected(false));
     };
-  }, [CustomerID, accessToken, dispatch]);
+  }, [ accessToken, dispatch]);
 
   /**
    * Navigation

@@ -155,32 +155,30 @@ class CustomerSocketListener {
       console.log('Load Status Changed : ', { data });
     });
     socket.on('driver-near-pickup', data => {
-      Alert.alert('Driver reached within 500m.');
       console.log('Driver Near Pickup : ', { data });
       dispatch(setMessage('Driver reached within 500m.'));
     });
     socket.on('driver-arrived-pickup', data => {
-      Alert.alert('Driver Arrived at Pickup Location.');
       console.log('Driver Arrived at Pickup : ', { data });
       dispatch(setMessage('Driver Arrived at Pickup Location.'));
     });
     socket.on('driver-near-delivery', data => {
-      Alert.alert('Driver reached within 500m.');
       console.log('Driver Near Delivery : ', { data });
       dispatch(setMessage('Driver reached Near Delivery within 500m.'));
     });
     socket.on('driver-arrived-delivery', data => {
-      Alert.alert('Driver Arrived at Delivery Location.');
       console.log('Driver Arrived at Delivery : ', { data });
       dispatch(setMessage('Driver Arrived at Delivery Location.'));
     });
     socket.on('trip-completed', data => {
       console.log('Trip Completed : ', { data });
+      dispatch(setMessage(''));
     });
 
     socket.on('payment-notification', data => {
       console.log('payment-notification: ', { data });
       Alert.alert(data?.message);
+      dispatch(setMessage(''));
     });
   }
 

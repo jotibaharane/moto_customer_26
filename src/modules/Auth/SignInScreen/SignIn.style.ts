@@ -1,59 +1,56 @@
-import {
-  COLORS,
-  FONT_FAMILIES,
-  moderateScale,
-  scale,
-  verticalScale,
-} from '@theme/index';
+import { COLORS, FONT_FAMILIES } from '@theme/index';
+import { fs, ms, s, vs } from '@theme/New';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   /* ================= LAYOUT ================= */
   container: {
     flex: 1,
-    paddingHorizontal: scale(16),
+    paddingHorizontal: s(16),
     backgroundColor: COLORS.white[100],
   },
 
   /* ================= TEXT ================= */
   title: {
-    marginTop: verticalScale(57),
+    marginTop: vs(57),
     textAlign: 'center',
     fontFamily: FONT_FAMILIES.bold,
-    fontSize: moderateScale(24),
+    fontSize: ms(24),
     color: COLORS.black[500],
   },
 
   subtitle: {
-    marginTop: verticalScale(32),
-    fontSize: moderateScale(16),
+    marginTop: vs(27),
+    fontSize: fs(16),
     fontFamily: FONT_FAMILIES.semiBold,
+    lineHeight: 34,
+    letterSpacing: -0.4,
     color: '#132235',
   },
 
   expiryText: {
-    marginTop: verticalScale(32),
+    marginTop: vs(32),
     textAlign: 'center',
-    fontSize: moderateScale(12),
+    fontSize: fs(12),
     fontFamily: FONT_FAMILIES.regular,
     color: COLORS.gray[500],
-    letterSpacing: 1,
+    letterSpacing: -1,
   },
 
   /* ================= INPUT ================= */
   inputContainer: {
-    marginTop: verticalScale(16),
+    marginTop: vs(24),
     flexDirection: 'row',
-    gap: scale(8),
+    gap: s(8),
   },
 
   input: {
     flex: 1,
     borderWidth: 1,
     borderColor: '#2E5A99',
-    borderRadius: scale(16),
-    paddingHorizontal: scale(16),
-    fontSize: moderateScale(16),
+    borderRadius: s(16),
+    paddingHorizontal: s(16),
+    fontSize: fs(16),
     fontFamily: FONT_FAMILIES.medium,
   },
 
@@ -63,66 +60,66 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
 
-    width: scale(98),
-    height: verticalScale(54),
+    width: s(98),
+    height: vs(54),
 
     borderWidth: 1,
     borderColor: '#D3DDE7',
-    borderRadius: scale(16),
+    borderRadius: s(16),
   },
 
   flag: {
-    width: scale(23),
-    height: verticalScale(17),
-    marginRight: scale(8),
+    width: s(23),
+    height: vs(17),
+    marginRight: s(8),
   },
 
   countryCodeText: {
     color: COLORS.black[500],
-    fontSize: moderateScale(16),
+    fontSize: fs(16),
     fontFamily: FONT_FAMILIES.regular,
-    marginRight: scale(4),
+    marginRight: s(4),
   },
 
   /* ================= OTP ================= */
   otpContainer: {
-    marginTop: verticalScale(24),
+    marginTop: vs(24),
   },
 
   pinCodeContainerStyle: {
-    width: scale(56),
-    height: scale(56),
+    width: s(42),
+    height: s(40),
     borderWidth: 1,
     borderColor: COLORS.gray[250],
-    borderRadius: scale(16),
+    borderRadius: s(8),
   },
 
   pinCodeTextStyle: {
-    fontSize: moderateScale(18),
+    fontSize: fs(18),
     fontFamily: FONT_FAMILIES.semiBold,
   },
 
   filledPinCodeContainerStyle: {
-    width: scale(40),
-    height: scale(42),
+    width: s(42),
+    height: s(40),
     borderWidth: 2,
-    borderColor: '#2E5A99',
-    borderRadius: scale(16),
+    borderColor: COLORS.primary[500],
+    borderRadius: s(8),
   },
 
   /* ================= BUTTON ================= */
   button: {
-    marginTop: verticalScale(32),
+    marginTop: vs(32),
     alignSelf: 'center',
-    width: scale(191),
-    minHeight: verticalScale(56),
+    width: s(191),
+    minHeight: vs(56),
   },
 
   resendText: {
-    marginTop: verticalScale(12),
+    marginTop: vs(12),
     textAlign: 'center',
     color: COLORS.primary[500],
-    fontSize: moderateScale(14),
+    fontSize: fs(14),
     fontFamily: FONT_FAMILIES.semiBold,
   },
 });

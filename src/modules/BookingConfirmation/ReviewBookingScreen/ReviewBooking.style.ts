@@ -1,4 +1,5 @@
 import { COLORS, FONT_FAMILIES, ms, s, vs } from '@theme/index';
+import { Colors, fs } from '@theme/New';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -63,7 +64,7 @@ export const styles = StyleSheet.create({
   addressTitle: {
     fontFamily: FONT_FAMILIES.medium,
     fontSize: ms(16),
-    color: '#4C002E',
+    color: Colors.black,
   },
 
   addressSubtitle: {
@@ -165,48 +166,52 @@ export const styles = StyleSheet.create({
     height: 150,
     justifyContent: 'center',
     overflow: 'hidden',
+    flex: 1,
   },
 
   circle: {
     position: 'absolute',
     width: 220,
-    height: 220,
+    height: 150,
     borderRadius: 110,
     backgroundColor: COLORS.primary[50],
-    left: -90,
-    top: -30,
+    left: -75,
+    top: 0,
   },
 
   truckImage: {
     width: 150,
-    height: 110,
+    height: 150,
     alignSelf: 'flex-end',
-    marginRight: -30,
   },
 
   cardContent: {
-    flex: 1,
     justifyContent: 'center',
     paddingHorizontal: 12,
+    flex: 4,
   },
 
   detailRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 8,
-    marginLeft: 40,
+    flex: 1,
     justifyContent: 'center',
   },
 
   vehicleName: {
-    fontSize: 16,
+    fontSize: fs(16),
     fontFamily: FONT_FAMILIES.bold,
+    marginTop: 8,
     textAlign: 'center',
+    letterSpacing: -1,
   },
 
   vehicleDetails: {
     marginLeft: 8,
-    fontSize: 13,
+    fontSize: fs(14),
     color: COLORS.gray[600],
+    letterSpacing: -1,
+    textAlign: 'center',
   },
 });

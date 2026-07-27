@@ -82,7 +82,7 @@ const ReviewBookingScreen = () => {
               <Text style={styles.vehicleName}>Tata Ace</Text>
             </View>
             <View style={styles.detailRow}>
-              <Text style={styles.vehicleDetails}>
+              <Text style={styles.vehicleDetails} numberOfLines={1}>
                 Loading Capacity - 750 kg
               </Text>
             </View>

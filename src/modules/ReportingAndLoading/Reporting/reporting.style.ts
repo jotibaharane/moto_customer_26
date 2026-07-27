@@ -1,4 +1,5 @@
 import { COLORS, FONT_FAMILIES } from '@theme/index';
+import { vs } from '@theme/New';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -39,8 +40,8 @@ export const styles = StyleSheet.create({
 
   mapContainer: {
     flex: 1,
-    borderRadius: 30,
-    padding: 5,
+    borderRadius: vs(30),
+    overflow: 'hidden',
   },
 
   map: {

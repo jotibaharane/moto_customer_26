@@ -1,14 +1,22 @@
 import { useSendOtpMutation, useValidateOtpMutation } from '@api/Mutations';
-import CustomButton from '@components/Button';
 import { OtpInput } from '@components/OtpInput';
 import { reset } from '@navigation/NavigationService';
 import { signIn } from '@store/slices/Auth/authSlice';
-import { COLORS } from '@theme/index';
+import { COLORS, vs } from '@theme/index';
+import { Colors, FONT_FAMILIES, fs, s } from '@theme/New';
 import { OTP_TIME } from '@utils/constants';
 import { formatTime } from '@utils/datetime.utils';
 import { ChevronDown } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
-import { Alert, Image, Text, TextInput, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 import { styles } from './SignIn.style';
@@ -119,16 +127,45 @@ const SignInScreen = () => {
           placeholderTextColor={COLORS.gray[500]}
         />
       </View>
-      <CustomButton
-        title={'Send OTP'}
-        variant="outline"
-        style={styles.button}
-        textStyle={{ color: '#2E5A99', fontSize: 22 }}
+
+      <TouchableOpacity
+        activeOpacity={0.8}
         onPress={handleSendOtp}
-        disbled={isTimerRunning}
-        loading={isSendingOtp}
-      />
-      {isOtpSent && (
+        disabled={isTimerRunning || isSendingOtp}
+        style={{
+          marginTop: vs(35),
+          alignSelf: 'center',
+          paddingHorizontal: s(15),
+          paddingVertical: s(20),
+          borderRadius: 8,
+          backgroundColor: '#fff',
+          shadowColor: '#000',
+          shadowOffset: {
+            width: 0,
+            height: 0,
+          },
+          shadowOpacity: 0.25,
+          shadowRadius: 8,
+          elevation: 3, // Android
+        }}
+      >
+        {isSendingOtp ? (
+          <ActivityIndicator size="small" color={COLORS.primary[500]} />
+        ) : (
+          <Text
+            style={{
+              fontFamily: FONT_FAMILIES.medium,
+              fontSize: fs(22),
+              lineHeight: 20,
+              letterSpacing: -0.5,
+              color: Colors.primary,
+            }}
+          >
+            Send OTP
+          </Text>
+        )}
+      </TouchableOpacity>
+      {isOtpSent && !isSendingOtp && (
         <>
           <Text style={styles.subtitle}>Check your SMS For OTP</Text>
 
@@ -141,7 +178,6 @@ const SignInScreen = () => {
                 pinCodeTextStyle: styles.pinCodeTextStyle,
                 filledPinCodeContainerStyle: styles.filledPinCodeContainerStyle,
               }}
-              autoFocus={false}
             />
           </View>
 
@@ -154,13 +190,36 @@ const SignInScreen = () => {
               Resend OTP
             </Text>
           )}
-          <CustomButton
-            title={'Verify'}
-            variant="filled"
+
+          <TouchableOpacity
             onPress={handleVerifyOtp}
-            loading={isVerifyingOtp}
-            style={{ marginTop: 24 }}
-          />
+            disabled={isVerifyingOtp}
+            style={{
+              marginTop: vs(65),
+              alignSelf: 'center',
+              backgroundColor: Colors.primary,
+              width: '100%',
+              paddingVertical: vs(16),
+              borderRadius: 8,
+            }}
+          >
+            {isVerifyingOtp ? (
+              <ActivityIndicator size="small" color={COLORS.primary[500]} />
+            ) : (
+              <Text
+                style={{
+                  fontFamily: FONT_FAMILIES.bold,
+                  fontSize: fs(22),
+                  lineHeight: 20,
+                  letterSpacing: -0.5,
+                  color: Colors.white,
+                  textAlign: 'center',
+                }}
+              >
+                Verify
+              </Text>
+            )}
+          </TouchableOpacity>
         </>
       )}
     </SafeAreaView>

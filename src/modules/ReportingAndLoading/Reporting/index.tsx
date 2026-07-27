@@ -3,7 +3,9 @@ import { useFocusEffect } from '@react-navigation/native';
 import CustomerSocket from '@socket/CustomerSocket';
 import SocketService from '@socket/SocketService';
 import { RootState } from '@store/rootReducer';
+import { s, vs } from '@theme/New';
 import React, { useCallback, useEffect } from 'react';
+import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import Header from './components/Header';
@@ -46,8 +48,16 @@ const ReportingScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Header />
-
-      <MapComponent />
+      <View
+        style={{
+          padding: vs(16),
+          flex: 1,
+          borderRadius: s(30),
+          overflow: 'hidden',
+        }}
+      >
+        <MapComponent />
+      </View>
 
       {/* {driver?.loadId && (
         <TouchableOpacity

@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { navigate } from '@navigation/NavigationService';
 import { setWeight } from '@store/slices/Booking/bookingSlice';
 import { COLORS, FONT_FAMILIES, ms, s, vs } from '@theme/index';
-import { ArrowRight } from 'lucide-react-native';
+import { ArrowRight, Bell } from 'lucide-react-native';
 import { styles } from './Dashboard.style';
 import DropModal from './components/DropModal';
 import MapComponent from './components/MapComponent';
@@ -32,32 +32,36 @@ const DashboardScreen = () => {
         <View style={styles.topWrapper}>
           <View style={styles.card}>
             <View style={styles.row}>
-              <SearchField
-                placeholder="Pick up Address"
-                onPress={() => setPickupModalVisible(true)}
-                iconColor="#4CAF50"
-                editable={false}
-                value={pickup?.fullAddress}
-                iconType="location"
-              />
-              {/* <Bell size={30} /> */}
+              <View style={{ flex: 1 }}>
+                <SearchField
+                  placeholder="Pick up Address"
+                  onPress={() => setPickupModalVisible(true)}
+                  iconColor="#4CAF50"
+                  editable={false}
+                  value={pickup?.fullAddress}
+                  iconType="location"
+                />
+              </View>
+              <Bell size={30} />
             </View>
 
             {pickup?.fullAddress && (
               <View style={styles.row}>
-                <SearchField
-                  placeholder="Delivery Address"
-                  onPress={() => {
-                    pickup?.name
-                      ? setDropModalVisible(true)
-                      : Alert.alert('Select pickup first');
-                  }}
-                  iconColor="#FF0A0A"
-                  editable={false}
-                  value={delivery?.fullAddress}
-                  iconType="location"
-                />
-                {/* <View style={styles.emptyBox} /> */}
+                <View style={{ flex: 1 }}>
+                  <SearchField
+                    placeholder="Delivery Address"
+                    onPress={() => {
+                      pickup?.name
+                        ? setDropModalVisible(true)
+                        : Alert.alert('Select pickup first');
+                    }}
+                    iconColor="#FF0A0A"
+                    editable={false}
+                    value={delivery?.fullAddress}
+                    iconType="location"
+                  />
+                </View>
+                <View style={styles.emptyBox} />
               </View>
             )}
             {pickup?.fullAddress && delivery?.fullAddress && (

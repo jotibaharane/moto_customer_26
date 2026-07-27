@@ -1,4 +1,5 @@
 import { COLORS, FONT_FAMILIES, ms, s, vs } from '@theme/index';
+import { Colors, fs } from '@theme/New';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -21,13 +22,13 @@ export const styles = StyleSheet.create({
   label: {
     fontFamily: FONT_FAMILIES.medium,
     fontSize: ms(16),
-    color: '#4C002E',
+    color: Colors.black,
   },
 
   subText: {
     fontFamily: FONT_FAMILIES.regular,
     fontSize: ms(14),
-    color: COLORS.gray[500],
+    color: '#B3B3B3',
   },
 
   distanceLine: {
@@ -134,29 +135,30 @@ export const styles = StyleSheet.create({
     height: 150,
     justifyContent: 'center',
     overflow: 'hidden',
+    flex: 1,
   },
 
   circle: {
     position: 'absolute',
     width: 220,
-    height: 220,
+    height: 150,
     borderRadius: 110,
     backgroundColor: COLORS.primary[50],
-    left: -90,
-    top: -30,
+    left: -75,
+    top: 0,
   },
 
   truckImage: {
     width: 150,
-    height: 110,
+    height: 150,
     alignSelf: 'flex-end',
-    marginRight: -30,
+    marginRight: -15,
   },
 
   cardContent: {
-    flex: 1,
     justifyContent: 'center',
     paddingHorizontal: 12,
+    flex: 2,
   },
 
   detailRow: {
@@ -167,15 +169,19 @@ export const styles = StyleSheet.create({
   },
 
   vehicleName: {
-    fontSize: 16,
+    fontSize: fs(16),
     fontFamily: FONT_FAMILIES.bold,
-    marginBottom: 8,
+    marginTop: 8,
     textAlign: 'center',
+    lineHeight: 30,
+    letterSpacing: -1,
   },
 
   vehicleDetails: {
     marginLeft: 8,
-    fontSize: 13,
+    fontSize: fs(12),
     color: COLORS.gray[600],
+    lineHeight: 30,
+    letterSpacing: -1,
   },
 });

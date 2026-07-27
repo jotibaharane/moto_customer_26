@@ -41,7 +41,9 @@ const VehicleCard = ({ item, selected, onSelect }: any) => {
 
         <View style={styles.detailRow}>
           <BadgeIndianRupee size={16} color={COLORS.primary[500]} />
-          <Text style={styles.vehicleDetails}>₹ {item.freightAmount}</Text>
+          <Text style={styles.vehicleDetails}>
+            Fright - ₹ {item.freightAmount}
+          </Text>
         </View>
       </View>
     </TouchableOpacity>

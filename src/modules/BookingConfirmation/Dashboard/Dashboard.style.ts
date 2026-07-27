@@ -1,4 +1,5 @@
 import { COLORS, FONT_FAMILIES, ms, s, vs } from '@theme/index';
+import { Colors } from '@theme/New';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -23,6 +24,7 @@ export const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     gap: s(20),
+    alignItems: 'center',
   },
 
   emptyBox: {
@@ -57,23 +59,22 @@ export const styles = StyleSheet.create({
   declare_weight: {
     fontSize: ms(18), // Figma size same
     fontFamily: FONT_FAMILIES.medium,
+    lineHeight: 25,
+    letterSpacing: -0.5,
   },
 
   weight_input: {
     backgroundColor: COLORS.white[100],
-    height: vs(42),
     width: s(103),
-
-    paddingHorizontal: s(7),
-
     borderRadius: s(8),
-
     fontFamily: FONT_FAMILIES.bold,
-    fontSize: ms(16), // Figma size same
+    fontSize: ms(20), // Figma size same
+    color: Colors.primary,
   },
 
   kg: {
     fontFamily: FONT_FAMILIES.semiBold,
     fontSize: ms(16), // Figma size same
+    color: Colors.primary,
   },
 });

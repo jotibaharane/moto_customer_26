@@ -3,7 +3,6 @@ import CustomButton from '@components/Button';
 import { InputOutline } from '@components/Input';
 import SearchField from '@components/SearchField';
 import { COLORS, s, vs } from '@theme/index';
-import { Bookmark, Edit, Locate, MapPin, Timer } from 'lucide-react-native';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
 
@@ -16,6 +15,13 @@ import { LoadLocation } from '@api/type';
 import { useCurrentLocation } from '@hooks/useCurrentLocation';
 import { RootState } from '@store/rootReducer';
 import { setPickup } from '@store/slices/Booking/bookingSlice';
+import {
+  IconBookmarkFilled,
+  IconClockHour4,
+  IconCurrentLocation,
+  IconMapPinFilled,
+  IconPencil,
+} from '@tabler/icons-react-native';
 import { useFormik } from 'formik';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useDispatch, useSelector } from 'react-redux';
@@ -128,7 +134,7 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
                   >
                     <Text style={styles.listLabel}>Current Location</Text>
                     <View style={styles.listContainer}>
-                      <Locate size={20} />
+                      <IconCurrentLocation size={20} />
                       <View style={{ flex: 1 }}>
                         <Text style={styles.title}>{item.name}</Text>
                         <Text style={styles.subtitle}>{item.fullAddress}</Text>
@@ -175,7 +181,10 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
                               {item.FullAddress}
                             </Text>
                           </View>
-                          <Bookmark size={20} fill={COLORS.primary[500]} />
+                          <IconBookmarkFilled
+                            size={20}
+                            fill={COLORS.primary[500]}
+                          />
                         </View>
                       </View>
                     </Pressable>
@@ -202,7 +211,11 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
                     }}
                     style={styles.listItem}
                   >
-                    {search ? <MapPin size={20} /> : <Timer size={20} />}
+                    {search ? (
+                      <IconMapPinFilled size={20} />
+                    ) : (
+                      <IconClockHour4 size={20} />
+                    )}
                     <View style={{ flex: 1 }}>
                       <Text style={styles.title}>{item.name}</Text>
                       <Text style={styles.subtitle}>{item.fullAddress}</Text>
@@ -219,7 +232,7 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
         /* 📍 SELECTED SCREEN */
         <View style={styles.gridContainer}>
           <View style={styles.headerRow}>
-            <MapPin size={32} fill={'#4CAF50'} />
+            <IconMapPinFilled size={32} fill={'#4CAF50'} />
 
             <View style={{ flex: 1 }}>
               <Text style={styles.title}>
@@ -231,7 +244,7 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
             </View>
 
             <Pressable onPress={() => setOpenGoogleAddress(true)}>
-              <Edit size={24} />
+              <IconPencil size={24} />
             </Pressable>
           </View>
 

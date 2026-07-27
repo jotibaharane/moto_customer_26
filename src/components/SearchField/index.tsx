@@ -1,5 +1,7 @@
-import { COLORS, FONT_FAMILIES, fp, ms, s, wp } from '@theme/index';
-import { MapPin, Search } from 'lucide-react-native';
+import { IconMapPinFilled } from '@tabler/icons-react-native';
+import { FONT_FAMILIES, ms, s } from '@theme/index';
+import { Colors } from '@theme/New';
+import { Search } from 'lucide-react-native';
 import React from 'react';
 import {
   StyleProp,
@@ -26,7 +28,7 @@ const SearchField: React.FC<Props> = ({
   value,
   ...props
 }) => {
-  const Icon = iconType === 'location' ? MapPin : Search;
+  const Icon = iconType === 'location' ? IconMapPinFilled : Search;
 
   return (
     <TouchableOpacity
@@ -34,7 +36,7 @@ const SearchField: React.FC<Props> = ({
       onPress={onPress}
       style={[styles.container, containerStyle]}
     >
-      <Icon size={32} color="#fff" fill={iconColor} />
+      <Icon size={32} color={iconColor} />
 
       <TextInput
         {...props}
@@ -71,7 +73,7 @@ const styles = StyleSheet.create({
     padding: s(8),
     borderRadius: s(16),
 
-    backgroundColor: COLORS.white[100],
+    backgroundColor: Colors.white,
     overflow: 'hidden',
   },
 

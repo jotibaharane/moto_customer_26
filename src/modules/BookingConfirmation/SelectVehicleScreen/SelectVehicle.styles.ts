@@ -135,7 +135,7 @@ export const styles = StyleSheet.create({
     height: 150,
     justifyContent: 'center',
     overflow: 'hidden',
-    flex: 1,
+    flex: 2,
   },
 
   circle: {
@@ -180,7 +180,7 @@ export const styles = StyleSheet.create({
   vehicleDetails: {
     marginLeft: 8,
     fontSize: fs(12),
-    color: COLORS.gray[600],
+    color: '#5C5C5E',
     lineHeight: 30,
     letterSpacing: -1,
   },

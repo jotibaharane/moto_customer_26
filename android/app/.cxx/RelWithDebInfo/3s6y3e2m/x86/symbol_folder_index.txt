@@ -1,1 +1,0 @@
-/home/motohelp/Desktop/moto_customer_26/android/app/build/intermediates/cxx/RelWithDebInfo/3s6y3e2m/obj/x86

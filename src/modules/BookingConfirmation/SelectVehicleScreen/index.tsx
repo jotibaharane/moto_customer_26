@@ -4,8 +4,8 @@ import { navigate } from '@navigation/NavigationService';
 import CustomerSocket from '@socket/CustomerSocket';
 import { RootState } from '@store/rootReducer';
 import { setSelectedDriver } from '@store/slices/Booking/bookingSlice';
+import { IconMapPinFilled } from '@tabler/icons-react-native';
 import { COLORS } from '@theme/index';
-import { MapPin } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -112,7 +112,7 @@ const SelectVehicleScreen = () => {
           style={styles.row}
           onPress={() => setPickupModalVisible(true)}
         >
-          <MapPin size={30} fill={'#4CAF50'} />
+          <IconMapPinFilled size={30} fill={'#4CAF50'} />
           <View>
             <Text style={styles.label}>Pick up Address</Text>
             <Text style={styles.subText}>
@@ -133,7 +133,7 @@ const SelectVehicleScreen = () => {
           style={styles.row}
           onPress={() => setDropModalVisible(true)}
         >
-          <MapPin size={30} fill={'#FF0A0A'} />
+          <IconMapPinFilled size={30} fill={'#FF0A0A'} />
           <View>
             <Text style={styles.label}>Delivery Address</Text>
             <Text style={styles.subText}>

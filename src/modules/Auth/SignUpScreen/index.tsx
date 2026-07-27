@@ -1,7 +1,7 @@
 import CustomButton from '@components/Button';
 import { InputOutline } from '@components/Input';
 import React from 'react';
-import { Alert, StatusBar, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Text, TouchableOpacity, View } from 'react-native';
 import { styles } from './SignUp.style';
 
 import { useOnboardingMutation } from '@api/Mutations';
@@ -11,6 +11,7 @@ import { goBack } from '@navigation/NavigationService';
 import { useRoute } from '@react-navigation/native';
 import { isProfileCompleted } from '@store/slices/Auth/authSlice';
 import { FONT_FAMILIES } from '@theme/index';
+import { Colors } from '@theme/New';
 import { ms, vs } from '@theme/scaling-utils';
 import { companyTypedata } from '@utils/constants';
 import { Formik } from 'formik';
@@ -47,13 +48,7 @@ const SignUpScreen = () => {
     }
   };
   return (
-    <SafeAreaView>
-      <StatusBar
-        translucent
-        backgroundColor="transparent"
-        barStyle="light-content"
-      />
-
+    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.white }}>
       <Formik<OnboardingRequest>
         initialValues={{
           fullName: '',

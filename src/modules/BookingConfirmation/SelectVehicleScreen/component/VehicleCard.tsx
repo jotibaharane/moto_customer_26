@@ -1,6 +1,9 @@
 import { navigate } from '@navigation/NavigationService';
-import { COLORS } from '@theme/index';
-import { BadgeIndianRupee, Clock, Weight } from 'lucide-react-native';
+import {
+  IconClockHour4,
+  IconCoinRupee,
+  IconWeight,
+} from '@tabler/icons-react-native';
 import { Image, Pressable, Text, TouchableOpacity, View } from 'react-native';
 import { styles } from '../SelectVehicle.styles';
 
@@ -28,19 +31,19 @@ const VehicleCard = ({ item, selected, onSelect }: any) => {
         <Text style={styles.vehicleName}>{item.vehicleType}</Text>
 
         <View style={styles.detailRow}>
-          <Weight size={16} color={COLORS.primary[500]} />
+          <IconWeight size={16} color={'#6C7278'} />
           <Text style={styles.vehicleDetails}>{item.weightRange}</Text>
         </View>
 
         <View style={styles.detailRow}>
-          <Clock size={16} color={COLORS.primary[500]} />
+          <IconClockHour4 size={16} color={'#6C7278'} />
           <Text style={styles.vehicleDetails}>
             {item.expectedVehicleAvailability}
           </Text>
         </View>
 
         <View style={styles.detailRow}>
-          <BadgeIndianRupee size={16} color={COLORS.primary[500]} />
+          <IconCoinRupee size={16} color={'#6C7278'} />
           <Text style={styles.vehicleDetails}>
             Fright - ₹ {item.freightAmount}
           </Text>

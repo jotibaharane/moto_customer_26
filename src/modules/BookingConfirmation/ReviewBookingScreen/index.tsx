@@ -3,8 +3,8 @@ import OverlayLoader from '@components/OverlayLoader';
 import { useDistance } from '@hooks/useDistance';
 import CustomerSocket from '@socket/CustomerSocket';
 import { RootState } from '@store/rootReducer';
+import { IconMapPinFilled } from '@tabler/icons-react-native';
 import { vs } from '@theme/index';
-import { MapPin } from 'lucide-react-native';
 import React from 'react';
 import {
   Image,
@@ -109,7 +109,7 @@ const ReviewBookingScreen = () => {
         </View>
         <View style={styles?.addressContainer}>
           <View style={styles.row}>
-            <MapPin size={30} fill={'#4CAF50'} />
+            <IconMapPinFilled size={30} fill={'#4CAF50'} />
             <View>
               <Text style={styles.addressTitle}>Pick up Address</Text>
               <Text style={styles.addressSubtitle}>{pickup?.name}</Text>
@@ -121,7 +121,7 @@ const ReviewBookingScreen = () => {
             </Text>
           </View>
           <View style={styles.row}>
-            <MapPin size={30} fill={'#FF0A0A'} />
+            <IconMapPinFilled size={30} fill={'#FF0A0A'} />
             <View>
               <Text style={styles.addressTitle}>Delivery Address</Text>
               <Text style={styles.addressSubtitle}>{delivery?.name}</Text>

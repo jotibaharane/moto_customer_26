@@ -3,7 +3,6 @@ import CustomButton from '@components/Button';
 import { InputOutline } from '@components/Input';
 import SearchField from '@components/SearchField';
 import { COLORS, FONT_FAMILIES, ms, s, vs } from '@theme/index';
-import { Edit, MapPin, Timer } from 'lucide-react-native';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -12,6 +11,11 @@ import { LoadLocation } from '@api/type';
 import { useCurrentLocation } from '@hooks/useCurrentLocation';
 import { RootState } from '@store/rootReducer';
 import { setDelivery } from '@store/slices/Booking/bookingSlice';
+import {
+  IconClockHour4,
+  IconMapPinFilled,
+  IconPencil,
+} from '@tabler/icons-react-native';
 import { useFormik } from 'formik';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useDispatch, useSelector } from 'react-redux';
@@ -103,7 +107,11 @@ const DropModal: React.FC<Props> = ({ onOpen, open }) => {
                 }}
                 style={styles.listItem}
               >
-                {search ? <MapPin size={20} /> : <Timer size={20} />}
+                {search ? (
+                  <IconMapPinFilled size={20} />
+                ) : (
+                  <IconClockHour4 size={20} />
+                )}
 
                 <View style={{ flex: 1 }}>
                   <Text style={styles.title}>{item.name}</Text>
@@ -117,7 +125,7 @@ const DropModal: React.FC<Props> = ({ onOpen, open }) => {
         /* 📍 SELECTED SCREEN */
         <View style={styles.gridContainer}>
           <View style={styles.headerRow}>
-            <MapPin size={32} fill={'#FF0A0A'} />
+            <IconMapPinFilled size={32} fill={'#FF0A0A'} />
 
             <View style={{ flex: 1 }}>
               <Text style={styles.title}>{formik.values.name}</Text>
@@ -125,7 +133,7 @@ const DropModal: React.FC<Props> = ({ onOpen, open }) => {
             </View>
 
             <Pressable onPress={() => setOpenGoogleAddress(true)}>
-              <Edit size={24} />
+              <IconPencil size={24} />
             </Pressable>
           </View>
 

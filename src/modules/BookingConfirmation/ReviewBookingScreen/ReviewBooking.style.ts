@@ -162,11 +162,11 @@ export const styles = StyleSheet.create({
   },
 
   imageContainer: {
-    width: 150,
+    width: 220,
     height: 150,
     justifyContent: 'center',
     overflow: 'hidden',
-    flex: 1,
+    flex: 2,
   },
 
   circle: {
@@ -188,7 +188,7 @@ export const styles = StyleSheet.create({
   cardContent: {
     justifyContent: 'center',
     paddingHorizontal: 12,
-    flex: 4,
+    flex: 2,
   },
 
   detailRow: {
@@ -210,7 +210,7 @@ export const styles = StyleSheet.create({
   vehicleDetails: {
     marginLeft: 8,
     fontSize: fs(14),
-    color: COLORS.gray[600],
+    color: '#5C5C5E',
     letterSpacing: -1,
     textAlign: 'center',
   },

@@ -1,6 +1,12 @@
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import {
+  IconCube,
+  IconHistory,
+  IconHome,
+  IconTarget,
+  IconUserCircle,
+} from '@tabler/icons-react-native';
 import { COLORS, FONT_FAMILIES, fp, hp, wp } from '@theme/index';
-import { Clock, Home, Package, Target, User } from 'lucide-react-native';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -23,15 +29,15 @@ const MyTabBar: React.FC<BottomTabBarProps> = ({
 
       switch (route.name) {
         case 'Home':
-          return <Home size={24} color={color} />;
+          return <IconHome size={24} color={color} />;
         case 'OPS':
-          return <Target size={24} color={color} />;
+          return <IconTarget size={24} color={color} />;
         case 'New Load':
-          return <Package size={35} color={COLORS.white[100]} />;
+          return <IconCube size={35} color={COLORS.white[100]} />;
         case 'History':
-          return <Clock size={24} color={color} />;
+          return <IconHistory size={24} color={color} />;
         case 'Profile':
-          return <User size={24} color={color} />;
+          return <IconUserCircle size={24} color={color} />;
         default:
           return null;
       }

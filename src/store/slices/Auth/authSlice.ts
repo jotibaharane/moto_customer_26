@@ -8,6 +8,7 @@ interface CustomerDetails {
   accessToken: string;
   refreshToken: string;
   isMPINSet?: boolean;
+  isLogin: boolean;
 }
 
 // ✅ Initial state
@@ -18,6 +19,7 @@ const initialState: CustomerDetails = {
   refreshToken: '',
   role: '',
   userId: '',
+  isLogin: false,
 };
 
 const authSlice = createSlice({
@@ -31,6 +33,12 @@ const authSlice = createSlice({
     isProfileCompleted: (state, action: PayloadAction<boolean>) => {
       state.isProfileCompleted = action.payload;
     },
+    login: (state, action: PayloadAction<void>) => {
+      state.isLogin = true;
+    },
+    logout: (state, action: PayloadAction<void>) => {
+      state.isLogin = false;
+    },
     // 🚪 Logout
     signOut: state => {
       return initialState;
@@ -38,6 +46,7 @@ const authSlice = createSlice({
   },
 });
 
-export const { signIn, signOut, isProfileCompleted } = authSlice.actions;
+export const { signIn, signOut, isProfileCompleted, login, logout } =
+  authSlice.actions;
 
 export default authSlice.reducer;

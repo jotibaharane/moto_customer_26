@@ -23,11 +23,6 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 const RootNavigator = () => {
   const dispatch = useDispatch();
 
-  const CustomerID = useSelector(
-    (state: RootState) => state.auth.userId,
-    shallowEqual,
-  );
-
   const isProfileCompleted = useSelector(
     (state: RootState) => state.auth.isProfileCompleted,
     shallowEqual,

@@ -9,6 +9,10 @@ interface CustomerDetails {
   refreshToken: string;
   isMPINSet?: boolean;
   isLogin: boolean;
+  currentLocation?: {
+    lat: number;
+    lng: number;
+  };
 }
 
 // ✅ Initial state
@@ -27,6 +31,12 @@ const authSlice = createSlice({
   initialState,
 
   reducers: {
+    setCurrentLocation: (
+      state,
+      action: PayloadAction<{ lat: number; lng: number }>,
+    ) => {
+      state.currentLocation = action.payload;
+    },
     signIn: (state, action: PayloadAction<CustomerDetails>) => {
       return { ...state, ...action.payload };
     },
@@ -46,7 +56,13 @@ const authSlice = createSlice({
   },
 });
 
-export const { signIn, signOut, isProfileCompleted, login, logout } =
-  authSlice.actions;
+export const {
+  signIn,
+  signOut,
+  isProfileCompleted,
+  login,
+  logout,
+  setCurrentLocation,
+} = authSlice.actions;
 
 export default authSlice.reducer;

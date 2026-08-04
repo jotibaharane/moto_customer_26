@@ -1,5 +1,5 @@
 import { getDirections } from '@api/mapbox/mapbox.api';
-import {
+import MapboxGL, {
   Camera,
   Images,
   LineLayer,
@@ -12,11 +12,13 @@ import { RootState } from '@store/rootReducer';
 import { animateMarker, getSmoothHeading } from '@utils/animation.utils';
 import { isValidLocation } from '@utils/location.utils';
 import React, { memo, useEffect, useRef, useState } from 'react';
-import { Text, View } from 'react-native';
-import { useSelector } from 'react-redux';
+import { PermissionsAndroid, Platform, Text, View } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import { styles } from '../reporting.style';
 
 const MapComponent = () => {
+  const dispatch = useDispatch();
+  const [location, setLocation] = useState<MapboxGL.Location>();
   const cameraRef = useRef<any>(null);
   const { driver, status, tracking } = useSelector(
     (state: RootState) => state.map,
@@ -103,6 +105,20 @@ const MapComponent = () => {
 
     loadRoute();
   }, [driver]);
+
+  useEffect(() => {
+    async function check() {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
+
+      console.log('Permission:', granted);
+    }
+
+    if (Platform.OS === 'android') {
+      check();
+    }
+  }, []);
 
   return (
     <View style={styles.mapContainer}>

@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { navigate } from '@navigation/NavigationService';
 import { setWeight } from '@store/slices/Booking/bookingSlice';
 import { COLORS, FONT_FAMILIES, ms, s, vs } from '@theme/index';
-import { ArrowRight, Bell } from 'lucide-react-native';
+import { ArrowRight } from 'lucide-react-native';
 import { styles } from './Dashboard.style';
 import DropModal from './components/DropModal';
 import MapComponent from './components/MapComponent';
@@ -42,7 +42,7 @@ const DashboardScreen = () => {
                   iconType="location"
                 />
               </View>
-              <Bell size={30} />
+              {/* <Bell size={30} /> */}
             </View>
 
             {pickup?.fullAddress && (
@@ -61,7 +61,7 @@ const DashboardScreen = () => {
                     iconType="location"
                   />
                 </View>
-                <View style={styles.emptyBox} />
+                {/* <View style={styles.emptyBox} /> */}
               </View>
             )}
             {pickup?.fullAddress && delivery?.fullAddress && (

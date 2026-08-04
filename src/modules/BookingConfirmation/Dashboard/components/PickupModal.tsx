@@ -8,11 +8,12 @@ import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
 
 import {
   useGetAddressLabelsQuery,
+  useGetLocationByLatLngQuery,
   useGetSavedLocationQuery,
   useGetSearchLocationQuery,
 } from '@api/query';
 import { LoadLocation } from '@api/type';
-import { useCurrentLocation } from '@hooks/useCurrentLocation';
+import { useDebounce } from '@hooks/useDebounce';
 import { RootState } from '@store/rootReducer';
 import { setPickup } from '@store/slices/Booking/bookingSlice';
 import {
@@ -33,6 +34,7 @@ interface Props {
 
 const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
   const { pickup } = useSelector((state: RootState) => state?.booking);
+  const { currentLocation } = useSelector((state: RootState) => state?.auth);
   const dispatch = useDispatch();
   /* ---------------- FORM ---------------- */
   const formik = useFormik<LoadLocation>({
@@ -51,15 +53,27 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
       onOpen?.(false);
     },
   });
-  const { location, currentLocationData } = useCurrentLocation();
+  // const { location, currentLocationData } = useCurrentLocation();
+  const { data: currentLocationData, refetch: refetchCurrentLocation } =
+    useGetLocationByLatLngQuery({
+      latitude: currentLocation?.lat ?? 0,
+      longitude: currentLocation?.lng ?? 0,
+    });
 
   const refScrollable = useRef<any>(null);
   const [search, setSearch] = useState('');
-  const { data: locationData } = useGetSearchLocationQuery({
-    search: search,
-    latitude: location?.lat,
-    longitude: location?.lng,
-  });
+  const debouncedSearch = useDebounce(search, 500);
+
+  const { data: locationData } = useGetSearchLocationQuery(
+    {
+      search: debouncedSearch,
+      latitude: currentLocation?.lat,
+      longitude: currentLocation?.lng,
+    },
+    {
+      skip: debouncedSearch.trim().length < 2,
+    },
+  );
 
   const { data: savedLocationData, refetch } = useGetSavedLocationQuery();
   const { data: addressTag, refetch: refetchTags } = useGetAddressLabelsQuery();
@@ -70,12 +84,13 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
     if (open) {
       refScrollable?.current?.open();
       refetch();
+      refetchCurrentLocation();
       refetchTags();
     } else {
       refScrollable?.current?.close();
     }
   }, [open]);
-
+  console.log({ currentLocationData, currentLocation, search });
   return (
     <RBSheet
       ref={refScrollable}
@@ -114,30 +129,75 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
 
           <View style={{ height: 10 }} />
           {currentLocationData?.data && (
+            <Pressable
+              onPress={() => {
+                formik?.setFieldValue('name', currentLocationData?.data?.name);
+                formik?.setFieldValue(
+                  'fullAddress',
+                  currentLocationData?.data?.fullAddress,
+                );
+                formik?.setFieldValue(
+                  'latitude',
+                  currentLocationData?.data?.latitude,
+                );
+                formik?.setFieldValue(
+                  'longitude',
+                  currentLocationData?.data?.longitude,
+                );
+
+                setOpenGoogleAddress(false);
+              }}
+              style={styles.currentLoactionButton}
+            >
+              <Text style={styles.listLabel}>Current Location</Text>
+              <View style={styles.listContainer}>
+                <IconCurrentLocation size={20} />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.title}>
+                    {currentLocationData?.data?.name}
+                  </Text>
+                  <Text style={styles.subtitle}>
+                    {currentLocationData?.data?.fullAddress}
+                  </Text>
+                </View>
+              </View>
+            </Pressable>
+          )}
+          {savedLocationData?.data?.length > 0 && search === '' && (
             <FlatList
-              data={
-                currentLocationData?.data ? [currentLocationData?.data] : []
-              }
+              data={savedLocationData?.data || []}
               keyExtractor={(item, index) => item?.mapboxId || index.toString()}
               renderItem={({ item }) => {
                 return (
                   <Pressable
                     onPress={() => {
-                      formik?.setFieldValue('name', item.name);
-                      formik?.setFieldValue('fullAddress', item.fullAddress);
-                      formik?.setFieldValue('latitude', item.latitude);
-                      formik?.setFieldValue('longitude', item.longitude);
-
+                      formik?.setValues({
+                        name: item?.PlaceName,
+                        fullAddress: item?.FullAddress,
+                        latitude: item?.Latitude,
+                        longitude: item?.Longitude,
+                        plotBuilding: item?.PlotBuilding,
+                        streetArea: item?.StreetArea,
+                        contactMobile: item?.ContactMobile,
+                        tag: item?.Tag,
+                      });
                       setOpenGoogleAddress(false);
                     }}
-                    style={styles.currentLoactionButton}
                   >
-                    <Text style={styles.listLabel}>Current Location</Text>
-                    <View style={styles.listContainer}>
-                      <IconCurrentLocation size={20} />
-                      <View style={{ flex: 1 }}>
-                        <Text style={styles.title}>{item.name}</Text>
-                        <Text style={styles.subtitle}>{item.fullAddress}</Text>
+                    <View style={styles.bookmarkListContiner}>
+                      <Text style={styles.listLabel}>{item.Tag}</Text>
+
+                      <View style={{ flexDirection: 'row' }}>
+                        <View style={{ flex: 1 }}>
+                          <Text style={styles.title}>{item.PlaceName}</Text>
+                          <Text style={styles.subtitle}>
+                            {item.FullAddress}
+                          </Text>
+                        </View>
+                        <IconBookmarkFilled
+                          size={20}
+                          fill={COLORS.primary[500]}
+                        />
                       </View>
                     </View>
                   </Pressable>
@@ -147,54 +207,8 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
               contentContainerStyle={{ paddingBottom: vs(100) }}
             />
           )}
-          {savedLocationData?.data?.length > 0 &&
-            locationData?.data?.length === 0 && (
-              <FlatList
-                data={savedLocationData?.data || []}
-                keyExtractor={(item, index) =>
-                  item?.mapboxId || index.toString()
-                }
-                renderItem={({ item }) => {
-                  return (
-                    <Pressable
-                      onPress={() => {
-                        formik?.setValues({
-                          name: item?.PlaceName,
-                          fullAddress: item?.FullAddress,
-                          latitude: item?.Latitude,
-                          longitude: item?.Longitude,
-                          plotBuilding: item?.PlotBuilding,
-                          streetArea: item?.StreetArea,
-                          contactMobile: item?.ContactMobile,
-                          tag: item?.Tag,
-                        });
-                        setOpenGoogleAddress(false);
-                      }}
-                    >
-                      <View style={styles.bookmarkListContiner}>
-                        <Text style={styles.listLabel}>{item.Tag}</Text>
 
-                        <View style={{ flexDirection: 'row' }}>
-                          <View style={{ flex: 1 }}>
-                            <Text style={styles.title}>{item.PlaceName}</Text>
-                            <Text style={styles.subtitle}>
-                              {item.FullAddress}
-                            </Text>
-                          </View>
-                          <IconBookmarkFilled
-                            size={20}
-                            fill={COLORS.primary[500]}
-                          />
-                        </View>
-                      </View>
-                    </Pressable>
-                  );
-                }}
-                style={{ flex: 1 }}
-                contentContainerStyle={{ paddingBottom: vs(100) }}
-              />
-            )}
-          {locationData?.data?.length > 0 && (
+          {search && (
             <FlatList
               data={locationData?.data || []}
               keyExtractor={(item, index) => item?.mapboxId || index.toString()}

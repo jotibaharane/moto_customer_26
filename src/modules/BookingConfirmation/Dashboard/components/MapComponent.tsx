@@ -1,26 +1,30 @@
-import { useCurrentLocation } from '@hooks/useCurrentLocation';
 import {
   Camera,
   Images,
   LineLayer,
+  Location,
   LocationPuck,
   MapView,
   ShapeSource,
   SymbolLayer,
+  UserLocation,
 } from '@rnmapbox/maps';
 import { RootState } from '@store/rootReducer';
+import { setCurrentLocation } from '@store/slices/Auth/authSlice';
 import { isValidLocation } from '@utils/location.utils';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { View } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getMapboxRoute } from '../../../../services/location/location.service';
 import { styles } from '../Dashboard.style';
 
 const MapComponent = () => {
+  const dispatch = useDispatch();
+  const [location, setLocation] = useState<Location>();
   const booking = useSelector((state: RootState) => state.booking);
   const cameraRef = useRef<any>(null);
   const [routeGeoJSON, setRouteGeoJSON] = useState<any>(null);
-  const { location } = useCurrentLocation();
+  // const { location } = useCurrentLocation();
 
   /* ================= ROUTE ================= */
   useEffect(() => {
@@ -115,7 +119,10 @@ const MapComponent = () => {
     // 🔥 INITIAL CURRENT LOCATION (FIXED)
     if (location) {
       cameraRef.current.setCamera({
-        centerCoordinate: [location.lng, location.lat],
+        centerCoordinate: [
+          location.coords?.longitude,
+          location.coords?.latitude,
+        ],
         zoomLevel: 17,
         pitch: 40,
         animationMode: 'easeTo',
@@ -143,6 +150,64 @@ const MapComponent = () => {
           images={{
             pickupIcon: require('@assets/images/marker.png'),
             dropIcon: require('@assets/images/drop_marker.png'),
+          }}
+        />
+
+        {location?.coords?.latitude && (
+          <ShapeSource
+            id="vehicleSource"
+            shape={{
+              type: 'Feature',
+              geometry: {
+                type: 'Point',
+                coordinates: [
+                  location?.coords?.longitude,
+                  location?.coords?.latitude,
+                ],
+              },
+              properties: {
+                heading: location?.coords?.heading,
+              },
+            }}
+          >
+            <SymbolLayer
+              id="vehicleLayer"
+              style={{
+                iconImage: 'carIcon',
+                iconSize: 0.25,
+                iconAllowOverlap: true,
+                iconIgnorePlacement: true,
+                iconRotate: ['get', 'heading'],
+                iconRotationAlignment: 'map',
+              }}
+            />
+          </ShapeSource>
+        )}
+
+        <UserLocation
+          visible={false}
+          minDisplacement={1}
+          onUpdate={location => {
+            setLocation(location);
+            console.log({ location });
+            dispatch(
+              setCurrentLocation({
+                lat: location.coords.latitude,
+                lng: location.coords.longitude,
+              }),
+            );
+
+            cameraRef.current?.setCamera({
+              centerCoordinate: [
+                location?.coords?.longitude,
+                location?.coords?.latitude,
+              ],
+              zoomLevel: 18,
+              pitch: 60,
+              heading: location.coords.heading || 0,
+              animationMode: 'linearTo',
+              animationDuration: 250,
+            });
           }}
         />
 

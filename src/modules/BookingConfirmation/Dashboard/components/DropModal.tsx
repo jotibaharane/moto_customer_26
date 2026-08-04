@@ -8,7 +8,7 @@ import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useGetSearchLocationQuery } from '@api/query';
 import { LoadLocation } from '@api/type';
-import { useCurrentLocation } from '@hooks/useCurrentLocation';
+import { useDebounce } from '@hooks/useDebounce';
 import { RootState } from '@store/rootReducer';
 import { setDelivery } from '@store/slices/Booking/bookingSlice';
 import {
@@ -27,14 +27,21 @@ interface Props {
 }
 
 const DropModal: React.FC<Props> = ({ onOpen, open }) => {
-  const { location } = useCurrentLocation();
+  const { currentLocation } = useSelector((state: RootState) => state.auth);
   const refScrollable = useRef<any>(null);
   const [search, setSearch] = useState('');
-  const { data: locationData } = useGetSearchLocationQuery({
-    search: search,
-    latitude: location?.lat,
-    longitude: location?.lng,
-  });
+  const debouncedSearch = useDebounce(search, 500);
+
+  const { data: locationData } = useGetSearchLocationQuery(
+    {
+      search: debouncedSearch,
+      latitude: currentLocation?.lat,
+      longitude: currentLocation?.lng,
+    },
+    {
+      skip: debouncedSearch.trim().length < 2,
+    },
+  );
   const dispatch = useDispatch();
   const [openGoogleAddress, setOpenGoogleAddress] = useState(false);
   const { delivery } = useSelector((state: RootState) => state.booking);

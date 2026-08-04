@@ -9,6 +9,7 @@ import {
 } from '@store/slices/customerSocket/customerSocketSlice';
 import { setDrivers, setMessage } from '@store/slices/map/mapSlice';
 import { Alert } from 'react-native';
+import { EventBus, EVENTS } from '../events/index';
 import { SOCKET_EVENTS } from './SocketEvents';
 import SocketService from './SocketService';
 
@@ -109,6 +110,7 @@ class CustomerSocketListener {
         //  CustomerSocket.trackLoad({
         //       loadId: load?.loadId,
         //     });
+        EventBus.emit(EVENTS.CLOSE_WAITING_LOADER);
         dispatch(resetBooking());
         dispatch(setActiveTrip(load));
         navigate('BottomNavigation', {

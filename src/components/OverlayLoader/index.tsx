@@ -1,8 +1,9 @@
+import { goBack } from '@navigation/NavigationService';
 import { FONT_FAMILIES, fp } from '@theme/index';
 import React, { memo, useEffect } from 'react';
 import { Modal, StyleSheet, Text, View } from 'react-native';
+import { EventBus, EVENTS } from '../../events/index';
 import CircularLoader from '../CircularLoader';
-import { goBack } from '@navigation/NavigationService';
 
 const OverlayLoader = ({
   visible = false,
@@ -11,26 +12,37 @@ const OverlayLoader = ({
   if (!visible) return null;
   const [timeLeft, setTimeLeft] = React.useState(150);
 
-    useEffect(() => {
-      let timer: any;
-      if (visible && timeLeft > 0) {
-        timer = setInterval(() => {
-          setTimeLeft(prev => prev - 1);
-        }, 1000);
-      }
-  
-      return () => {
-        if (timer) clearInterval(timer);
-      };
-    }, [visible, timeLeft]);
-  
-    useEffect(() => {
-      if (timeLeft === 0) {
-        goBack();
-        onClose()
-      }
-     
-    }, [visible, timeLeft]);
+  useEffect(() => {
+    let timer: any;
+    if (visible && timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft(prev => prev - 1);
+      }, 1000);
+    }
+
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [visible, timeLeft]);
+
+  useEffect(() => {
+    if (timeLeft === 0) {
+      goBack();
+      onClose();
+    }
+  }, [visible, timeLeft]);
+
+  useEffect(() => {
+    const closeLoader = () => {
+      onClose?.();
+    };
+
+    EventBus.on(EVENTS.CLOSE_WAITING_LOADER, closeLoader);
+
+    return () => {
+      EventBus.off(EVENTS.CLOSE_WAITING_LOADER, closeLoader);
+    };
+  }, []);
   return (
     <Modal
       transparent
@@ -42,8 +54,7 @@ const OverlayLoader = ({
         <View style={styles.overlay} />
 
         <View style={styles.card}>
-          <CircularLoader duration={timeLeft
-          } showTimer={true} />
+          <CircularLoader duration={timeLeft} showTimer={true} />
           <Text style={styles.text}>Waiting for Driver’s Confirmation</Text>
         </View>
       </View>

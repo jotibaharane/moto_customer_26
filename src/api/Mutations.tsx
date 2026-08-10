@@ -14,7 +14,7 @@ export const authApiMutations = baseApi.injectEndpoints({
   endpoints: builder => ({
     sendOtp: builder.mutation<any, SendOtpRequest>({
       query: body => ({
-        url: '/auth/send-otp',
+        url: '/send-otp',
         method: 'POST',
         body,
       }),
@@ -22,7 +22,7 @@ export const authApiMutations = baseApi.injectEndpoints({
 
     validateOtp: builder.mutation<any, ValidateOtpRequest>({
       query: body => ({
-        url: '/auth/verify-otp',
+        url: '/verify-otp',
         method: 'POST',
         body,
       }),
@@ -30,7 +30,7 @@ export const authApiMutations = baseApi.injectEndpoints({
 
     onboarding: builder.mutation<OnboardingResponse, OnboardingRequest>({
       query: body => ({
-        url: '/auth/customer/register',
+        url: '/register',
         method: 'POST',
         body,
       }),
@@ -38,7 +38,7 @@ export const authApiMutations = baseApi.injectEndpoints({
 
     setMpin: builder.mutation<any, any>({
       query: body => ({
-        url: '/mpin/create-mpin',
+        url: '/create-mpin',
         method: 'POST',
         body,
       }),
@@ -50,7 +50,7 @@ export const authApiMutations = baseApi.injectEndpoints({
       }
     >({
       query: body => ({
-        url: '/mpin/login-mpin',
+        url: '/login-mpin',
         method: 'POST',
         body,
       }),

@@ -68,7 +68,7 @@ class CustomerSocket {
     });
   }
   onDriverOnline(callback: (driver: any) => void) {
-    SocketService.on('driver-online', callback);
+    SocketService.on(SOCKET_EVENTS.DRIVER_ONLINE, callback);
   }
 
   onDriverLocation(callback: (driver: any) => void) {
@@ -76,7 +76,7 @@ class CustomerSocket {
   }
 
   onDriverOffline(callback: (driver: any) => void) {
-    SocketService.on('driver-offline', callback);
+    SocketService.on(SOCKET_EVENTS.DRIVER_OFFLINE, callback);
   }
 
   removeDriverOnline(callback: (driver: any) => void) {

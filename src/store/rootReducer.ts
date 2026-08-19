@@ -1,5 +1,4 @@
 import { baseApi } from '@api/baseApi';
-import { paymentApi } from '@api/paymentApi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { combineReducers } from '@reduxjs/toolkit';
 import { createTransform, persistReducer } from 'redux-persist';
@@ -50,7 +49,6 @@ const rootReducer = combineReducers({
   map: mapSlice,
   customerSocket: customerSocketReducer,
   [baseApi.reducerPath]: baseApi.reducer,
-  [paymentApi.reducerPath]: paymentApi.reducer,
 });
 
 export default persistReducer(persistConfig, rootReducer as any);

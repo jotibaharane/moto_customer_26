@@ -109,6 +109,25 @@ const mapSlice = createSlice({
     setMessage: (state, action: PayloadAction<string>) => {
       state.message = action.payload;
     },
+    setDriverData: (
+      state,
+      action: PayloadAction<Partial<DriverLocationUpdate>>,
+    ) => {
+      // Only merge defined fields to avoid overwriting required properties with undefined
+      if (state.driver && action.payload) {
+        const updated: DriverLocationUpdate = { ...state.driver };
+        (
+          Object.keys(action.payload) as Array<keyof DriverLocationUpdate>
+        ).forEach(key => {
+          const val = action.payload[key];
+          if (val !== undefined) {
+            // @ts-ignore assign known key safely
+            updated[key] = val as any;
+          }
+        });
+        state.driver = updated;
+      }
+    },
   },
 });
 
@@ -126,6 +145,7 @@ export const {
   setMessageAndDistance,
   setFromDriver,
   setMessage,
+  setDriverData,
 } = mapSlice.actions;
 
 export default mapSlice.reducer;

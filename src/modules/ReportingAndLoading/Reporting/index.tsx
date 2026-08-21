@@ -18,7 +18,7 @@ const ReportingScreen = () => {
   });
 
   const { driver } = useSelector((state: RootState) => state.map);
-
+  console.log({ driver });
   const currentLoadId = loads?.data?.[0]?.LoadId;
 
   useFocusEffect(
@@ -31,9 +31,9 @@ const ReportingScreen = () => {
     const socket = SocketService.getSocket();
     if (!socket) return;
     const track = () => {
-      if (!currentLoadId) return;
+      if (!currentLoadId && !driver?.loadId) return;
       CustomerSocket.trackLoad({
-        loadId: currentLoadId,
+        loadId: driver?.loadId ?? currentLoadId,
       });
     };
     socket.on('connect', track);
@@ -43,7 +43,7 @@ const ReportingScreen = () => {
     return () => {
       socket.off('connect', track);
     };
-  }, [currentLoadId]);
+  }, [driver?.loadId, currentLoadId]);
 
   return (
     <SafeAreaView style={styles.container}>

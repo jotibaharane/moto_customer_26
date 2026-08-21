@@ -1,55 +1,58 @@
-import { useGetLoadTrakingQuery } from '@api/Mutations';
 import { useGetLoadsQuery } from '@api/query';
 import Dropdown from '@components/Dropdown';
 import { useFocusEffect } from '@react-navigation/native';
-import CustomerSocket from '@socket/CustomerSocket';
-import CustomerSocketListener from '@socket/CustomerSocketListener';
 import { RootState } from '@store/rootReducer';
-import { setLPStatus, setTripDetails } from '@store/slices/map/mapSlice';
-import { COLORS, FONT_FAMILIES, fp, hp, wp } from '@theme/index';
-import { formatTimeAMPM } from '@utils/datetime.utils';
+import { setDriverData } from '@store/slices/map/mapSlice';
+import { COLORS, FONT_FAMILIES } from '@theme/index';
 import { CheckCircle2 } from 'lucide-react-native';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, Text, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 const LiveTracking = () => {
+  const dispatch = useDispatch();
   const [loadID, setLoadId] = useState<any>('');
-  const { data: loads ,refetch} = useGetLoadsQuery();
+  const { data: loads, refetch } = useGetLoadsQuery();
+  const { driver } = useSelector((state: RootState) => state.map);
+  const loadData = useMemo(
+    () =>
+      loads?.data?.map((load: any) => ({
+        label: load?.LoadId,
+        value: load?.LoadId,
+      })),
+    [loads],
+  );
 
-const loadData=useMemo(()=>loads?.data?.map((load:any) => ({
-          label: load?.LoadId,
-          value: load?.LoadId,
-        })),[loads])
-
-  console.log({ loadData ,loadID});
+  console.log({ loadData, loadID });
   useFocusEffect(
     useCallback(() => {
       refetch();
-     
     }, [refetch]),
   );
 
+  useEffect(() => {
+    if (loadID) {
+      const resp = loads?.data?.filter((item: any) => item?.LoadId === loadID);
 
-
-
-
-useEffect(() => {
-  CustomerSocketListener.setAuthenticatedCallback(() => {
-    if (!loadID) return;
-    console.log('Track Load After Auth:', loadID);
-    CustomerSocket.trackLoad({
-      loadId: loadID,
-    });
-  });
-
-  return () => {
-    CustomerSocketListener.clearAuthenticatedCallback();
-  };
-}, [loadID]);
-
-
-
+      if (resp?.length) {
+        let data = resp[0];
+        dispatch(
+          setDriverData({
+            driverId: data?.DriverId,
+            pickupCoordinate: {
+              latitude: data?.PickupLatitude,
+              longitude: data?.PickupLongitude,
+            },
+            destinationCoordinate: {
+              latitude: data?.DeliveryLatitude,
+              longitude: data?.DeliveryLongitude,
+            },
+            loadId: data?.LoadId,
+          }),
+        );
+      }
+    }
+  }, [loadID]);
 
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.white[100], padding: 16 }}>
@@ -92,14 +95,13 @@ useEffect(() => {
             fontSize: 20,
           }}
         >
-          - {loadID||loads?.data?.[0]?.LoadId}
+          - {driver?.loadId || loads?.data?.[0]?.LoadId}
         </Text>
       </View>
       <Dropdown
         label="Your Load"
         data={loadData}
         placeholder="Select Load"
-        
         onChange={value => {
           setLoadId(value);
         }}

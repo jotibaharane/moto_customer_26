@@ -28,7 +28,6 @@ const MapComponent = () => {
     null,
   );
 
-  console.log({ driver, status, tracking });
   const prevCoords = useRef<[number, number] | null>(null);
   const prevHeading = useRef(0);
 

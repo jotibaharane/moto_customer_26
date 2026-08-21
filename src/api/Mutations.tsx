@@ -206,13 +206,8 @@ export const {
   useCreateLoadPostMutation,
   useDeleteLoadPostMutation,
   useGetBookmarksQuery,
-  useGetLoadPostsQuery,
   useGetPincodeDataMutation,
   useGetVehicleImagesQuery,
   useGetVehicleListsQuery,
-  usePostBookmarkMutation,
-  useUpdateLoadPostMutation,
-  useGetLoadTrakingQuery,
-  useGetLoadsQuery,
   useProfileMutation,
 } = authApiMutations;

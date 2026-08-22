@@ -1,42 +1,85 @@
 export const SOCKET_EVENTS = {
+  /**
+   * Socket lifecycle
+   */
   CONNECT: 'connect',
   DISCONNECT: 'disconnect',
   CONNECT_ERROR: 'connect_error',
 
+  /**
+   * Authentication
+   */
   AUTHENTICATED: 'authenticated',
 
   /**
-   * Customer
+   * =========================
+   * CUSTOMER → SERVER
+   * =========================
    */
-  CUSTOMER_WATCH: 'customer-watch',
-  CREATE_LOAD_OFFER: 'create-load-offer',
+
+  CUSTOMER_WATCH: 'customer:watch',
+
+  CUSTOMER_SEND_OFFER: 'customer:send-offer',
+
+  CUSTOMER_TRACK_LOAD: 'customer:track-load',
+
+  CUSTOMER_STOP_TRACK_LOAD: 'customer:stop-track-load',
 
   /**
-   * Nearby Driver
+   * =========================
+   * DRIVER / NEARBY
+   * =========================
    */
-  DRIVER_ONLINE: 'driver-online',
-  DRIVER_OFFLINE: 'driver-offline',
-  NEARBY_DRIVER_LOCATION: 'nearby-driver-location',
+
+  DRIVER_ONLINE: 'driver:online',
+
+  DRIVER_OFFLINE: 'driver:offline',
+
+  DRIVER_LOCATION: 'driver:location',
 
   /**
-   * Load Offer
+   * =========================
+   * LOAD
+   * =========================
    */
-  LOAD_OFFER: 'load-offer',
-  LOAD_ACCEPTED: 'load-accepted',
-  LOAD_REJECTED: 'load-rejected',
-  OFFER_EXPIRED: 'offer-expired',
+
+  LOAD_OFFER_SENT: 'load:offer:sent',
+
+  LOAD_OFFER_EXPIRED: 'load:offer:expired',
+
+  LOAD_ASSIGNED: 'load:assigned',
+
+  LOAD_REJECTED: 'load:rejected',
+
+  LOAD_CANCELLED: 'load:cancelled',
+
+  LOAD_DRIVER_LOCATION: 'load:driver-location',
 
   /**
-   * Driver
+   * =========================
+   * LOAD STATUS
+   * =========================
    */
-  ACCEPT_LOAD: 'accept-load',
-  REJECT_LOAD: 'reject-load',
+
+  LOAD_STATUS_CHANGED: 'load:status-changed',
 
   /**
-   * Trip
+   * =========================
+   * TRIP
+   * =========================
    */
-  TRIP_STARTED: 'trip-started',
-  TRIP_LOCATION: 'trip-location',
-  TRIP_COMPLETED: 'trip-completed',
-  TRIP_CANCELLED: 'trip-cancelled',
+
+  TRIP_STARTED: 'trip:started',
+
+  TRIP_COMPLETED: 'trip:completed',
+
+  /**
+   * =========================
+   * PAYMENT
+   * =========================
+   */
+
+  PAYMENT_CREATE: 'payment:create',
+
+  PAYMENT_STATUS: 'payment:status',
 } as const;

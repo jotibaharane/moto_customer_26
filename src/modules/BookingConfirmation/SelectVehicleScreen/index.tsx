@@ -74,7 +74,7 @@ const SelectVehicleScreen = () => {
     };
 
     const handleDriverLocation = (driver: any) => {
-      console.log('LOCATION', driver);
+      console.log('DRIVER LOCATION', driver);
       setDrivers(prev =>
         prev.map(item =>
           item.driverId === driver.driverId

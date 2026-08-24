@@ -6,8 +6,9 @@ import {
 } from '@tabler/icons-react-native';
 import { Image, Pressable, Text, TouchableOpacity, View } from 'react-native';
 import { styles } from '../SelectVehicle.styles';
+import { DriverResponse } from '@store/slices/customerSocket/customerSocketSlice';
 
-const VehicleCard = ({ item, selected, onSelect }: any) => {
+const VehicleCard = ({ item, selected, onSelect }: {item:DriverResponse,selected:any,onSelect:any}) => {
   return (
     <TouchableOpacity
       activeOpacity={0.9}
@@ -20,32 +21,41 @@ const VehicleCard = ({ item, selected, onSelect }: any) => {
       >
         <View style={styles.circle} />
 
-        <Image
+     <Image
+  source={{
+    uri: `https://stag.motohelpindia.com/assets${item?.vehicle?.cardImage}`,
+  }}
+  resizeMode="contain"
+  style={styles.truckImage}
+/>
+          {/* <Image
           source={require('@assets/images/truck.png')}
           resizeMode="contain"
           style={styles.truckImage}
-        />
+        /> */}
       </Pressable>
 
       <View style={styles.cardContent}>
-        <Text style={styles.vehicleName}>{item.vehicleType}</Text>
+        <Text style={styles.vehicleName}>{item.vehicle?.vehicleType}</Text>
 
         <View style={styles.detailRow}>
           <IconWeight size={16} color={'#6C7278'} />
-          <Text style={styles.vehicleDetails}>{item.weightRange}</Text>
+          <Text style={styles.vehicleDetails}>{item.vehicle?.minLoadingCapacity}kg - {item.vehicle?.maxLoadingCapacity}kg </Text>
         </View>
 
         <View style={styles.detailRow}>
           <IconClockHour4 size={16} color={'#6C7278'} />
           <Text style={styles.vehicleDetails}>
-            {item.expectedVehicleAvailability}
+            {item.etaMinutes} min
+          
           </Text>
         </View>
 
         <View style={styles.detailRow}>
           <IconCoinRupee size={16} color={'#6C7278'} />
           <Text style={styles.vehicleDetails}>
-            Fright - ₹ {item.freightAmount}
+            {/* Fright - ₹ {item.freightAmount} */}
+            Fright - ₹ 1000
           </Text>
         </View>
       </View>

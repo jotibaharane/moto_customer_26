@@ -90,7 +90,7 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
       refScrollable?.current?.close();
     }
   }, [open]);
-  console.log({ currentLocationData, currentLocation, search });
+  console.log({ currentLocationData:formik?.values});
   return (
     <RBSheet
       ref={refScrollable}

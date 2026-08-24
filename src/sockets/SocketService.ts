@@ -25,7 +25,7 @@ class SocketService {
 
     console.log('🔌 Creating Socket Connection...');
 
-    this.socket = io('http://192.168.1.112:6001', {
+    this.socket = io('http://192.168.1.112:6000', {
       transports: ['websocket'],
 
       auth: {

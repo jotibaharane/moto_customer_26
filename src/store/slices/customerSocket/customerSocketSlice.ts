@@ -2,24 +2,88 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export type DriverStatus = 'AVAILABLE' | 'BUSY' | 'OFFLINE';
 
-export interface NearbyDriver {
+
+
+
+export type ProviderType = 'DRIVER';
+
+export type OnboardingStatus = 'ACTIVE' | 'INACTIVE' | 'PENDING' | string;
+
+export type CapacityUnit = 'kg' | string;
+
+export type VehicleType = 'Light' | 'Medium' | 'Heavy' | string;
+
+export type VehicleCategory = 'HGV' | 'MGV' | 'LCV' | string;
+
+export interface Vendor {
+  vendorId: string;
+  vendorName: string;
+  onboardingStatus: OnboardingStatus;
+}
+
+export interface Vehicle {
+  assignmentId: string;
+  cardImage: string | null;
+
+  vehicleId: string;
+dhalaHeight:string;
+dhalaLength:string;
+dhalaWidth:string;
+  minLoadingCapacity: number;
+  maxLoadingCapacity: number;
+  capacityUnit: CapacityUnit;
+
+  vehicleNo: string;
+  vehicleType: VehicleType;
+
+  manufacturer: string;
+  makerModel: string;
+
+  loadingCapacity: number;
+  vehicleGrossWeight: number;
+
+  vehicleCategory: VehicleCategory;
+  bodyType: string;
+
+  verified: boolean;
+  active: boolean;
+  assignmentActive: boolean;
+}
+
+export interface DriverLocation {
   driverId: string;
-  driverName?: string;
-  vehicleNo?: string;
 
   latitude: number;
   longitude: number;
 
-  distance?: number;
-  eta?: number;
+  heading: number;
+  speed: number;
 
-  status: DriverStatus;
-
-  heading?: number;
-  speed?: number;
-
-  lastSeen: number;
+  updatedAt: string;
 }
+
+export interface DriverResponse {
+  providerType: ProviderType;
+
+  driverId: string;
+  profileId: string;
+
+  driverName: string;
+  nickName: string;
+
+  verified: boolean;
+
+  capacityKg: number;
+  etaMinutes: number;
+
+  vendor: Vendor;
+  vehicle: Vehicle;
+  location: DriverLocation;
+
+  online: boolean;
+}
+
+
 
 export interface ActiveTrip {
   tripId?: string;
@@ -40,9 +104,9 @@ export interface ActiveTrip {
 interface CustomerSocketState {
   connected: boolean;
 
-  nearbyDrivers: NearbyDriver[];
+  nearbyDrivers: DriverResponse[];
 
-  selectedDriver: NearbyDriver | null;
+  selectedDriver: DriverResponse | null;
 
   activeTrip: ActiveTrip | null;
 
@@ -60,92 +124,85 @@ const initialState: CustomerSocketState = {
 
   watchingRadius: 5,
 };
-
 const customerSocketSlice = createSlice({
   name: 'customerSocket',
 
   initialState,
 
   reducers: {
-    setConnected(state, action: PayloadAction<boolean>) {
+    setConnected(
+      state,
+      action: PayloadAction<boolean>,
+    ) {
       state.connected = action.payload;
     },
 
-    setWatchingRadius(state, action: PayloadAction<number>) {
+    setWatchingRadius(
+      state,
+      action: PayloadAction<number>,
+    ) {
       state.watchingRadius = action.payload;
     },
 
-    setNearbyDrivers(state, action: PayloadAction<NearbyDriver[]>) {
+    setNearbyDrivers(
+      state,
+      action: PayloadAction<DriverResponse[]>,
+    ) {
       state.nearbyDrivers = action.payload;
     },
 
-    updateDriver(state, action: PayloadAction<NearbyDriver>) {
-      const index = state.nearbyDrivers.findIndex(
-        item => item.driverId === action.payload.driverId,
-      );
-
-      if (index !== -1) {
-        state.nearbyDrivers[index] = {
-          ...state.nearbyDrivers[index],
-          ...action.payload,
-        };
-      } else {
-        state.nearbyDrivers.push(action.payload);
-      }
-
-      state.nearbyDrivers.sort(
-        (a, b) => (a.distance ?? 9999) - (b.distance ?? 9999),
-      );
-    },
-
-    updateDriverStatus(
+    updateDriver(
       state,
-      action: PayloadAction<{
-        driverId: string;
-        status: DriverStatus;
-      }>,
+      action: PayloadAction<DriverResponse>,
     ) {
-      const driver = state.nearbyDrivers.find(
-        item => item.driverId === action.payload.driverId,
+      const driver = action.payload;
+
+      const index = state.nearbyDrivers.findIndex(
+        item => item.driverId === driver.driverId,
       );
 
-      if (driver) {
-        driver.status = action.payload.status;
-        driver.lastSeen = Date.now();
+      if (index === -1) {
+        state.nearbyDrivers.push(driver);
+        return;
       }
+
+      state.nearbyDrivers[index] = {
+        ...state.nearbyDrivers[index],
+        ...driver,
+        location: {
+          ...state.nearbyDrivers[index].location,
+          ...driver.location,
+        },
+        vehicle: {
+          ...state.nearbyDrivers[index].vehicle,
+          ...driver.vehicle,
+        },
+      };
     },
 
-    removeDriver(state, action: PayloadAction<string>) {
-      state.nearbyDrivers = state.nearbyDrivers.filter(
-        item => item.driverId !== action.payload,
-      );
-
-      if (state.selectedDriver?.driverId === action.payload) {
-        state.selectedDriver = null;
-      }
-    },
-
-    removeExpiredDrivers(state) {
-      const now = Date.now();
+    removeDriver(
+      state,
+      action: PayloadAction<string>,
+    ) {
+      const driverId = action.payload;
 
       state.nearbyDrivers = state.nearbyDrivers.filter(
-        item => now - item.lastSeen <= 15000,
+        driver => driver.driverId !== driverId,
       );
 
-      if (
-        state.selectedDriver &&
-        now - state.selectedDriver.lastSeen > 15000
-      ) {
+      if (state.selectedDriver?.driverId === driverId) {
         state.selectedDriver = null;
       }
     },
 
     clearNearbyDrivers(state) {
       state.nearbyDrivers = [];
-      state.selectedDriver = null;
     },
 
-    selectDriver(state, action: PayloadAction<NearbyDriver>) {
+    selectDriver(
+      state,
+      action: PayloadAction<DriverResponse>,
+    ) {
       state.selectedDriver = action.payload;
     },
 
@@ -153,11 +210,17 @@ const customerSocketSlice = createSlice({
       state.selectedDriver = null;
     },
 
-    setActiveTrip(state, action: PayloadAction<ActiveTrip>) {
+    setActiveTrip(
+      state,
+      action: PayloadAction<ActiveTrip>,
+    ) {
       state.activeTrip = action.payload;
     },
 
-    updateActiveTrip(state, action: PayloadAction<Partial<ActiveTrip>>) {
+    updateActiveTrip(
+      state,
+      action: PayloadAction<Partial<ActiveTrip>>,
+    ) {
       if (state.activeTrip) {
         state.activeTrip = {
           ...state.activeTrip,
@@ -181,9 +244,7 @@ export const {
   setWatchingRadius,
   setNearbyDrivers,
   updateDriver,
-  updateDriverStatus,
   removeDriver,
-  removeExpiredDrivers,
   clearNearbyDrivers,
   selectDriver,
   clearSelectedDriver,

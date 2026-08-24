@@ -234,7 +234,9 @@ export interface CreateLoadRequest {
   selectedDriverId: string;
   driverName?: string;
   driverMobile?: string;
-
+ width?:string;
+  height?:string;
+  length?:string;
   // Vehicle
   vehicleType: string;
   vehicleNumber?: string;

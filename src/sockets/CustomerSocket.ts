@@ -6,6 +6,7 @@ class CustomerSocket {
     latitude: number,
     longitude: number,
     radius = 5,
+    weightKg=1
   ): Promise<any[]> {
     return new Promise((resolve, reject) => {
       SocketService.emit(
@@ -14,6 +15,7 @@ class CustomerSocket {
           latitude,
           longitude,
           radius,
+          weightKg
         },
         (response: any) => {
           if (!response) {
@@ -29,7 +31,7 @@ class CustomerSocket {
   sendLoadOffer(payload: any): Promise<any> {
     return new Promise((resolve, reject) => {
       SocketService.emit(
-        SOCKET_EVENTS.CREATE_LOAD_OFFER,
+        SOCKET_EVENTS.CUSTOMER_SEND_OFFER,
         payload,
         (response: any) => {
           if (!response) {
@@ -78,6 +80,11 @@ class CustomerSocket {
   onDriverOffline(callback: (driver: any) => void) {
     SocketService.on(SOCKET_EVENTS.DRIVER_OFFLINE, callback);
   }
+ avilableDrivers(callback: (driver: any) => void) {
+    SocketService.on("nearby:drivers", callback);
+  }
+
+ 
 
   removeDriverOnline(callback: (driver: any) => void) {
     SocketService.off('driver-online', callback);
@@ -91,13 +98,13 @@ class CustomerSocket {
     SocketService.off('driver-offline', callback);
   }
 
-  onLoadAccepted(callback: (data: any) => void) {
-    SocketService.on(SOCKET_EVENTS.LOAD_ACCEPTED, callback);
-  }
+  // onLoadAccepted(callback: (data: any) => void) {
+  //   SocketService.on(SOCKET_EVENTS.LOAD_ACCEPTED, callback);
+  // }
 
-  removeLoadAccepted(callback: any) {
-    SocketService.off(SOCKET_EVENTS.LOAD_ACCEPTED, callback);
-  }
+  // removeLoadAccepted(callback: any) {
+  //   SocketService.off(SOCKET_EVENTS.LOAD_ACCEPTED, callback);
+  // }
 
   onLoadRejected(callback: any) {
     SocketService.on(SOCKET_EVENTS.LOAD_REJECTED, callback);
@@ -107,13 +114,13 @@ class CustomerSocket {
     SocketService.off(SOCKET_EVENTS.LOAD_REJECTED, callback);
   }
 
-  onOfferExpired(callback: any) {
-    SocketService.on(SOCKET_EVENTS.OFFER_EXPIRED, callback);
-  }
+  // onOfferExpired(callback: any) {
+  //   SocketService.on(SOCKET_EVENTS.OFFER_EXPIRED, callback);
+  // }
 
-  removeOfferExpired(callback: any) {
-    SocketService.off(SOCKET_EVENTS.OFFER_EXPIRED, callback);
-  }
+  // removeOfferExpired(callback: any) {
+  //   SocketService.off(SOCKET_EVENTS.OFFER_EXPIRED, callback);
+  // }
 
   trackingDriverLocation(callback: any) {
     SocketService.on('tracking-driver-location', callback);

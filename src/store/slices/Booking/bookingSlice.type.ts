@@ -1,70 +1,66 @@
-export type Location = {
-  latitude: number;
-  longitude: number;
-};
+import { CreateLoadRequest } from '@api/type';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export type Vehicle = {
+interface BookingState extends CreateLoadRequest {
+  selectedDriverId: string;
+
+  driverName: string;
+  driverMobile: string;
+
   vehicleType: string;
-  approximateWeightKg: string;
-  vehicleNo: string;
-};
+  vehicleNumber: string;
+  vehicleImage: string;
 
-export type Load = {
-  freight_amount: string;
-  paymentMode: string;
+  weightRange: string;
+
+  freightAmount: number;
   expectedVehicleAvailability: string;
-};
 
-export type BookingDetails = {
-  customerId: string;
-  LoadPost_ID?: string;
-  pickup: any;
-  delivery: any;
-  vehicle: Vehicle;
-  load: Load;
-};
-
-export type IsConfirmed = {
-  DriverID: string;
-  loadId: string;
-  loadstatus: 'waiting' | 'accepted' | 'rejected';
-};
-export type BookingState = {
-  current_location: Location;
-  booking: BookingDetails;
-  pickupLocation: Location;
-  dropLocation: Location;
-  isConfirmed?: IsConfirmed;
-  bookingVehicle?: any;
-  avilableVehicles?: VehicleLocation[];
-  DriverID?: any;
-};
-
-export interface VehicleLocation {
-  vehicleid: string;
-  registration_no: string;
-  vehicleType: string;
-  body_type: string;
-  VehicleName: string;
-  WeightRange: string;
-
-  Lat: number;
-  Lng: number;
-
-  DriverID: string;
-  MobileNo: string;
-
-  VehicleID: string;
-  VendorID: string;
-
-  freight_amount: string;
-
-  paymentMode: string | null;
-  expectedVehicleAvailability: string | null;
-
-  LP_Status: string;
-
-  Img: string;
-
-  DistanceKm: number;
+  distance: number;
 }
+
+const initialState: BookingState = {
+  customerId: '',
+
+  selectedDriverId: '',
+
+  driverName: '',
+  driverMobile: '',
+
+  vehicleType: '',
+  vehicleNumber: '',
+  vehicleImage: '',
+
+  weightRange: '',
+
+  freightAmount: 0,
+  expectedVehicleAvailability: '',
+
+  distance: 0,
+
+  pickup: {
+    name: '',
+    fullAddress: '',
+    latitude: undefined,
+    longitude: undefined,
+    plotBuilding: '',
+    streetArea: '',
+    contactName: '',
+    contactMobile: '',
+    tag: '',
+  },
+
+  delivery: {
+    name: '',
+    fullAddress: '',
+    latitude: undefined,
+    longitude: undefined,
+    plotBuilding: '',
+    streetArea: '',
+    contactName: '',
+    contactMobile: '',
+    tag: '',
+  },
+
+  weight: 0,
+};

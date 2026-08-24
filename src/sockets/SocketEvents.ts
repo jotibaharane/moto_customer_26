@@ -16,7 +16,7 @@ export const SOCKET_EVENTS = {
    * CUSTOMER → SERVER
    * =========================
    */
-
+ NEARBY_DRIVERS: 'nearby:drivers',
   CUSTOMER_WATCH: 'customer:watch',
 
   CUSTOMER_SEND_OFFER: 'customer:send-offer',

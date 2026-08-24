@@ -65,7 +65,7 @@ export const authApiMutations = baseApi.injectEndpoints({
 
     createLoadPost: builder.mutation<any, any>({
       query: body => ({
-        url: '/Insert_customer_load_post',
+        url: '/load/create',
         method: 'POST',
         body,
       }),

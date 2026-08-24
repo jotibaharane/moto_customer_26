@@ -21,6 +21,12 @@ const ReviewBookingScreen = () => {
   const [watingDriver, setWaitingDriver] = React.useState(false);
   const { userId } = useSelector((state: RootState) => state.auth);
   const {
+    selectedDriverId,
+    driverName,
+    driverMobile,
+    vehicleNumber,
+    customerId,
+    
     delivery,
     pickup,
     vehicleType,
@@ -28,11 +34,11 @@ const ReviewBookingScreen = () => {
     vehicleImage,
     expectedVehicleAvailability,
     freightAmount,
-    selectedDriverId,
-    driverMobile,
-    driverName,
-    vehicleNumber,
     weightRange,
+    height,
+    length,
+    width
+
   } = useSelector((state: RootState) => state.booking);
   const { distance, loading } = useDistance(
     { lat: pickup?.latitude!, lng: pickup?.longitude! },
@@ -70,32 +76,34 @@ const ReviewBookingScreen = () => {
           <Pressable style={styles.imageContainer}>
             <View style={styles.circle} />
 
-            <Image
-              source={require('@assets/images/truck.png')}
-              resizeMode="contain"
-              style={styles.truckImage}
-            />
+          <Image
+            source={{
+              uri: `https://stag.motohelpindia.com/assets${vehicleImage}`,
+            }}
+            resizeMode="contain"
+            style={styles.truckImage}
+          />
           </Pressable>
 
           <View style={styles.cardContent}>
             <View style={styles.detailRow}>
-              <Text style={styles.vehicleName}>Tata Ace</Text>
+              <Text style={styles.vehicleName}>{vehicleType}</Text>
             </View>
             <View style={styles.detailRow}>
               <Text style={styles.vehicleDetails} numberOfLines={1}>
-                Loading Capacity - 750 kg
+                Loading Capacity - {weightRange}
               </Text>
             </View>
 
             <View style={styles.detailRow}>
-              <Text style={styles.vehicleDetails}>Length - 7 ft</Text>
+              <Text style={styles.vehicleDetails}>Length - {length}ft</Text>
             </View>
 
             <View style={styles.detailRow}>
-              <Text style={styles.vehicleDetails}>width - 5 ft </Text>
+              <Text style={styles.vehicleDetails}>width - {width} ft </Text>
             </View>
             <View style={styles.detailRow}>
-              <Text style={styles.vehicleDetails}>Height - 5 ft </Text>
+              <Text style={styles.vehicleDetails}>Height - {height} ft </Text>
             </View>
           </View>
         </TouchableOpacity>

@@ -6,7 +6,7 @@ class CustomerSocket {
     latitude: number,
     longitude: number,
     radius = 5,
-    weightKg=1
+    weightKg = 1,
   ): Promise<any[]> {
     return new Promise((resolve, reject) => {
       SocketService.emit(
@@ -15,7 +15,7 @@ class CustomerSocket {
           latitude,
           longitude,
           radius,
-          weightKg
+          weightKg,
         },
         (response: any) => {
           if (!response) {
@@ -47,7 +47,7 @@ class CustomerSocket {
 
   trackLoad(payload: any): Promise<any> {
     return new Promise((resolve, reject) => {
-      SocketService.emit('track-load', payload, (response: any) => {
+      SocketService.emit('customer:track-load', payload, (response: any) => {
         if (!response) {
           reject();
           return;
@@ -80,11 +80,9 @@ class CustomerSocket {
   onDriverOffline(callback: (driver: any) => void) {
     SocketService.on(SOCKET_EVENTS.DRIVER_OFFLINE, callback);
   }
- avilableDrivers(callback: (driver: any) => void) {
-    SocketService.on("nearby:drivers", callback);
+  avilableDrivers(callback: (driver: any) => void) {
+    SocketService.on('nearby:drivers', callback);
   }
-
- 
 
   removeDriverOnline(callback: (driver: any) => void) {
     SocketService.off('driver-online', callback);

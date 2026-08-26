@@ -25,8 +25,6 @@ const ReviewBookingScreen = () => {
     driverName,
     driverMobile,
     vehicleNumber,
-    customerId,
-    
     delivery,
     pickup,
     vehicleType,
@@ -37,8 +35,7 @@ const ReviewBookingScreen = () => {
     weightRange,
     height,
     length,
-    width
-
+    width,
   } = useSelector((state: RootState) => state.booking);
   const { distance, loading } = useDistance(
     { lat: pickup?.latitude!, lng: pickup?.longitude! },
@@ -76,13 +73,13 @@ const ReviewBookingScreen = () => {
           <Pressable style={styles.imageContainer}>
             <View style={styles.circle} />
 
-          <Image
-            source={{
-              uri: `https://stag.motohelpindia.com/assets${vehicleImage}`,
-            }}
-            resizeMode="contain"
-            style={styles.truckImage}
-          />
+            <Image
+              source={{
+                uri: `https://stag.motohelpindia.com/assets${vehicleImage}`,
+              }}
+              resizeMode="contain"
+              style={styles.truckImage}
+            />
           </Pressable>
 
           <View style={styles.cardContent}>

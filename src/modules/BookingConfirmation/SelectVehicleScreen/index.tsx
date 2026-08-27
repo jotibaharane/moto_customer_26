@@ -35,7 +35,7 @@ const SelectVehicleScreen = () => {
   const [drivers, setDrivers] = useState<any[]>([]);
   const [loadingDrivers, setLoadingDrivers] = useState(false);
 
-  console.log({ pickup, delivery });
+  console.log('_drivers', { drivers });
   useEffect(() => {
     if (!pickup?.latitude || !pickup?.longitude) {
       return;
@@ -49,6 +49,7 @@ const SelectVehicleScreen = () => {
           pickup.latitude!,
           pickup.longitude!,
           5,
+          weight,
         );
         setDrivers(response);
         console.log('Drivers', response);
@@ -184,13 +185,17 @@ const SelectVehicleScreen = () => {
             onSelect={() =>
               dispatch(
                 setSelectedDriver({
+                  width: item?.vehicle?.dhalaWidth,
+                  height: item?.vehicle?.dhalaHeight,
+                  length: item?.vehicle?.dhalaLength,
                   driverId: item.driverId,
-                  vehicleType: item.vehicleType,
-                  vehicleNumber: item.vehicleNumber,
-                  vehicleImage: item.vehicleImage,
+                  vehicleType: item?.vehicle?.vehicleType,
+                  vehicleNumber: item.vehicle?.vehicleNo,
                   freightAmount: item.freightAmount,
                   expectedVehicleAvailability: item.expectedVehicleAvailability,
                   distance: item.distance,
+                  vehicleImage: item.vehicle.cardImage,
+                  weightRange: `${item.vehicle.minLoadingCapacity}-${item.vehicle.maxLoadingCapacity} ${item.vehicle.capacityUnit}`,
                 }),
               )
             }

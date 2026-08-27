@@ -229,7 +229,9 @@ export interface MakePaymentResponse {
 
 export interface CreateLoadRequest {
   customerId: string;
-
+  width?: string;
+  height?: string;
+  length?: string;
   // Selected Driver
   selectedDriverId: string;
   driverName?: string;

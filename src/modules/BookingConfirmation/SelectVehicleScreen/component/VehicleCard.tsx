@@ -21,24 +21,34 @@ const VehicleCard = ({ item, selected, onSelect }: any) => {
         <View style={styles.circle} />
 
         <Image
-          source={require('@assets/images/truck.png')}
+          source={{
+            uri: `https://stag.motohelpindia.com/assets${item?.vehicle?.cardImage}`,
+          }}
           resizeMode="contain"
           style={styles.truckImage}
         />
+        {/* <Image
+          source={require('@assets/images/truck.png')}
+          resizeMode="contain"
+          style={styles.truckImage}
+        /> */}
       </Pressable>
 
       <View style={styles.cardContent}>
-        <Text style={styles.vehicleName}>{item.vehicleType}</Text>
+        <Text style={styles.vehicleName}>{item.vehicle?.vehicleType}</Text>
 
         <View style={styles.detailRow}>
           <IconWeight size={16} color={'#6C7278'} />
-          <Text style={styles.vehicleDetails}>{item.weightRange}</Text>
+          <Text style={styles.vehicleDetails}>
+            {item.vehicle?.minLoadingCapacity}kg -{' '}
+            {item.vehicle?.maxLoadingCapacity}kg{' '}
+          </Text>
         </View>
 
         <View style={styles.detailRow}>
           <IconClockHour4 size={16} color={'#6C7278'} />
           <Text style={styles.vehicleDetails}>
-            {item.expectedVehicleAvailability}
+            {item.expectedVehicleAvailability} min
           </Text>
         </View>
 
@@ -46,6 +56,7 @@ const VehicleCard = ({ item, selected, onSelect }: any) => {
           <IconCoinRupee size={16} color={'#6C7278'} />
           <Text style={styles.vehicleDetails}>
             Fright - ₹ {item.freightAmount}
+            {/* Fright - ₹ 1000 */}
           </Text>
         </View>
       </View>

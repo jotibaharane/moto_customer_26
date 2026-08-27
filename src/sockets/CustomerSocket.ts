@@ -6,6 +6,7 @@ class CustomerSocket {
     latitude: number,
     longitude: number,
     radius = 5,
+    weight: number,
   ): Promise<any[]> {
     return new Promise((resolve, reject) => {
       SocketService.emit(
@@ -14,6 +15,7 @@ class CustomerSocket {
           latitude,
           longitude,
           radius,
+          weight,
         },
         (response: any) => {
           if (!response) {

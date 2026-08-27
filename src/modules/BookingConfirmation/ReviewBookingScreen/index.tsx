@@ -33,6 +33,9 @@ const ReviewBookingScreen = () => {
     driverName,
     vehicleNumber,
     weightRange,
+    length,
+    width,
+    height,
   } = useSelector((state: RootState) => state.booking);
   const { distance, loading } = useDistance(
     { lat: pickup?.latitude!, lng: pickup?.longitude! },
@@ -71,7 +74,9 @@ const ReviewBookingScreen = () => {
             <View style={styles.circle} />
 
             <Image
-              source={require('@assets/images/truck.png')}
+              source={{
+                uri: `https://stag.motohelpindia.com/assets${vehicleImage}`,
+              }}
               resizeMode="contain"
               style={styles.truckImage}
             />
@@ -79,23 +84,23 @@ const ReviewBookingScreen = () => {
 
           <View style={styles.cardContent}>
             <View style={styles.detailRow}>
-              <Text style={styles.vehicleName}>Tata Ace</Text>
+              <Text style={styles.vehicleName}>{vehicleType}</Text>
             </View>
             <View style={styles.detailRow}>
               <Text style={styles.vehicleDetails} numberOfLines={1}>
-                Loading Capacity - 750 kg
+                Loading Capacity - {weightRange}
               </Text>
             </View>
 
             <View style={styles.detailRow}>
-              <Text style={styles.vehicleDetails}>Length - 7 ft</Text>
+              <Text style={styles.vehicleDetails}>Length - {length}ft</Text>
             </View>
 
             <View style={styles.detailRow}>
-              <Text style={styles.vehicleDetails}>width - 5 ft </Text>
+              <Text style={styles.vehicleDetails}>width - {width} ft </Text>
             </View>
             <View style={styles.detailRow}>
-              <Text style={styles.vehicleDetails}>Height - 5 ft </Text>
+              <Text style={styles.vehicleDetails}>Height - {height} ft </Text>
             </View>
           </View>
         </TouchableOpacity>

@@ -1,8 +1,6 @@
-import { goBack } from '@navigation/NavigationService';
 import { FONT_FAMILIES, fp } from '@theme/index';
 import React, { memo, useEffect } from 'react';
 import { Modal, StyleSheet, Text, View } from 'react-native';
-import { EventBus, EVENTS } from '../../events/index';
 import CircularLoader from '../CircularLoader';
 
 const OverlayLoader = ({
@@ -25,24 +23,24 @@ const OverlayLoader = ({
     };
   }, [visible, timeLeft]);
 
-  useEffect(() => {
-    if (timeLeft === 0) {
-      goBack();
-      onClose();
-    }
-  }, [visible, timeLeft]);
+  // useEffect(() => {
+  //   if (timeLeft === 0) {
+  //     goBack();
+  //     onClose();
+  //   }
+  // }, [visible, timeLeft]);
 
-  useEffect(() => {
-    const closeLoader = () => {
-      onClose?.();
-    };
+  // useEffect(() => {
+  //   const closeLoader = () => {
+  //     onClose?.();
+  //   };
 
-    EventBus.on(EVENTS.CLOSE_WAITING_LOADER, closeLoader);
+  //   EventBus.on(EVENTS.CLOSE_WAITING_LOADER, closeLoader);
 
-    return () => {
-      EventBus.off(EVENTS.CLOSE_WAITING_LOADER, closeLoader);
-    };
-  }, []);
+  //   return () => {
+  //     EventBus.off(EVENTS.CLOSE_WAITING_LOADER, closeLoader);
+  //   };
+  // }, []);
   return (
     <Modal
       transparent

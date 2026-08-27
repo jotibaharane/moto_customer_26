@@ -9,6 +9,9 @@ const initialState: CreateLoadRequest = {
   distance: 0,
   vehicleImage: '',
   vehicleNumber: '',
+  width: '',
+  height: '',
+  length: '',
   pickup: {
     name: '',
     fullAddress: '',
@@ -66,6 +69,11 @@ const bookingSlice = createSlice({
         vehicleImage: string;
         vehicleNumber: string;
         distance: any;
+        width?: string;
+        height?: string;
+        length?: string;
+        cardImg?: string;
+        weightRange?: string;
       }>,
     ) => {
       state.selectedDriverId = action.payload.driverId;
@@ -81,6 +89,10 @@ const bookingSlice = createSlice({
 
       state.vehicleNumber = action.payload.vehicleNumber;
       state.distance = action.payload.distance;
+      state.width = action.payload.width;
+      state.height = action.payload.height;
+      state.length = action.payload.length;
+      state.weightRange = action.payload.weightRange;
     },
     setDistance: (state, action: PayloadAction<number>) => {
       state.distance = action.payload;

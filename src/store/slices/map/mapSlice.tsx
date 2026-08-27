@@ -128,6 +128,9 @@ const mapSlice = createSlice({
         state.driver = updated;
       }
     },
+    resetMap: state => {
+      return initialState;
+    },
   },
 });
 
@@ -146,6 +149,7 @@ export const {
   setFromDriver,
   setMessage,
   setDriverData,
+  resetMap,
 } = mapSlice.actions;
 
 export default mapSlice.reducer;

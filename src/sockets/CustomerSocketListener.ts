@@ -1,4 +1,4 @@
-import { navigate } from '@navigation/NavigationService';
+import { goBack, navigate } from '@navigation/NavigationService';
 import { resetBooking } from '@store/slices/Booking/bookingSlice';
 import {
   clearActiveTrip,
@@ -7,9 +7,8 @@ import {
   updateDriver,
   updateDriverStatus,
 } from '@store/slices/customerSocket/customerSocketSlice';
-import { setDrivers, setMessage } from '@store/slices/map/mapSlice';
+import { resetMap, setDrivers, setMessage } from '@store/slices/map/mapSlice';
 import { Alert } from 'react-native';
-import { EventBus, EVENTS } from '../events/index';
 import { SOCKET_EVENTS } from './SocketEvents';
 import SocketService from './SocketService';
 
@@ -102,23 +101,18 @@ class CustomerSocketListener {
      * Driver Live Tracking
      */
 
-    socket.on(
-      SOCKET_EVENTS.LOAD_ACCEPTED,
-
-      load => {
-        console.log('LOAD_ACCEPTED =', { load });
-        //  CustomerSocket.trackLoad({
-        //       loadId: load?.loadId,
-        //     });
-        EventBus.emit(EVENTS.CLOSE_WAITING_LOADER);
-        dispatch(resetBooking());
-        dispatch(setActiveTrip(load));
-        navigate('BottomNavigation', {
-          screen: 'New Load',
-          params: { load },
-        });
-      },
-    );
+    socket.on(SOCKET_EVENTS.LOAD_ACCEPTED, load => {
+      console.log('LOAD_ACCEPTED =', { load });
+      // CustomerSocket.trackLoad({
+      //   loadId: load?.loadId,
+      // });
+      dispatch(resetBooking());
+      dispatch(setActiveTrip(load));
+      navigate('BottomNavigation', {
+        screen: 'New Load',
+        params: { load },
+      });
+    });
 
     socket.on(
       SOCKET_EVENTS.LOAD_REJECTED,
@@ -128,7 +122,8 @@ class CustomerSocketListener {
       },
     );
     socket.on(SOCKET_EVENTS.OFFER_EXPIRED, load => {
-      navigate('SelectVehicleScreen');
+      goBack();
+      // navigate('SelectVehicleScreen');
       console.log(load);
     });
 
@@ -137,6 +132,7 @@ class CustomerSocketListener {
      */
     socket.on(SOCKET_EVENTS.TRIP_COMPLETED, () => {
       dispatch(clearActiveTrip());
+      dispatch(resetMap());
     });
 
     /**
@@ -150,7 +146,12 @@ class CustomerSocketListener {
 
     socket.on('tracking-driver-location', data => {
       console.log('Tracking Location : ', { data });
-      dispatch(setDrivers(data));
+      if (data?.tripStatus === 'TRIP_COMPLETED') {
+        dispatch(clearActiveTrip());
+        dispatch(resetMap());
+      } else {
+        dispatch(setDrivers(data));
+      }
     });
 
     socket.on('load-status-changed', data => {

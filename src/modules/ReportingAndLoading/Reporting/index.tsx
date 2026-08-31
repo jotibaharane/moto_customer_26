@@ -30,19 +30,10 @@ const ReportingScreen = () => {
   useEffect(() => {
     const socket = SocketService.getSocket();
     if (!socket) return;
-    const track = () => {
-      if (!currentLoadId && !driver?.loadId) return;
-      CustomerSocket.trackLoad({
-        loadId: driver?.loadId ?? currentLoadId,
-      });
-    };
-    socket.on('connect', track);
-    if (socket.connected) {
-      track();
-    }
-    return () => {
-      socket.off('connect', track);
-    };
+    if (!currentLoadId && !driver?.loadId) return;
+    CustomerSocket.trackLoad({
+      loadId: driver?.loadId ?? currentLoadId,
+    });
   }, [driver?.loadId, currentLoadId]);
 
   return (

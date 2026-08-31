@@ -1,4 +1,3 @@
-import { useGetVehicleImagesQuery } from '@api/Mutations';
 import CustomButton from '@components/Button';
 import { goBack } from '@navigation/NavigationService';
 import React from 'react';
@@ -6,28 +5,40 @@ import { FlatList, Image, Text, View } from 'react-native';
 import { styles } from './vehicleDhalaSize.style';
 
 const VehicleDhalaSizeScreen = ({ route }: any) => {
-  const vehicle: any = route?.params?.item;
-  const { data: vehicleImagesData } = useGetVehicleImagesQuery({
-    driver_id: vehicle?.DriverID || '',
-  });
+  const vehicle: any = route?.params?.item?.vehicle;
 
-  const vehicleImages = vehicleImagesData?.data || [];
+  console.log({ vehicle });
 
+  const vehicleImages = Object.entries(vehicle.images).map(
+    ([position, image]) => ({
+      photo_url: image,
+      photo_id: position,
+    }),
+  );
   return (
     <View style={styles.container}>
       <View style={styles.imageRow}>
-        <Image source={{ uri: vehicle?.Img }} style={styles.vehicleImage} />
         <Image
-          source={{ uri: vehicle?.Img }}
-          style={styles.vehicleImageMirror}
+          source={{
+            uri: `https://stag.motohelpindia.com${vehicle?.vehicleTypeImages?.front}`,
+          }}
+          style={styles.vehicleImage}
+          resizeMode="contain"
+        />
+        <Image
+          source={{
+            uri: `https://stag.motohelpindia.com${vehicle?.vehicleTypeImages?.back}`,
+          }}
+          style={styles.vehicleImage}
+          resizeMode="contain"
         />
       </View>
       <View style={styles.infoContainer}>
-        <Text style={styles.vehicleName}>{vehicle?.VehicleName}</Text>
+        <Text style={styles.vehicleName}>{vehicle?.vehicleType}</Text>
         <Text style={styles.vehicleDetails}>
-          4 Wheeler , {vehicle?.unladen_weight} kg ,{' '}
-          {vehicle?.vehicle_gross_weight} Ton{'\n'} Body Length: ~
-          {vehicle?.length} ft , Body Height: ~{vehicle?.height}ft
+          {vehicle?.loadingCapacity} kg , {vehicle?.vehicleGrossWeight} Ton
+          {'\n'} Body Length: ~{vehicle?.dhalaLength} ft , Body Height: ~
+          {vehicle?.dhalaHeight}ft {'\n'} Body Width: ~{vehicle?.dhalaWidth}ft
         </Text>
       </View>
       <Text style={styles.sectionTitle}>Real Image Of Vehicle</Text>
@@ -38,7 +49,7 @@ const VehicleDhalaSizeScreen = ({ route }: any) => {
           <View style={styles.listItem}>
             <Image
               source={{
-                uri: item?.photo_url,
+                uri: item?.photo_url ?? '',
               }}
               style={styles.listImage}
               resizeMode="contain"

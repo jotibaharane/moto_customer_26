@@ -1,0 +1,1 @@
+/home/motohelp2/Desktop/jotiba/moto_customer_26/android/app/build/intermediates/cxx/RelWithDebInfo/234b51t1/obj/arm64-v8a

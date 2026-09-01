@@ -2,6 +2,7 @@ import { FONT_FAMILIES, fp } from '@theme/index';
 import React, { memo, useEffect } from 'react';
 import { Modal, StyleSheet, Text, View } from 'react-native';
 import CircularLoader from '../CircularLoader';
+import CustomButton from '@components/CustumButtons/CustomButton';
 
 const OverlayLoader = ({
   visible = false,
@@ -22,6 +23,9 @@ const OverlayLoader = ({
       if (timer) clearInterval(timer);
     };
   }, [visible, timeLeft]);
+  const Cancelload=()=>{
+    console.log('load is cancelled')
+  }
 
   // useEffect(() => {
   //   if (timeLeft === 0) {
@@ -54,8 +58,10 @@ const OverlayLoader = ({
         <View style={styles.card}>
           <CircularLoader duration={timeLeft} showTimer={true} />
           <Text style={styles.text}>Waiting for Driver’s Confirmation</Text>
+
         </View>
       </View>
+      <CustomButton title='Cancel Load Post' onPress={Cancelload} leftIcon='' />
     </Modal>
   );
 };

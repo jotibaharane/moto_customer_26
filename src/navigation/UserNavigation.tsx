@@ -12,11 +12,12 @@ import { COLORS } from '@theme/index';
 import React, { memo, useMemo } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 import BottomNavigation from './BottomNavigation';
+import OtherDueDetailsScreen from '@modules/CanceledBookings/screens/OtherDueDetailsScreen';
 
 const Stack = createNativeStackNavigator();
 
 const UserNavigation = () => {
- 
+
   const MPIN_Flag = useSelector(
     (state: RootState) => state.auth.isMPINSet,
     shallowEqual,
@@ -35,11 +36,11 @@ const UserNavigation = () => {
     <Stack.Navigator initialRouteName={initialRouteName}>
       {/* BOTTOM TAB */}
       <Stack.Group screenOptions={{
-                  headerStyle: {
-                    backgroundColor: COLORS.white[500],
-            },
-            headerShadowVisible: false,
-          }}>
+        headerStyle: {
+          backgroundColor: COLORS.white[500],
+        },
+        headerShadowVisible: false,
+      }}>
         <Stack.Screen
           name="BottomNavigation"
           component={BottomNavigation}
@@ -50,10 +51,10 @@ const UserNavigation = () => {
       </Stack.Group>
 
       {/* MAIN SCREENS */}
-      <Stack.Group screenOptions={ ({ navigation }: any) => ({
-      headerLeft: () => <BackButton navigation={navigation} />,
-      headerShadowVisible: false,
-    })}>
+      <Stack.Group screenOptions={({ navigation }: any) => ({
+        headerLeft: () => <BackButton navigation={navigation} />,
+        headerShadowVisible: false,
+      })}>
         <Stack.Screen
           name="MpinLogin"
           component={MpinLogin}
@@ -62,6 +63,13 @@ const UserNavigation = () => {
           }}
         />
 
+        <Stack.Screen
+          name="CalledRideScreen"
+          component={OtherDueDetailsScreen}
+          options={{
+            headerTitle: () => <HeaderTitle title="Other Due Details" />,
+          }}
+        />
         <Stack.Screen
           name="ReviewBookingScreen"
           component={ReviewBookingScreen}
@@ -101,7 +109,7 @@ const UserNavigation = () => {
             headerTitle: () => <HeaderTitle title="Live Tracking" />,
           }}
         />
-         <Stack.Screen
+        <Stack.Screen
           name="SetMPIN"
           component={SetMPINScreen}
           options={{
@@ -110,7 +118,7 @@ const UserNavigation = () => {
         />
       </Stack.Group>
 
-      
+
     </Stack.Navigator>
   );
 };

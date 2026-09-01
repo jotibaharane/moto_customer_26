@@ -63,11 +63,9 @@ const CircularLoader = ({
     const outerR = 60;
     const innerR = 27;
     const gap = 2;
-
     const angle = 360 / TOTAL_SLICES;
     const start = index * angle + gap;
     const end = (index + 1) * angle - gap;
-
     const so = polar(cx, cy, outerR, start);
     const eo = polar(cx, cy, outerR, end);
     const si = polar(cx, cy, innerR, end);
@@ -90,7 +88,7 @@ const CircularLoader = ({
     };
   };
 
-  if (!loading) return null; // 🔥 hide loader
+  if (!loading) return null;
 
   return (
     <View style={{ alignItems: 'center', justifyContent: 'center' }}>

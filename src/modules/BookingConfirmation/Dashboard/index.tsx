@@ -14,8 +14,10 @@ import { styles } from './Dashboard.style';
 import DropModal from './components/DropModal';
 import MapComponent from './components/MapComponent';
 import PickupModal from './components/PickupModal';
+import { useNavigation } from '@react-navigation/native';
 
 const DashboardScreen = () => {
+  const navigation =  useNavigation()
   const { pickup, delivery, weight } = useSelector(
     (state: RootState) => state.booking,
   );
@@ -24,6 +26,10 @@ const DashboardScreen = () => {
   const [dropModalVisible, setDropModalVisible] = useState(false);
 
   console.log({ pickupModalVisible, dropModalVisible });
+
+  const handlecheck=()=>{
+    navigation.navigate('CalledRideScreen' as never)
+  }
   return (
     <SafeAreaView style={styles.container}>
       {/* ================= TOP ================= */}
@@ -111,6 +117,25 @@ const DashboardScreen = () => {
         }}
       >
         <MapComponent />
+          <TouchableOpacity
+          onPress={handlecheck}
+          style={{
+            position: 'absolute',
+            bottom: 30,
+            right: 30,
+            backgroundColor: COLORS.primary[500],
+            paddingHorizontal: 20,
+            paddingVertical: 12,
+            borderRadius: 10,
+          }}>
+          <Text
+            style={{
+              color: '#FFFFFF',
+              fontFamily: FONT_FAMILIES.bold,
+            }}>
+            Check
+          </Text>
+        </TouchableOpacity>
       </View>
 
       {/* ================= MODALS ================= */}

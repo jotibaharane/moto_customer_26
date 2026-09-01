@@ -12,20 +12,37 @@ import {
 import { RootState } from '@store/rootReducer';
 import { setCurrentLocation } from '@store/slices/Auth/authSlice';
 import { isValidLocation } from '@utils/location.utils';
-import React, { memo, useEffect, useRef, useState } from 'react';
-import { View } from 'react-native';
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMapboxRoute } from '../../../../services/location/location.service';
 import { styles } from '../Dashboard.style';
-
+import CustomModal from '@components/Modals/CustumModal';
+import BookingCard from '@components/Cards/BookingCard';
+import Dropdown, {Item} from '@components/Dropdown';
 const MapComponent = () => {
   const dispatch = useDispatch();
   const [location, setLocation] = useState<Location>();
   const booking = useSelector((state: RootState) => state.booking);
   const cameraRef = useRef<any>(null);
   const [routeGeoJSON, setRouteGeoJSON] = useState<any>(null);
+    const [modalVisible, setModalVisible] = useState(false);
+      const [loadPostNo, setLoadPostNo] = useState('');
+      const handleOpenBooking = useCallback(() => {
+    setModalVisible(true);
+  }, []);
+
+  const handleCloseBooking = useCallback(() => {
+    setModalVisible(false);
+  }, []);
   // const { location } = useCurrentLocation();
 
+
+const loadPosts: Item[] = [
+  {label: 'LP001', value: 'LP001'},
+  {label: 'LP002', value: 'LP002'},
+  {label: 'LP003', value: 'LP003'},
+];
   /* ================= ROUTE ================= */
   useEffect(() => {
     if (
@@ -132,7 +149,7 @@ const MapComponent = () => {
   }, [booking?.pickup, booking?.delivery, location]);
   return (
     <View style={styles.mapContainer}>
-      <MapView
+      {/* <MapView
         style={styles.map}
         styleURL="mapbox://styles/mapbox/streets-v12"
         scaleBarEnabled={false}
@@ -145,7 +162,7 @@ const MapComponent = () => {
           puckBearing="heading"
           pulsing={{ isEnabled: true }}
         />
-        {/* 🔥 IMAGES */}
+
         <Images
           images={{
             pickupIcon: require('@assets/images/marker.png'),
@@ -211,7 +228,7 @@ const MapComponent = () => {
           }}
         />
 
-        {/* 🔵 ROUTE FIRST */}
+    
         {routeGeoJSON && (
           <ShapeSource id="routeSource" shape={routeGeoJSON}>
             <LineLayer
@@ -226,7 +243,7 @@ const MapComponent = () => {
           </ShapeSource>
         )}
 
-        {/* 🟢 PICKUP */}
+   
         {isValidLocation({
           latitude: booking?.pickup?.latitude?.toString(),
           longitude: booking?.pickup?.longitude?.toString(),
@@ -250,13 +267,12 @@ const MapComponent = () => {
               style={{
                 iconImage: 'pickupIcon',
                 iconSize: 0.25,
-                iconAnchor: 'bottom', // 🔥 KEY FIX
+                iconAnchor: 'bottom', 
               }}
             />
           </ShapeSource>
         )}
 
-        {/* 🔴 DROP */}
         {isValidLocation({
           latitude: booking?.delivery?.latitude?.toString(),
           longitude: booking?.delivery?.longitude?.toString(),
@@ -280,12 +296,66 @@ const MapComponent = () => {
               style={{
                 iconImage: 'dropIcon',
                 iconSize: 0.48,
-                iconAnchor: 'bottom', // 🔥 KEY FIX
+                iconAnchor: 'bottom',
               }}
             />
           </ShapeSource>
         )}
-      </MapView>
+      </MapView> */}
+      <CustomModal
+        visible={modalVisible}
+        onClose={handleCloseBooking}
+        closeOnBackdropPress={true}
+          width={94}>
+            
+ <Dropdown
+      label="Load Post No"
+      data={loadPosts}
+      value={loadPostNo}
+      onChange={value => {
+        setLoadPostNo(value as string);
+      }}
+      placeholder="Select Load Post No"
+      searchPlaceholder="Search Load Post No..."
+      emptyMessage="No load posts found"
+    />
+        <BookingCard
+          loadId={booking?.loadId ?? 'ABC12345566'}
+          pickupDistance="05 km"
+          pickupAddress={
+            booking?.pickup?.address ??
+            'Bhandup Mumbai, Maharashtra, India'
+          }
+          deliveryAddress={
+            booking?.delivery?.address ??
+            'Rajkot Mandvi, Gujarat, India'
+          }
+          distance={`${booking?.distance ?? 250} km`}
+          approxWeight={`${booking?.approxWeight ?? 10000} KG`}
+          freightAmount={`RS ${booking?.freightAmount ?? 10000}`}
+          vehicleNo={booking?.vehicleNo}
+          driverName={booking?.driverName}
+          driverId={booking?.driverId}
+          onCancel={() => {
+            console.log('Cancel Booking');
+            handleCloseBooking();
+          }}
+        />
+
+      </CustomModal>
+
+      <TouchableOpacity
+  onPress={handleOpenBooking}
+  style={{
+    position: 'absolute',
+    bottom: 100,
+    right: 20,
+    backgroundColor: '#000',
+    padding: 15,
+    borderRadius: 10,
+  }}>
+  <Text style={{color: '#fff'}}>Open Booking</Text>
+</TouchableOpacity>
     </View>
   );
 };

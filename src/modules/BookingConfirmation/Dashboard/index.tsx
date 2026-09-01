@@ -1,15 +1,13 @@
 import SearchField from '@components/SearchField';
-import React, { useState } from 'react';
-import { Alert, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
-import { RootState } from '@store/rootReducer';
-import { useDispatch, useSelector } from 'react-redux';
-
 import { navigate } from '@navigation/NavigationService';
+import { RootState } from '@store/rootReducer';
 import { setWeight } from '@store/slices/Booking/bookingSlice';
 import { COLORS, FONT_FAMILIES, ms, s, vs } from '@theme/index';
 import { ArrowRight } from 'lucide-react-native';
+import React, { useState } from 'react';
+import { Alert, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useDispatch, useSelector } from 'react-redux';
 import { styles } from './Dashboard.style';
 import DropModal from './components/DropModal';
 import MapComponent from './components/MapComponent';

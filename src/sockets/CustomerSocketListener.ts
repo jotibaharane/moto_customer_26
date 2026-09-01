@@ -13,25 +13,11 @@ import { SOCKET_EVENTS } from './SocketEvents';
 import SocketService from './SocketService';
 
 class CustomerSocketListener {
-  private authenticatedCallback: ((data: any) => void) | null = null;
-
-  setAuthenticatedCallback(callback: (data: any) => void) {
-    this.authenticatedCallback = callback;
-  }
-
-  clearAuthenticatedCallback() {
-    this.authenticatedCallback = null;
-  }
-
   initialize(dispatch: any) {
     const socket = SocketService.getSocket();
-
     if (!socket) return;
-
     socket.on(SOCKET_EVENTS.AUTHENTICATED, data => {
       console.log('Authenticated', data);
-
-      this.authenticatedCallback?.(data);
     });
 
     socket.onAny((event, ...args) => {

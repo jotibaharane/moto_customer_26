@@ -98,7 +98,6 @@ const SignInScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Hi, Welcome To{'\n'}Motohelp</Text>
-
       <Text style={styles.subtitle}>Enter Mobile number for verification</Text>
 
       <View style={styles.inputContainer}>

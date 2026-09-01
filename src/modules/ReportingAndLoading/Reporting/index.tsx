@@ -18,7 +18,6 @@ const ReportingScreen = () => {
   });
 
   const { driver } = useSelector((state: RootState) => state.map);
-  console.log({ driver });
   const currentLoadId = loads?.data?.[0]?.LoadId;
 
   useFocusEffect(

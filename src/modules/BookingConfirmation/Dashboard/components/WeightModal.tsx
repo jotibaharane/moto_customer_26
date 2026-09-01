@@ -21,8 +21,8 @@ const WeightModal: React.FC<WeightModalProps> = ({
   modalVisible,
   setModalVisible,
 }) => {
-  const { weight:approximateWeightKg } = useSelector(
-    (state: RootState) => state?.booking
+  const { weight: approximateWeightKg } = useSelector(
+    (state: RootState) => state?.booking,
   );
   const [weight, setWeightValue] = useState('');
   const dispatch = useDispatch();

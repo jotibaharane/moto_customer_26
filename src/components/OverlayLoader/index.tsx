@@ -23,24 +23,6 @@ const OverlayLoader = ({
     };
   }, [visible, timeLeft]);
 
-  // useEffect(() => {
-  //   if (timeLeft === 0) {
-  //     goBack();
-  //     onClose();
-  //   }
-  // }, [visible, timeLeft]);
-
-  // useEffect(() => {
-  //   const closeLoader = () => {
-  //     onClose?.();
-  //   };
-
-  //   EventBus.on(EVENTS.CLOSE_WAITING_LOADER, closeLoader);
-
-  //   return () => {
-  //     EventBus.off(EVENTS.CLOSE_WAITING_LOADER, closeLoader);
-  //   };
-  // }, []);
   return (
     <Modal
       transparent

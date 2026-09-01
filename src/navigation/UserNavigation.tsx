@@ -16,30 +16,26 @@ import BottomNavigation from './BottomNavigation';
 const Stack = createNativeStackNavigator();
 
 const UserNavigation = () => {
- 
   const MPIN_Flag = useSelector(
     (state: RootState) => state.auth.isMPINSet,
     shallowEqual,
   );
 
-
   const initialRouteName = useMemo(() => {
     return MPIN_Flag ? 'MpinLogin' : 'SetMPIN';
   }, [MPIN_Flag]);
 
-
-
-
-
   return (
     <Stack.Navigator initialRouteName={initialRouteName}>
       {/* BOTTOM TAB */}
-      <Stack.Group screenOptions={{
-                  headerStyle: {
-                    backgroundColor: COLORS.white[500],
-            },
-            headerShadowVisible: false,
-          }}>
+      <Stack.Group
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: COLORS.white[500],
+          },
+          headerShadowVisible: false,
+        }}
+      >
         <Stack.Screen
           name="BottomNavigation"
           component={BottomNavigation}
@@ -50,10 +46,12 @@ const UserNavigation = () => {
       </Stack.Group>
 
       {/* MAIN SCREENS */}
-      <Stack.Group screenOptions={ ({ navigation }: any) => ({
-      headerLeft: () => <BackButton navigation={navigation} />,
-      headerShadowVisible: false,
-    })}>
+      <Stack.Group
+        screenOptions={({ navigation }: any) => ({
+          headerLeft: () => <BackButton navigation={navigation} />,
+          headerShadowVisible: false,
+        })}
+      >
         <Stack.Screen
           name="MpinLogin"
           component={MpinLogin}
@@ -78,14 +76,6 @@ const UserNavigation = () => {
           }}
         />
 
-        {/* <Stack.Screen
-          name="FrightPayment"
-          component={FrightPayment}
-          options={{
-            headerTitle: () => <HeaderTitle title="Fright Payment" />,
-          }}
-        /> */}
-
         <Stack.Screen
           name="SelectVehicleScreen"
           component={SelectVehicleScreen}
@@ -101,7 +91,7 @@ const UserNavigation = () => {
             headerTitle: () => <HeaderTitle title="Live Tracking" />,
           }}
         />
-         <Stack.Screen
+        <Stack.Screen
           name="SetMPIN"
           component={SetMPINScreen}
           options={{
@@ -109,8 +99,6 @@ const UserNavigation = () => {
           }}
         />
       </Stack.Group>
-
-      
     </Stack.Navigator>
   );
 };

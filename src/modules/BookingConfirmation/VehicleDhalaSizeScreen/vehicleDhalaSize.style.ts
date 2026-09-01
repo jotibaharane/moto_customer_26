@@ -1,48 +1,74 @@
-import { COLORS, FONT_FAMILIES, s, vs } from '@theme/index';
+/* ========================================================================== */
+/* vehicleDhalaSize.style.ts                                                  */
+/* ========================================================================== */
+
+import { COLORS, FONT_FAMILIES, ms, s, vs } from '@theme/index';
+
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
+  /* ======================================================================== */
+  /* CONTAINER                                                                */
+  /* ======================================================================== */
+
   container: {
     flex: 1,
     backgroundColor: COLORS.white[100],
-    padding: s(16),
+    paddingHorizontal: s(16),
+    paddingTop: vs(16),
   },
 
-  /* ================= VEHICLE IMAGES ================= */
+  /* ======================================================================== */
+  /* VEHICLE TYPE IMAGES                                                      */
+  /* ======================================================================== */
+
   imageRow: {
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: s(16),
+  },
+
+  vehicleImageContainer: {
+    flex: 1,
+    height: vs(150),
+    alignItems: 'center',
     justifyContent: 'center',
-    gap: s(29),
+    overflow: 'hidden',
   },
 
   vehicleImage: {
-    width: s(150),
-    height: s(150),
+    width: '100%',
+    height: '100%',
   },
 
   vehicleImageMirror: {
-    width: s(150),
-    height: s(150),
+    width: '100%',
+    height: '100%',
     transform: [{ scaleX: -1 }],
   },
 
-  /* ================= VEHICLE INFO ================= */
+  /* ======================================================================== */
+  /* VEHICLE INFORMATION                                                      */
+  /* ======================================================================== */
+
   infoContainer: {
     justifyContent: 'center',
     alignItems: 'center',
     gap: vs(4),
+    marginTop: vs(8),
   },
 
   vehicleName: {
-    fontSize: 16,
+    fontSize: ms(16),
     fontFamily: FONT_FAMILIES.semiBold,
     color: COLORS.black[500],
     textAlign: 'center',
   },
 
   vehicleDetails: {
-    fontSize: 16,
+    fontSize: ms(16),
     fontFamily: FONT_FAMILIES.regular,
     color: COLORS.gray[500],
     textAlign: 'center',
@@ -53,28 +79,77 @@ export const styles = StyleSheet.create({
     paddingBottom: vs(24),
   },
 
-  /* ================= TITLE ================= */
-  sectionTitle: {
-    marginTop: vs(27),
+  /* ======================================================================== */
+  /* TITLE                                                                    */
+  /* ======================================================================== */
 
-    fontSize: 20,
+  sectionTitle: {
+    marginTop: vs(20),
+    marginBottom: vs(12),
+
+    fontSize: ms(20),
     fontFamily: FONT_FAMILIES.semiBold,
     color: COLORS.primary[500],
   },
 
-  /* ================= LIST ================= */
-  listItem: {
+  /* ======================================================================== */
+  /* FLATLIST                                                                 */
+  /* ======================================================================== */
+
+  list: {
     flex: 1,
-    marginBottom: vs(16),
+    width: '100%',
+  },
+
+  listContentContainer: {
+    width: '100%',
+    paddingBottom: vs(20),
+  },
+
+  /* ======================================================================== */
+  /* REAL IMAGE CARD                                                          */
+  /* ======================================================================== */
+
+  listItem: {
+    width: '100%',
+    height: vs(180),
+
+    borderRadius: s(10),
+
+    overflow: 'hidden',
+
+    backgroundColor: COLORS.gray[100],
   },
 
   listImage: {
     width: '100%',
-    height: vs(146),
+    height: '100%',
   },
 
-  /* ================= BUTTON ================= */
+  /* ======================================================================== */
+  /* EMPTY STATE                                                              */
+  /* ======================================================================== */
+
+  emptyContainer: {
+    width: '100%',
+    height: vs(150),
+
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  emptyText: {
+    fontSize: ms(14),
+    fontFamily: FONT_FAMILIES.regular,
+    color: COLORS.gray[500],
+  },
+
+  /* ======================================================================== */
+  /* BUTTON                                                                   */
+  /* ======================================================================== */
+
   button: {
-    marginTop: vs(15),
+    marginTop: vs(12),
+    marginBottom: vs(8),
   },
 });

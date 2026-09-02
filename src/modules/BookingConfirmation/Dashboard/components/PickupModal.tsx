@@ -195,6 +195,7 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
       return;
     }
 
+    formik.setFieldValue('mapboxId', location.mapboxId);
     formik.setFieldValue('name', location.name);
     formik.setFieldValue('fullAddress', location.fullAddress);
     formik.setFieldValue('latitude', location.latitude);
@@ -211,6 +212,7 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
   const handleSelectSavedLocation = useCallback(
     (item: any) => {
       formik.setValues({
+        mapboxId: item?.MapboxId ?? '',
         name: item?.PlaceName ?? '',
         fullAddress: item?.FullAddress ?? '',
         latitude: item?.Latitude ?? 0,
@@ -233,6 +235,7 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
 
   const handleSelectSearchLocation = useCallback(
     (item: any) => {
+      formik.setFieldValue('mapboxId', item?.mapboxId ?? '');
       formik.setFieldValue('name', item?.name ?? '');
       formik.setFieldValue('fullAddress', item?.fullAddress ?? '');
       formik.setFieldValue('latitude', item?.latitude ?? 0);

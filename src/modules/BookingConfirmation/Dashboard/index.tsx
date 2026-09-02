@@ -79,6 +79,13 @@ const DashboardScreen = () => {
                 <TouchableOpacity
                   style={{ flexDirection: 'row', alignSelf: 'flex-end' }}
                   onPress={() => {
+                    if (!weight || Number(weight) <= 0) {
+                      Alert.alert(
+                        'Weight required',
+                        'Please enter the shipment weight before continuing.',
+                      );
+                      return;
+                    }
                     navigate('SelectVehicleScreen');
                   }}
                 >

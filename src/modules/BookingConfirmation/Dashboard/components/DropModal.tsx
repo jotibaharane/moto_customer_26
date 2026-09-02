@@ -181,6 +181,8 @@ const DropModal: React.FC<Props> = ({ onOpen, open }) => {
 
   const handleSelectLocation = useCallback(
     (item: any) => {
+      formik.setFieldValue('mapboxId', item?.mapboxId ?? '');
+
       formik.setFieldValue('name', item?.name ?? '');
 
       formik.setFieldValue('fullAddress', item?.fullAddress ?? '');

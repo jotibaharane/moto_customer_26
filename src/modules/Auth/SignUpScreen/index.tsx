@@ -4,7 +4,7 @@ import React from 'react';
 import { Alert, Text, TouchableOpacity, View } from 'react-native';
 import { styles } from './SignUp.style';
 
-import { useOnboardingMutation } from '@api/Mutations';
+import { useOnboardingMutation } from '@api/api';
 import { OnboardingRequest } from '@api/type';
 import Dropdown from '@components/Dropdown';
 import { goBack } from '@navigation/NavigationService';

@@ -2,6 +2,8 @@ export const SOCKET_EVENTS = {
   CONNECT: 'connect',
   DISCONNECT: 'disconnect',
   CONNECT_ERROR: 'connect_error',
+  RECONNECT_ERROR: 'reconnect_error',
+  RECONNECT_FAILED: 'reconnect_failed',
 
   AUTHENTICATED: 'authenticated',
 

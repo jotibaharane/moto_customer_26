@@ -20,7 +20,7 @@ import {
   View,
 } from 'react-native';
 
-import { useGetSearchLocationQuery } from '@api/query';
+import { useGetSearchLocationQuery } from '@api/api';
 import { LoadLocation } from '@api/type';
 import { useDebounce } from '@hooks/useDebounce';
 import { RootState } from '@store/rootReducer';

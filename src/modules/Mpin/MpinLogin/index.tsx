@@ -1,4 +1,4 @@
-import { useMpinLoginMutation } from '@api/Mutations';
+import { useMpinLoginMutation } from '@api/api';
 import CustomButton from '@components/Button';
 import { OtpInput } from '@components/OtpInput';
 import { reset } from '@navigation/NavigationService';

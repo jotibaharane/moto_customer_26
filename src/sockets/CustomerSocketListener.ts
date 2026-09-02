@@ -42,6 +42,25 @@ class CustomerSocketListener {
     });
 
     /**
+     * Connection errors
+     */
+    socket.on(SOCKET_EVENTS.CONNECT_ERROR, error => {
+      console.log('🔴 Socket Connect Error:', error?.message);
+
+      dispatch(setConnected(false));
+    });
+
+    socket.io.on(SOCKET_EVENTS.RECONNECT_ERROR, error => {
+      console.log('🔴 Socket Reconnect Error:', error?.message);
+    });
+
+    socket.io.on(SOCKET_EVENTS.RECONNECT_FAILED, () => {
+      console.log('🔴 Socket Reconnect Failed');
+
+      dispatch(setConnected(false));
+    });
+
+    /**
      * Live Driver Location
      */
     socket.on(SOCKET_EVENTS.NEARBY_DRIVER_LOCATION, (driver: any) => {

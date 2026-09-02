@@ -11,9 +11,11 @@ import {
 } from '@rnmapbox/maps';
 import { RootState } from '@store/rootReducer';
 import { setCurrentLocation } from '@store/slices/Auth/authSlice';
+import { COLORS } from '@theme/index';
 import { isValidLocation } from '@utils/location.utils';
-import React, { memo, useEffect, useRef, useState } from 'react';
-import { View } from 'react-native';
+import { LocateFixed } from 'lucide-react-native';
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMapboxRoute } from '../../../../services/location/location.service';
 import { styles } from '../Dashboard.style';
@@ -130,11 +132,27 @@ const MapComponent = () => {
       });
     }
   }, [booking?.pickup, booking?.delivery, location]);
+
+  const handleRecenter = useCallback(() => {
+    if (!location?.coords || !cameraRef.current) {
+      return;
+    }
+
+    cameraRef.current.setCamera({
+      centerCoordinate: [location.coords.longitude, location.coords.latitude],
+      zoomLevel: 17,
+      pitch: 40,
+      heading: location.coords.heading ?? 0,
+      animationMode: 'flyTo',
+      animationDuration: 500,
+    });
+  }, [location]);
+
   return (
     <View style={styles.mapContainer}>
       <MapView
         style={styles.map}
-        styleURL="mapbox://styles/mapbox/streets-v12"
+        styleURL="mapbox://styles/mapbox/navigation-day-v1"
         scaleBarEnabled={false}
         logoEnabled={false}
       >
@@ -148,6 +166,7 @@ const MapComponent = () => {
         {/* 🔥 IMAGES */}
         <Images
           images={{
+            carIcon: require('@assets/images/carIcon.png'),
             pickupIcon: require('@assets/images/marker.png'),
             dropIcon: require('@assets/images/drop_marker.png'),
           }}
@@ -174,7 +193,7 @@ const MapComponent = () => {
               id="vehicleLayer"
               style={{
                 iconImage: 'carIcon',
-                iconSize: 0.25,
+                iconSize: 0.1,
                 iconAllowOverlap: true,
                 iconIgnorePlacement: true,
                 iconRotate: ['get', 'heading'],
@@ -215,9 +234,18 @@ const MapComponent = () => {
         {routeGeoJSON && (
           <ShapeSource id="routeSource" shape={routeGeoJSON}>
             <LineLayer
+              id="routeLineCasing"
+              style={{
+                lineColor: '#FFFFFF',
+                lineWidth: 10,
+                lineCap: 'round',
+                lineJoin: 'round',
+              }}
+            />
+            <LineLayer
               id="routeLine"
               style={{
-                lineColor: '#2563eb',
+                lineColor: '#2E5A99',
                 lineWidth: 6,
                 lineCap: 'round',
                 lineJoin: 'round',
@@ -249,7 +277,7 @@ const MapComponent = () => {
               id="pickupSymbol"
               style={{
                 iconImage: 'pickupIcon',
-                iconSize: 0.25,
+                iconSize: 0.28,
                 iconAnchor: 'bottom', // 🔥 KEY FIX
               }}
             />
@@ -279,15 +307,42 @@ const MapComponent = () => {
               id="dropSymbol"
               style={{
                 iconImage: 'dropIcon',
-                iconSize: 0.48,
+                iconSize: 0.28,
                 iconAnchor: 'bottom', // 🔥 KEY FIX
               }}
             />
           </ShapeSource>
         )}
       </MapView>
+
+      <TouchableOpacity
+        style={mapComponentStyles.recenterButton}
+        activeOpacity={0.85}
+        onPress={handleRecenter}
+      >
+        <LocateFixed size={22} color={COLORS.primary[500]} />
+      </TouchableOpacity>
     </View>
   );
 };
+
+const mapComponentStyles = StyleSheet.create({
+  recenterButton: {
+    position: 'absolute',
+    right: 16,
+    bottom: 16,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: COLORS.white[100],
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  },
+});
 
 export default memo(MapComponent);

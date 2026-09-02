@@ -1,4 +1,4 @@
-import { useGetLoadsQuery } from '@api/query';
+import { useGetLoadsQuery } from '@api/api';
 import { useFocusEffect } from '@react-navigation/native';
 import CustomerSocket from '@socket/CustomerSocket';
 import SocketService from '@socket/SocketService';

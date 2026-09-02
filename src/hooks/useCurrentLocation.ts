@@ -1,4 +1,4 @@
-// import { useGetLocationByLatLngQuery } from '@api/query';
+// import { useGetLocationByLatLngQuery } from '@api/api';
 // import Geolocation from '@react-native-community/geolocation';
 // import { useEffect, useRef, useState } from 'react';
 
@@ -68,7 +68,7 @@ import Geolocation, {
 } from '@react-native-community/geolocation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { useGetLocationByLatLngQuery } from '@api/query';
+import { useGetLocationByLatLngQuery } from '@api/api';
 
 interface Coordinates {
   lat: number;

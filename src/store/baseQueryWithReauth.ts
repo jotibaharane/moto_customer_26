@@ -4,13 +4,15 @@ import {
   FetchBaseQueryError,
   fetchBaseQuery,
 } from '@reduxjs/toolkit/query/react';
+import Config from 'react-native-config';
+
+import SocketService from '@socket/SocketService';
 
 import { RootState } from './rootReducer';
 import { signIn, signOut } from './slices/Auth/authSlice';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: 'https://stag.motohelpindia.com/api/v1/customer',
-  // baseUrl: 'http://192.168.1.112:6000/api/v1/customer',
+  baseUrl: Config.API_URL,
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.accessToken;
 
@@ -48,7 +50,7 @@ export const baseQueryWithReauth: BaseQueryFn<
 
     const refreshResult = await baseQuery(
       {
-        url: '/auth/refresh-token',
+        url: '/refresh-token',
         method: 'POST',
         body: {
           refreshToken,
@@ -68,6 +70,8 @@ export const baseQueryWithReauth: BaseQueryFn<
           refreshToken: response.data.refreshToken,
         }),
       );
+
+      SocketService.updateAuthToken(response.data.accessToken);
 
       /**
        * Retry Original API

@@ -10,9 +10,13 @@ import {
 
 import { RootState } from '@store/rootReducer';
 
+import { COLORS } from '@theme/index';
+
 import { animateMarker, getSmoothHeading } from '@utils/animation.utils';
 
 import { isValidLocation } from '@utils/location.utils';
+
+import { LocateFixed } from 'lucide-react-native';
 
 import React, {
   memo,
@@ -23,7 +27,13 @@ import React, {
   useState,
 } from 'react';
 
-import { PermissionsAndroid, Platform, Text, View } from 'react-native';
+import {
+  PermissionsAndroid,
+  Platform,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 import { useSelector } from 'react-redux';
 
@@ -745,6 +755,25 @@ const MapComponent = () => {
     : driver?.deliveryDistance?.durationMin;
 
   /* ======================================================================== */
+  /* RECENTER                                                                 */
+  /* ======================================================================== */
+
+  const handleRecenter = useCallback(() => {
+    if (!animatedCoords || !cameraRef.current) {
+      return;
+    }
+
+    cameraRef.current.setCamera({
+      centerCoordinate: animatedCoords,
+      zoomLevel: CAMERA_ZOOM,
+      pitch: CAMERA_PITCH,
+      heading,
+      animationMode: 'flyTo',
+      animationDuration: 500,
+    });
+  }, [animatedCoords, heading]);
+
+  /* ======================================================================== */
   /* RENDER                                                                   */
   /* ======================================================================== */
 
@@ -752,7 +781,7 @@ const MapComponent = () => {
     <View style={styles.mapContainer}>
       <MapView
         style={styles.map}
-        styleURL="mapbox://styles/mapbox/streets-v12"
+        styleURL="mapbox://styles/mapbox/navigation-day-v1"
         logoEnabled={false}
         scaleBarEnabled={false}
       >
@@ -783,9 +812,31 @@ const MapComponent = () => {
         {routeGeoJSON && (
           <ShapeSource id="routeSource" shape={routeGeoJSON}>
             <LineLayer
+              id="routeLineCasing"
+              style={{
+                lineColor: '#FFFFFF',
+
+                lineWidth: [
+                  'interpolate',
+                  ['linear'],
+                  ['zoom'],
+                  10,
+                  7,
+                  14,
+                  11,
+                  18,
+                  17,
+                ],
+
+                lineCap: 'round',
+
+                lineJoin: 'round',
+              }}
+            />
+            <LineLayer
               id="routeLine"
               style={{
-                lineColor: '#2563eb',
+                lineColor: '#2E5A99',
 
                 lineWidth: [
                   'interpolate',
@@ -942,8 +993,35 @@ const MapComponent = () => {
           </ShapeSource>
         )}
       </MapView>
+
+      <TouchableOpacity
+        style={mapComponentStyles.recenterButton}
+        activeOpacity={0.85}
+        onPress={handleRecenter}
+      >
+        <LocateFixed size={22} color={COLORS.primary[500]} />
+      </TouchableOpacity>
     </View>
   );
+};
+
+const mapComponentStyles = {
+  recenterButton: {
+    position: 'absolute' as const,
+    right: 16,
+    bottom: 16,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: COLORS.white[100],
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  },
 };
 
 export default memo(MapComponent);

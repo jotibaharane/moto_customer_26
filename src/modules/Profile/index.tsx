@@ -1,4 +1,4 @@
-import { useProfileMutation } from '@api/Mutations';
+import { useProfileMutation } from '@api/api';
 import { signIn } from '@store/slices/Auth/authSlice';
 import { COLORS, FONT_FAMILIES } from '@theme/index';
 import { Edit } from 'lucide-react-native';

@@ -8,66 +8,24 @@ class CustomerSocket {
     radius = 5,
     weight: number,
   ): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      SocketService.emit(
-        SOCKET_EVENTS.CUSTOMER_WATCH,
-        {
-          latitude,
-          longitude,
-          radius,
-          weight,
-        },
-        (response: any) => {
-          if (!response) {
-            reject();
-            return;
-          }
-
-          resolve(response.data ?? []);
-        },
-      );
-    });
+    return SocketService.emitWithAck(SOCKET_EVENTS.CUSTOMER_WATCH, {
+      latitude,
+      longitude,
+      radius,
+      weight,
+    }).then(response => response?.data ?? []);
   }
-  sendLoadOffer(payload: any): Promise<any> {
-    return new Promise((resolve, reject) => {
-      SocketService.emit(
-        SOCKET_EVENTS.CREATE_LOAD_OFFER,
-        payload,
-        (response: any) => {
-          if (!response) {
-            reject();
-            return;
-          }
 
-          resolve(response);
-        },
-      );
-    });
+  sendLoadOffer(payload: any): Promise<any> {
+    return SocketService.emitWithAck(SOCKET_EVENTS.CREATE_LOAD_OFFER, payload);
   }
 
   trackLoad(payload: any): Promise<any> {
-    return new Promise((resolve, reject) => {
-      SocketService.emit('track-load', payload, (response: any) => {
-        if (!response) {
-          reject();
-          return;
-        }
-
-        resolve(response);
-      });
-    });
+    return SocketService.emitWithAck('track-load', payload);
   }
-  stopTracking(payload: any): Promise<any> {
-    return new Promise((resolve, reject) => {
-      SocketService.emit('stop-tracking', payload, (response: any) => {
-        if (!response) {
-          reject();
-          return;
-        }
 
-        resolve(response);
-      });
-    });
+  stopTracking(payload: any): Promise<any> {
+    return SocketService.emitWithAck('stop-tracking', payload);
   }
   onDriverOnline(callback: (driver: any) => void) {
     SocketService.on(SOCKET_EVENTS.DRIVER_ONLINE, callback);

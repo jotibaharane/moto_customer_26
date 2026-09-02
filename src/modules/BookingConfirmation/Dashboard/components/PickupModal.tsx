@@ -25,7 +25,7 @@ import {
   useGetLocationByLatLngQuery,
   useGetSavedLocationQuery,
   useGetSearchLocationQuery,
-} from '@api/query';
+} from '@api/api';
 
 import { LoadLocation } from '@api/type';
 import { useDebounce } from '@hooks/useDebounce';

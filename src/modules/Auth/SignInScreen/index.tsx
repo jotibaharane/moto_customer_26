@@ -1,4 +1,4 @@
-import { useSendOtpMutation, useValidateOtpMutation } from '@api/Mutations';
+import { useSendOtpMutation, useValidateOtpMutation } from '@api/api';
 import { OtpInput } from '@components/OtpInput';
 import { reset } from '@navigation/NavigationService';
 import { signIn } from '@store/slices/Auth/authSlice';

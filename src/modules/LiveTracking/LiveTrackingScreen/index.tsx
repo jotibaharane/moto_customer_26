@@ -1,4 +1,4 @@
-import { useGetLoadsQuery } from '@api/query';
+import { useGetLoadsQuery } from '@api/api';
 import Dropdown from '@components/Dropdown';
 import { useFocusEffect } from '@react-navigation/native';
 import { RootState } from '@store/rootReducer';

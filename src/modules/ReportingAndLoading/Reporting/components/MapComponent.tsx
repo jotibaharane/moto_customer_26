@@ -185,10 +185,31 @@ const getRemainingRoute = (
 /* COMPONENT                                                                  */
 /* ========================================================================== */
 
-const MapComponent = () => {
+interface MapComponentProps {
+  /** Known independently of live driver data, so the map has something
+   * sensible to center on and show before the driver's first GPS ping
+   * arrives — without this it falls back to Mapbox's default world
+   * view. */
+  pickup?: { latitude: number | undefined; longitude: number | undefined } | null;
+  delivery?: { latitude: number | undefined; longitude: number | undefined } | null;
+}
+
+const MapComponent = ({ pickup, delivery }: MapComponentProps) => {
   const { driver } = useSelector((state: RootState) => state.map);
 
   const cameraRef = useRef<any>(null);
+
+  const fallbackCenter = useMemo((): Coordinate | null => {
+    if (isValidLocation(pickup)) {
+      return [Number(pickup!.longitude), Number(pickup!.latitude)];
+    }
+
+    if (isValidLocation(delivery)) {
+      return [Number(delivery!.longitude), Number(delivery!.latitude)];
+    }
+
+    return null;
+  }, [pickup, delivery]);
 
   /* ------------------------------------------------------------------------ */
   /* DRIVER LOCATION                                                          */
@@ -719,26 +740,37 @@ const MapComponent = () => {
   /* ======================================================================== */
 
   const pickupCoords = useMemo(() => {
-    if (!isValidLocation(driver?.pickupCoordinate)) {
-      return null;
+    if (isValidLocation(driver?.pickupCoordinate)) {
+      return [
+        Number(driver?.pickupCoordinate.longitude),
+        Number(driver?.pickupCoordinate.latitude),
+      ] as Coordinate;
     }
 
-    return [
-      Number(driver?.pickupCoordinate.longitude),
-      Number(driver?.pickupCoordinate.latitude),
-    ] as Coordinate;
-  }, [driver?.pickupCoordinate]);
+    if (isValidLocation(pickup)) {
+      return [Number(pickup!.longitude), Number(pickup!.latitude)] as Coordinate;
+    }
+
+    return null;
+  }, [driver?.pickupCoordinate, pickup]);
 
   const destinationCoords = useMemo(() => {
-    if (!isValidLocation(driver?.destinationCoordinate)) {
-      return null;
+    if (isValidLocation(driver?.destinationCoordinate)) {
+      return [
+        Number(driver?.destinationCoordinate.longitude),
+        Number(driver?.destinationCoordinate.latitude),
+      ] as Coordinate;
     }
 
-    return [
-      Number(driver?.destinationCoordinate.longitude),
-      Number(driver?.destinationCoordinate.latitude),
-    ] as Coordinate;
-  }, [driver?.destinationCoordinate]);
+    if (isValidLocation(delivery)) {
+      return [
+        Number(delivery!.longitude),
+        Number(delivery!.latitude),
+      ] as Coordinate;
+    }
+
+    return null;
+  }, [driver?.destinationCoordinate, delivery]);
 
   /* ======================================================================== */
   /* DISTANCE / TIME DISPLAY                                                  */
@@ -789,7 +821,14 @@ const MapComponent = () => {
         {/* CAMERA                                                            */}
         {/* ================================================================= */}
 
-        <Camera ref={cameraRef} />
+        <Camera
+          ref={cameraRef}
+          defaultSettings={
+            fallbackCenter
+              ? { centerCoordinate: fallbackCenter, zoomLevel: 13 }
+              : undefined
+          }
+        />
 
         {/* ================================================================= */}
         {/* MAP IMAGES                                                        */}

@@ -9,7 +9,7 @@ class SocketService {
       return this.socket;
     }
 
-    this.socket = io(Config.SOCKET_URL ?? '', {
+    this.socket = io(Config.SOCKET_URL ?? 'https://stag.motohelpindia.com', {
       transports: ['websocket'],
       auth: {
         token,

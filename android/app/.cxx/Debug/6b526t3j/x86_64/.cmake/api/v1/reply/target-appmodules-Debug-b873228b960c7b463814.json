@@ -410,15 +410,11 @@
 		},
 		{
 			"backtrace" : 4,
-			"id" : "react_codegen_rnmapbox_maps_specs::@636de9d518b8c337676e"
-		},
-		{
-			"backtrace" : 4,
 			"id" : "react_codegen_RNCConfigSpec::@89f1b79ed4954e2f2cff"
 		},
 		{
 			"backtrace" : 4,
-			"id" : "react_codegen_RNLocalizeSpec::@f3ba5298aff84514e205"
+			"id" : "react_codegen_rnmapbox_maps_specs::@636de9d518b8c337676e"
 		},
 		{
 			"backtrace" : 4,
@@ -426,11 +422,15 @@
 		},
 		{
 			"backtrace" : 4,
-			"id" : "react_codegen_NitroModulesSpec::@472a82f9c57d3d3b8644"
+			"id" : "react_codegen_RNLocalizeSpec::@f3ba5298aff84514e205"
 		},
 		{
 			"backtrace" : 4,
 			"id" : "react_codegen_safeareacontext::@7984cd80db47aa7b952a"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_NitroModulesSpec::@472a82f9c57d3d3b8644"
 		},
 		{
 			"backtrace" : 4,

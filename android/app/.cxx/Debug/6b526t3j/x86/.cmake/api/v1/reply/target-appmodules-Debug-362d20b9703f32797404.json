@@ -402,15 +402,7 @@
 		},
 		{
 			"backtrace" : 4,
-			"id" : "react_codegen_rnmapbox_maps_specs::@636de9d518b8c337676e"
-		},
-		{
-			"backtrace" : 4,
 			"id" : "react_codegen_RNCConfigSpec::@89f1b79ed4954e2f2cff"
-		},
-		{
-			"backtrace" : 4,
-			"id" : "react_codegen_RNKC::@01e3c54a97c6e9d385b6"
 		},
 		{
 			"backtrace" : 4,
@@ -418,7 +410,11 @@
 		},
 		{
 			"backtrace" : 4,
-			"id" : "react_codegen_rnreanimated::@8afabad14bfffa3f8b9a"
+			"id" : "react_codegen_rnmapbox_maps_specs::@636de9d518b8c337676e"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_RNKC::@01e3c54a97c6e9d385b6"
 		},
 		{
 			"backtrace" : 4,
@@ -426,11 +422,11 @@
 		},
 		{
 			"backtrace" : 4,
-			"id" : "react_codegen_rnscreens::@25bcbd507e98d3a854ad"
+			"id" : "react_codegen_NitroModulesSpec::@472a82f9c57d3d3b8644"
 		},
 		{
 			"backtrace" : 4,
-			"id" : "react_codegen_NitroModulesSpec::@472a82f9c57d3d3b8644"
+			"id" : "react_codegen_rnsvg::@4f40eb209d0c0b4a3b65"
 		},
 		{
 			"backtrace" : 4,
@@ -438,7 +434,11 @@
 		},
 		{
 			"backtrace" : 4,
-			"id" : "react_codegen_rnsvg::@4f40eb209d0c0b4a3b65"
+			"id" : "react_codegen_rnreanimated::@8afabad14bfffa3f8b9a"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_rnscreens::@25bcbd507e98d3a854ad"
 		},
 		{
 			"backtrace" : 4,

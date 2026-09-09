@@ -7,7 +7,7 @@ import { RootState } from '@store/rootReducer';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { navigate } from '@navigation/NavigationService';
-import { setWeight } from '@store/slices/Booking/bookingSlice';
+import { setWeight, setvalue } from '@store/slices/Booking/bookingSlice';
 import { COLORS, FONT_FAMILIES, ms, s, vs } from '@theme/index';
 import { ArrowRight } from 'lucide-react-native';
 import { styles } from './Dashboard.style';
@@ -15,19 +15,24 @@ import DropModal from './components/DropModal';
 import MapComponent from './components/MapComponent';
 import PickupModal from './components/PickupModal';
 import { useNavigation } from '@react-navigation/native';
-
+import CustomRadioButton from '@components/CustomCheckbox/CustomRadioButton';
 const DashboardScreen = () => {
-  const navigation =  useNavigation()
-  const { pickup, delivery, weight } = useSelector(
+  const navigation = useNavigation()
+  const { pickup, delivery, weight, value } = useSelector(
     (state: RootState) => state.booking,
   );
   const dispatch = useDispatch();
   const [pickupModalVisible, setPickupModalVisible] = useState(false);
   const [dropModalVisible, setDropModalVisible] = useState(false);
+  const [declarevalue, setdeclarevalue] = useState(false)
 
   console.log({ pickupModalVisible, dropModalVisible });
 
-  const handlecheck=()=>{
+  const handledeclare = () => {
+    setdeclarevalue(true)
+  }
+
+  const handlecheck = () => {
     navigation.navigate('CalledRideScreen' as never)
   }
   return (
@@ -76,13 +81,41 @@ const DashboardScreen = () => {
                   <Text style={styles.declare_weight}>Declare Weight</Text>
                   <TextInput
                     placeholder="eg. 1000"
+                    placeholderTextColor={COLORS.gray[500]}
                     style={styles.weight_input}
-                    value={weight?.toString()}
+                    value={weight?.toString() ?? ''}
                     keyboardType="number-pad"
-                    onChangeText={i => dispatch(setWeight({ weight: i }))}
+                    onChangeText={text => dispatch(setWeight({ weight: text }))}
                   />
 
                   <Text style={styles.kg}>Kg</Text>
+                </View>
+                <View style={styles.declare_weight_container}>
+                  <Text style={styles.declare_weight}>Declare Value</Text>
+
+                  <CustomRadioButton
+                    selected={declarevalue}
+                    onPress={handledeclare}
+                    size={20}
+                    label='Yes'
+                    activeColor={COLORS.primary[500]}
+                    inactiveColor={COLORS.gray[400]}
+                  />
+
+                  <TextInput
+                    placeholder="eg. 1000"
+                    placeholderTextColor={COLORS.gray[500]}
+                    style={[
+                      styles.weight_input,
+                      !declarevalue && { backgroundColor: '#F3F4F6' },
+                    ]}
+                    value={value?.toString() ?? ''}
+                    keyboardType="number-pad"
+                    editable={declarevalue}
+                    onChangeText={text => dispatch(setvalue({ value: text }))}
+                  />
+
+                  <Text style={styles.kg}>₹</Text>
                 </View>
                 <TouchableOpacity
                   style={{ flexDirection: 'row', alignSelf: 'flex-end' }}
@@ -117,7 +150,7 @@ const DashboardScreen = () => {
         }}
       >
         <MapComponent />
-          <TouchableOpacity
+        <TouchableOpacity
           onPress={handlecheck}
           style={{
             position: 'absolute',

@@ -20,10 +20,13 @@ import { styles } from '../Dashboard.style';
 import CustomModal from '@components/Modals/CustumModal';
 import BookingCard from '@components/Cards/BookingCard';
 import Dropdown, {Item} from '@components/Dropdown';
+import CancelBookingModal from '@components/Modal/CancelBookingModal';
 const MapComponent = () => {
   const dispatch = useDispatch();
   const [location, setLocation] = useState<Location>();
   const booking = useSelector((state: RootState) => state.booking);
+    const [isCancelModalVisible, setIsCancelModalVisible] =
+    useState(false);
   const cameraRef = useRef<any>(null);
   const [routeGeoJSON, setRouteGeoJSON] = useState<any>(null);
     const [modalVisible, setModalVisible] = useState(false);
@@ -35,6 +38,14 @@ const MapComponent = () => {
   const handleCloseBooking = useCallback(() => {
     setModalVisible(false);
   }, []);
+
+const handleConfirmCancel = () => {
+  console.log('Booking cancelled');
+
+  // Call cancel booking API here
+
+  setIsCancelModalVisible(false);
+};
   // const { location } = useCurrentLocation();
 
 
@@ -149,7 +160,7 @@ const loadPosts: Item[] = [
   }, [booking?.pickup, booking?.delivery, location]);
   return (
     <View style={styles.mapContainer}>
-      {/* <MapView
+      <MapView
         style={styles.map}
         styleURL="mapbox://styles/mapbox/streets-v12"
         scaleBarEnabled={false}
@@ -301,7 +312,7 @@ const loadPosts: Item[] = [
             />
           </ShapeSource>
         )}
-      </MapView> */}
+      </MapView>
       <CustomModal
         visible={modalVisible}
         onClose={handleCloseBooking}
@@ -343,7 +354,26 @@ const loadPosts: Item[] = [
         />
 
       </CustomModal>
-
+  <CancelBookingModal
+        visible={isCancelModalVisible}
+        onClose={() => setIsCancelModalVisible(false)}
+        loadId="12345"
+        title="Cancel Booking"
+        message="Are you sure you want to cancel this booking?"
+        remark="Pickup Address 05 km Away  From You"
+        pickup="Mumbai, Maharashtra"
+        delivery="Pune, Maharashtra"
+        distance="150"
+        weight="500"
+        freightAmount="12000"
+        vehicleNo="MH 12 AB 1234"
+        driverName="Rahul Sharma"
+        driverId="DR001"
+        showRouteDetails={true}
+        showVehicleDetails={true}
+        buttonText="Cancel Booking"
+        onConfirmCancel={handleConfirmCancel}
+      />
       <TouchableOpacity
   onPress={handleOpenBooking}
   style={{
@@ -355,6 +385,21 @@ const loadPosts: Item[] = [
     borderRadius: 10,
   }}>
   <Text style={{color: '#fff'}}>Open Booking</Text>
+</TouchableOpacity>
+<TouchableOpacity
+  onPress={() => setIsCancelModalVisible(true)}
+  style={{
+    position: 'absolute',
+    bottom: 160,
+    right: 20,
+    backgroundColor: 'red',
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    borderRadius: 10,
+  }}>
+  <Text style={{color: '#fff', fontWeight: '600'}}>
+    Cancel Booking
+  </Text>
 </TouchableOpacity>
     </View>
   );

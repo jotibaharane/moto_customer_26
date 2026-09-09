@@ -170,7 +170,6 @@ export const styles = StyleSheet.create({
 
   vehicleName: {
     fontSize: fs(16),
-    fontFamily: FONT_FAMILIES.bold,
     marginTop: 8,
     textAlign: 'center',
     lineHeight: 30,
@@ -179,7 +178,7 @@ export const styles = StyleSheet.create({
 
   vehicleDetails: {
     marginLeft: 8,
-    fontSize: fs(12),
+    fontSize: fs(18),
     color: '#5C5C5E',
     lineHeight: 30,
     letterSpacing: -1,

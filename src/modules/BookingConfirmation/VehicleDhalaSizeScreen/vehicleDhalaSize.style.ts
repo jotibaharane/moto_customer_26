@@ -1,80 +1,119 @@
-import { COLORS, FONT_FAMILIES, s, vs } from '@theme/index';
-import { StyleSheet } from 'react-native';
+import {StyleSheet} from 'react-native';
+import {COLORS, FONT_FAMILIES, ms, s, vs} from '@theme/index';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.white[100],
-    padding: s(16),
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: s(18),
   },
 
-  /* ================= VEHICLE IMAGES ================= */
   imageRow: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: s(29),
+    marginTop: vs(15),
   },
 
   vehicleImage: {
-    width: s(150),
-    height: s(150),
+    width: '48%',
+    height: vs(130),
   },
 
-  vehicleImageMirror: {
-    width: s(150),
-    height: s(150),
-    transform: [{ scaleX: -1 }],
-  },
-
-  /* ================= VEHICLE INFO ================= */
   infoContainer: {
-    justifyContent: 'center',
+    marginTop: vs(15),
+    borderWidth: 1,
+    borderColor: '#DDDDDD',
+    borderRadius: s(8),
+    overflow: 'hidden',
+    backgroundColor: '#FFFFFF',
+  },
+
+  infoRow: {
+    minHeight: vs(40),
+    flexDirection: 'row',
     alignItems: 'center',
-    gap: vs(4),
-  },
-
-  vehicleName: {
-    fontSize: 16,
-    fontFamily: FONT_FAMILIES.semiBold,
-    color: COLORS.black[500],
-    textAlign: 'center',
-  },
-
-  vehicleDetails: {
-    fontSize: 16,
-    fontFamily: FONT_FAMILIES.regular,
-    color: COLORS.gray[500],
-    textAlign: 'center',
-
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.gray[250],
-
-    paddingBottom: vs(24),
+    borderBottomColor: '#BDBDBD',
   },
 
-  /* ================= TITLE ================= */
-  sectionTitle: {
-    marginTop: vs(27),
-
-    fontSize: 20,
-    fontFamily: FONT_FAMILIES.semiBold,
-    color: COLORS.primary[500],
+  label: {
+    width: '40%',
+    paddingHorizontal: s(9),
+    fontSize: ms(13),
+    color: '#252525',
+    fontFamily: FONT_FAMILIES.regular,
   },
 
-  /* ================= LIST ================= */
-  listItem: {
+  value: {
     flex: 1,
-    marginBottom: vs(16),
+    paddingHorizontal: s(12),
+    fontSize: ms(13),
+    color: '#252525',
+    fontFamily: FONT_FAMILIES.regular,
+  },
+
+  dhalaRow: {
+    flexDirection: 'row',
+    minHeight: vs(65),
+  },
+
+  dhalaContent: {
+    flex: 1,
+    borderLeftWidth: 1,
+    borderLeftColor: '#BDBDBD',
+  },
+
+  dhalaHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    minHeight: vs(30),
+  },
+
+  dhalaValueRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    minHeight: vs(30),
+  },
+
+  dhalaHeader: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: ms(12),
+    color: '#252525',
+    fontFamily: FONT_FAMILIES.regular,
+  },
+
+  dhalaValue: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: ms(13),
+    color: '#111111',
+    fontFamily: FONT_FAMILIES.bold,
+  },
+
+  sectionTitle: {
+    marginTop: vs(12),
+    marginBottom: vs(10),
+    fontSize: ms(17),
+    color: COLORS.primary[500],
+    fontFamily: FONT_FAMILIES.bold,
+  },
+
+  listItem: {
+    marginBottom: vs(12),
+    borderRadius: s(5),
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: COLORS.primary[500],
   },
 
   listImage: {
     width: '100%',
-    height: vs(146),
+    height: vs(125),
   },
 
-  /* ================= BUTTON ================= */
   button: {
-    marginTop: vs(15),
+    marginVertical: vs(15),
   },
 });

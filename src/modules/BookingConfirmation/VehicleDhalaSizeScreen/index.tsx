@@ -33,14 +33,60 @@ const VehicleDhalaSizeScreen = ({ route }: any) => {
           resizeMode="contain"
         />
       </View>
-      <View style={styles.infoContainer}>
-        <Text style={styles.vehicleName}>{vehicle?.vehicleType}</Text>
-        <Text style={styles.vehicleDetails}>
-          {vehicle?.loadingCapacity} kg , {vehicle?.vehicleGrossWeight} Ton
-          {'\n'} Body Length: ~{vehicle?.dhalaLength} ft , Body Height: ~
-          {vehicle?.dhalaHeight}ft {'\n'} Body Width: ~{vehicle?.dhalaWidth}ft
+    <View style={styles.infoContainer}>
+  {/* Loading Capacity */}
+  <View style={styles.infoRow}>
+    <Text style={styles.label}>Loading Capacity</Text>
+    <Text style={styles.value}>
+      {vehicle?.loadingCapacity} kg
+    </Text>
+  </View>
+
+  {/* Make & Segment */}
+  <View style={styles.infoRow}>
+    <Text style={styles.label}>Make & Segment</Text>
+    <Text style={styles.value}>
+      {vehicle?.makeAndSegment || vehicle?.make || 'N/A'}
+    </Text>
+  </View>
+
+  {/* Body Type */}
+  <View style={styles.infoRow}>
+    <Text style={styles.label}>Body Type</Text>
+    <Text style={styles.value}>
+      {vehicle?.bodyType || 'N/A'}
+    </Text>
+  </View>
+
+  {/* Dhala Size */}
+  <View style={styles.dhalaRow}>
+    <Text style={styles.label}>Dhala Size</Text>
+
+    <View style={styles.dhalaContent}>
+      {/* Headers */}
+      <View style={styles.dhalaHeaderRow}>
+        <Text style={styles.dhalaHeader}>Length</Text>
+        <Text style={styles.dhalaHeader}>Width</Text>
+        <Text style={styles.dhalaHeader}>Height</Text>
+      </View>
+
+      {/* Values */}
+      <View style={styles.dhalaValueRow}>
+        <Text style={styles.dhalaValue}>
+          {vehicle?.dhalaLength ?? '-'} ft
+        </Text>
+
+        <Text style={styles.dhalaValue}>
+          {vehicle?.dhalaWidth ?? '-'} ft
+        </Text>
+
+        <Text style={styles.dhalaValue}>
+          {vehicle?.dhalaHeight ?? '-'} ft
         </Text>
       </View>
+    </View>
+  </View>
+</View>
       <Text style={styles.sectionTitle}>Real Image Of Vehicle</Text>
       <FlatList
         data={vehicleImages}

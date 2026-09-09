@@ -35,20 +35,25 @@ const VehicleCard = ({ item, selected, onSelect }: any) => {
       </Pressable>
 
       <View style={styles.cardContent}>
-        <Text style={styles.vehicleName}>{item.vehicle?.vehicleType}</Text>
+    <Text style={[styles.vehicleName, { color: '#6C7278' }]}>
+ {item.vehicle?.vehicleType}{' '}
+  ( {item.vehicle?.minLoadingCapacity}kg -{' '}
+  {item.vehicle?.maxLoadingCapacity}kg
+  )
+</Text>
 
-        <View style={styles.detailRow}>
+        {/* <View style={styles.detailRow}>
           <IconWeight size={16} color={'#6C7278'} />
           <Text style={styles.vehicleDetails}>
             {item.vehicle?.minLoadingCapacity}kg -{' '}
             {item.vehicle?.maxLoadingCapacity}kg{' '}
           </Text>
-        </View>
+        </View> */}
 
         <View style={styles.detailRow}>
           <IconClockHour4 size={16} color={'#6C7278'} />
           <Text style={styles.vehicleDetails}>
-            {item.expectedVehicleAvailability} min
+            {item.expectedVehicleAvailability} min away
           </Text>
         </View>
 

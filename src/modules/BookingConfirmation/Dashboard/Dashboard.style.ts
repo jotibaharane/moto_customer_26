@@ -6,7 +6,16 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-
+  
+  mapContainer: {
+    flex: 1,
+    borderRadius: vs(30),
+    overflow: 'hidden',
+  },
+  map: {
+    flex: 1,
+    marginBottom: -vs(50),
+  },
   topWrapper: {
     paddingHorizontal: s(16),
     marginTop: vs(24),
@@ -27,54 +36,40 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  emptyBox: {
-    width: s(30),
-    height: s(30),
-  },
-
-  mapContainer: {
-    flex: 1,
-    borderRadius: vs(30),
-    overflow: 'hidden',
-  },
-
-  map: {
-    flex: 1,
-    marginBottom: -vs(50),
-  },
-
-  marker: {
-    padding: s(6),
-    borderRadius: s(20),
-    elevation: 6,
-  },
-
   declare_weight_container: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: s(10),
+    justifyContent: 'flex-start',
+    gap: s(12),
   },
 
   declare_weight: {
-    fontSize: ms(18), // Figma size same
+    flex: 1,
+    fontSize: ms(16),
     fontFamily: FONT_FAMILIES.medium,
-    lineHeight: 25,
+    lineHeight: vs(25),
     letterSpacing: -0.5,
+    color: '#000000',
   },
 
   weight_input: {
     backgroundColor: COLORS.white[100],
-    width: s(103),
+    width: s(87),
+    height: vs(40),
     borderRadius: s(8),
+    paddingHorizontal: s(8),
+    paddingVertical: 0,
     fontFamily: FONT_FAMILIES.bold,
-    fontSize: ms(20), // Figma size same
-    color: Colors.primary,
+    fontSize: ms(16),
+    color: '#000000',
+    textAlignVertical: 'center',
+    includeFontPadding: false,
   },
 
   kg: {
+    width: s(24),
     fontFamily: FONT_FAMILIES.semiBold,
-    fontSize: ms(16), // Figma size same
-    color: Colors.primary,
+    fontSize: ms(16),
+    color: '#000000',
   },
 });

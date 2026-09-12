@@ -7,7 +7,7 @@ import { styles } from './vehicleDhalaSize.style';
 const VehicleDhalaSizeScreen = ({ route }: any) => {
   const vehicle: any = route?.params?.item?.vehicle;
 
-  console.log({ vehicle });
+ 
 
   const vehicleImages = Object.entries(vehicle.images).map(
     ([position, image]) => ({

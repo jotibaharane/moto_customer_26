@@ -16,6 +16,13 @@ import MapComponent from './components/MapComponent';
 import PickupModal from './components/PickupModal';
 import { useNavigation } from '@react-navigation/native';
 import CustomRadioButton from '@components/CustomCheckbox/CustomRadioButton';
+import LoadStatusModal from './components/LoadStatusModal';
+type LoadStatus =
+  | 'REPORTED'
+  | 'LOADING'
+  | 'LOADED'
+  | 'PAYMENT'
+  | 'COMPLETED';
 const DashboardScreen = () => {
   const navigation = useNavigation()
   const { pickup, delivery, weight, value } = useSelector(
@@ -25,6 +32,14 @@ const DashboardScreen = () => {
   const [pickupModalVisible, setPickupModalVisible] = useState(false);
   const [dropModalVisible, setDropModalVisible] = useState(false);
   const [declarevalue, setdeclarevalue] = useState(false)
+  const [showStatusModal, setShowStatusModal] =
+  useState(false);
+const [selectedStatus, setSelectedStatus] =
+  useState<LoadStatus>('REPORTED');
+  const handleStatusChange = (newStatus: LoadStatus) => {
+  console.log('NEW STATUS:', newStatus);
+  setSelectedStatus(newStatus);
+};
 
   console.log({ pickupModalVisible, dropModalVisible });
 
@@ -33,7 +48,8 @@ const DashboardScreen = () => {
   }
 
   const handlecheck = () => {
-    navigation.navigate('CalledRideScreen' as never)
+    setShowStatusModal(true)
+    // navigation.navigate('CalledRideScreen' as never)
   }
   return (
     <SafeAreaView style={styles.container}>
@@ -174,6 +190,37 @@ const DashboardScreen = () => {
       {/* ================= MODALS ================= */}
       <PickupModal open={pickupModalVisible} onOpen={setPickupModalVisible} />
       <DropModal open={dropModalVisible} onOpen={setDropModalVisible} />
+
+
+<LoadStatusModal
+  visible={showStatusModal}
+  status={selectedStatus}
+  // onStatusChange={setSelectedStatus}
+  onStatusChange={handleStatusChange}
+ onClose={() => {
+    setShowStatusModal(false);
+    setSelectedStatus('REPORTED');
+  }}
+  loadPostId="123456"
+  reportedTime="2:00 pm"
+  loadingTime="00:20"
+  packagesLoaded={1000}
+  loadingDuration="30 min : 00:20"
+  receipt={{
+    receiptNo: 'REC-10001',
+    loadPostId: '123456',
+    vehicleNo: 'MH 12 AB 1234',
+    customerName: 'ABC Transport',
+    driverName: 'Rahul Kumar',
+    freightAmount: 25000,
+    advanceAmount: 10000,
+    balanceAmount: 15000,
+    paymentMode: 'UPI',
+    paymentStatus: 'PAID',
+    paymentDate: '11 Sep 2026',
+  }}
+/>
+
     </SafeAreaView>
   );
 };

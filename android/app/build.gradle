@@ -115,6 +115,14 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
@@ -125,5 +133,34 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    // ==========================
+    // NATIVE MAP (single persistent MapView — see src/main/java/com/moto_customer/map)
+    // ==========================
+
+    // Navigation Core SDK — same artifacts/versions as the driver app's
+    // TripMapView, so the customer's live-tracking screen gets a real
+    // following camera + route line driven through Mapbox's own replay
+    // engine off the driver's reported position (see CustomerMapView.kt's
+    // REPLAY section for why: the driver's position only arrives via
+    // sparse socket pings, not continuous device GPS, so MapboxReplayer is
+    // used to feed those pings into a trip session the same way it would
+    // feed real GPS). No maneuver banner — tripdata-ndk27 (which provides
+    // MapboxManeuverApi) is intentionally not included.
+    implementation("com.mapbox.navigationcore:android-ndk27:3.30.0")
+    implementation("com.mapbox.navigationcore:ui-maps-ndk27:3.30.0")
+    implementation("com.mapbox.navigationcore:ui-components-ndk27:3.30.0")
+
+    // Provides View.setViewTreeLifecycleOwner(), used to stop Maps SDK's
+    // own MapboxLifecyclePlugin from auto-binding to the hosting Activity.
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
+
+    // Raw Mapbox Directions API calls from Kotlin (see CustomerMapView.kt)
+    // — SELECT mode's booking-screen preview route only; TRACKING mode's
+    // route now comes from the Navigation SDK's own requestRoutes().
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
+    implementation("androidx.cardview:cardview:1.0.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 }
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"

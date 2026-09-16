@@ -181,15 +181,23 @@ const DropModal: React.FC<Props> = ({ onOpen, open }) => {
 
   const handleSelectLocation = useCallback(
     (item: any) => {
-      formik.setFieldValue('mapboxId', item?.mapboxId ?? '');
-
-      formik.setFieldValue('name', item?.name ?? '');
-
-      formik.setFieldValue('fullAddress', item?.fullAddress ?? '');
-
-      formik.setFieldValue('latitude', item?.latitude ?? 0);
-
-      formik.setFieldValue('longitude', item?.longitude ?? 0);
+      // A full replace, not five separate setFieldValue patches — patching
+      // only name/fullAddress/lat/lng left plotBuilding/streetArea/
+      // contactName/contactMobile from whatever was PREVIOUSLY selected
+      // still sitting in the form, so re-editing to a different delivery
+      // address could submit with a new pin but an old unit/contact still
+      // attached to it.
+      formik.setValues({
+        mapboxId: item?.mapboxId ?? '',
+        name: item?.name ?? '',
+        fullAddress: item?.fullAddress ?? '',
+        latitude: item?.latitude ?? 0,
+        longitude: item?.longitude ?? 0,
+        plotBuilding: '',
+        streetArea: '',
+        contactName: '',
+        contactMobile: '',
+      });
 
       /**
        * Clear search after selecting location.

@@ -1,0 +1,682 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="72dp"
+    android:height="120dp"
+    android:viewportWidth="360"
+    android:viewportHeight="600">
+
+    <!-- ============================================================
+         TOP-DOWN INDIAN TRUCK NAVIGATION MARKER
+         
+         IMPORTANT:
+         - Truck faces UP.
+         - Do NOT rotate this drawable itself.
+         - Mapbox/navigation bearing should rotate the marker.
+         ============================================================ -->
+
+
+    <!-- =========================
+         SOFT GROUND SHADOW
+         ========================= -->
+
+    <path
+        android:fillColor="#25000000"
+        android:pathData="
+            M180,575
+            C120,575 82,562 82,545
+            C82,528 120,515 180,515
+            C240,515 278,528 278,545
+            C278,562 240,575 180,575 Z" />
+
+
+    <!-- =========================
+         TRAILER OUTER BODY
+         ========================= -->
+
+    <path
+        android:fillColor="#E9ECEF"
+        android:strokeColor="#202830"
+        android:strokeWidth="5"
+        android:pathData="
+            M91,204
+            Q91,194 101,194
+            L259,194
+            Q269,194 269,204
+            L269,515
+            Q269,525 259,525
+            L101,525
+            Q91,525 91,515
+            Z" />
+
+
+    <!-- =========================
+         TRAILER INNER PANEL
+         ========================= -->
+
+    <path
+        android:fillColor="#F7F8F9"
+        android:strokeColor="#8B949C"
+        android:strokeWidth="3"
+        android:pathData="
+            M101,207
+            L259,207
+            L259,505
+            L101,505
+            Z" />
+
+
+    <!-- =========================
+         TRAILER TOP BORDER
+         ========================= -->
+
+    <path
+        android:fillColor="#D4D9DE"
+        android:strokeColor="#69747E"
+        android:strokeWidth="2"
+        android:pathData="
+            M98,194
+            L262,194
+            L262,207
+            L98,207
+            Z" />
+
+
+    <!-- =========================
+         TRAILER HORIZONTAL PANELS
+         ========================= -->
+
+    <path
+        android:strokeColor="#C1C7CC"
+        android:strokeWidth="2"
+        android:pathData="
+            M103,224 L257,224
+            M103,241 L257,241
+            M103,258 L257,258
+            M103,275 L257,275
+            M103,292 L257,292
+            M103,309 L257,309
+            M103,326 L257,326
+            M103,343 L257,343
+            M103,360 L257,360
+            M103,377 L257,377
+            M103,394 L257,394
+            M103,411 L257,411
+            M103,428 L257,428
+            M103,445 L257,445
+            M103,462 L257,462
+            M103,479 L257,479
+            M103,496 L257,496" />
+
+
+    <!-- =========================
+         TRAILER SIDE FRAME
+         ========================= -->
+
+    <path
+        android:fillColor="#B9C0C6"
+        android:pathData="
+            M91,205
+            L102,205
+            L102,515
+            L91,515
+            Z" />
+
+    <path
+        android:fillColor="#B9C0C6"
+        android:pathData="
+            M258,205
+            L269,205
+            L269,515
+            L258,515
+            Z" />
+
+
+    <!-- =========================
+         TRAILER SIDE LIGHTS
+         ========================= -->
+
+    <path
+        android:fillColor="#FF7A00"
+        android:pathData="
+            M91,235
+            L99,235
+            L99,252
+            L91,252
+            Z" />
+
+    <path
+        android:fillColor="#FF7A00"
+        android:pathData="
+            M261,235
+            L269,235
+            L269,252
+            L261,252
+            Z" />
+
+    <path
+        android:fillColor="#FF3B30"
+        android:pathData="
+            M91,440
+            L99,440
+            L99,457
+            L91,457
+            Z" />
+
+    <path
+        android:fillColor="#FF3B30"
+        android:pathData="
+            M261,440
+            L269,440
+            L269,457
+            L261,457
+            Z" />
+
+
+    <!-- =========================
+         REAR DOORS
+         ========================= -->
+
+    <path
+        android:fillColor="#D9DDE1"
+        android:strokeColor="#59636C"
+        android:strokeWidth="3"
+        android:pathData="
+            M103,508
+            L257,508
+            L257,540
+            L103,540
+            Z" />
+
+    <path
+        android:strokeColor="#59636C"
+        android:strokeWidth="3"
+        android:pathData="
+            M180,508
+            L180,540" />
+
+
+    <!-- =========================
+         REAR DOOR HANDLES
+         ========================= -->
+
+    <path
+        android:fillColor="#202830"
+        android:pathData="
+            M169,516
+            L176,516
+            L176,535
+            L169,535
+            Z" />
+
+    <path
+        android:fillColor="#202830"
+        android:pathData="
+            M184,516
+            L191,516
+            L191,535
+            L184,535
+            Z" />
+
+
+    <!-- =========================
+         REAR RED REFLECTORS
+         ========================= -->
+
+    <path
+        android:fillColor="#E53935"
+        android:pathData="
+            M111,529
+            L145,529
+            L145,535
+            L111,535
+            Z" />
+
+    <path
+        android:fillColor="#E53935"
+        android:pathData="
+            M215,529
+            L249,529
+            L249,535
+            L215,535
+            Z" />
+
+
+    <!-- =========================
+         CAB OUTER BODY
+         ========================= -->
+
+    <path
+        android:fillColor="#F5F6F7"
+        android:strokeColor="#202830"
+        android:strokeWidth="5"
+        android:pathData="
+            M105,53
+            Q105,29 128,20
+            Q180,4 232,20
+            Q255,29 255,53
+            L255,193
+            Q255,204 244,204
+            L116,204
+            Q105,204 105,193
+            Z" />
+
+
+    <!-- =========================
+         CAB ROOF
+         ========================= -->
+
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#9AA2A9"
+        android:strokeWidth="3"
+        android:pathData="
+            M119,48
+            Q119,29 139,24
+            Q180,13 221,24
+            Q241,29 241,48
+            L241,65
+            L119,65
+            Z" />
+
+
+    <!-- =========================
+         ROOF DARK TRIM
+         ========================= -->
+
+    <path
+        android:fillColor="#202830"
+        android:pathData="
+            M122,42
+            Q122,30 140,26
+            Q180,16 220,26
+            Q238,30 238,42
+            L238,49
+            Q180,35 122,49
+            Z" />
+
+
+    <!-- =========================
+         WINDSHIELD
+         ========================= -->
+
+    <path
+        android:fillColor="#26343E"
+        android:strokeColor="#111820"
+        android:strokeWidth="3"
+        android:pathData="
+            M119,66
+            Q119,57 129,53
+            Q180,43 231,53
+            Q241,57 241,66
+            L241,103
+            Q241,111 233,114
+            Q180,122 127,114
+            Q119,111 119,103
+            Z" />
+
+
+    <!-- =========================
+         WINDSHIELD REFLECTION
+         ========================= -->
+
+    <path
+        android:fillColor="#526873"
+        android:pathData="
+            M128,61
+            Q180,50 232,61
+            L232,70
+            Q180,61 128,70
+            Z" />
+
+
+    <!-- =========================
+         WINDSHIELD CENTER
+         ========================= -->
+
+    <path
+        android:strokeColor="#111820"
+        android:strokeWidth="3"
+        android:pathData="
+            M180,54
+            L180,114" />
+
+
+    <!-- =========================
+         CAB HOOD / CENTER PANEL
+         ========================= -->
+
+    <path
+        android:fillColor="#EEF0F2"
+        android:strokeColor="#C3C8CD"
+        android:strokeWidth="2"
+        android:pathData="
+            M126,117
+            Q180,128 234,117
+            L244,178
+            Q244,190 232,193
+            L128,193
+            Q116,190 116,178
+            Z" />
+
+
+    <!-- =========================
+         CENTER CAB PANEL
+         ========================= -->
+
+    <path
+        android:fillColor="#DDE1E4"
+        android:pathData="
+            M157,133
+            Q157,128 162,128
+            L198,128
+            Q203,128 203,133
+            L203,151
+            Q203,156 198,156
+            L162,156
+            Q157,156 157,151
+            Z" />
+
+
+    <!-- =========================
+         FRONT GRILLE
+         ========================= -->
+
+    <path
+        android:fillColor="#303A43"
+        android:strokeColor="#151C22"
+        android:strokeWidth="2"
+        android:pathData="
+            M141,171
+            Q141,164 148,162
+            L212,162
+            Q219,164 219,171
+            L219,187
+            L141,187
+            Z" />
+
+
+    <!-- =========================
+         GRILLE LINES
+         ========================= -->
+
+    <path
+        android:strokeColor="#67727B"
+        android:strokeWidth="2"
+        android:pathData="
+            M151,166 L151,184
+            M161,166 L161,184
+            M171,166 L171,184
+            M181,166 L181,184
+            M191,166 L191,184
+            M201,166 L201,184
+            M211,166 L211,184" />
+
+
+    <!-- =========================
+         HEADLIGHTS
+         ========================= -->
+
+    <path
+        android:fillColor="#FFF3B0"
+        android:strokeColor="#C8A93A"
+        android:strokeWidth="2"
+        android:pathData="
+            M119,161
+            Q119,155 125,154
+            L137,158
+            L137,174
+            L123,177
+            Q119,175 119,170
+            Z" />
+
+    <path
+        android:fillColor="#FFF3B0"
+        android:strokeColor="#C8A93A"
+        android:strokeWidth="2"
+        android:pathData="
+            M241,161
+            Q241,155 235,154
+            L223,158
+            L223,174
+            L237,177
+            Q241,175 241,170
+            Z" />
+
+
+    <!-- =========================
+         CAB SIDE MIRRORS
+         ========================= -->
+
+    <path
+        android:fillColor="#202830"
+        android:pathData="
+            M102,74
+            L83,63
+            Q78,60 75,65
+            L75,91
+            Q77,97 83,95
+            L103,84
+            Z" />
+
+    <path
+        android:fillColor="#202830"
+        android:pathData="
+            M258,74
+            L277,63
+            Q282,60 285,65
+            L285,91
+            Q283,97 277,95
+            L257,84
+            Z" />
+
+
+    <!-- =========================
+         MIRROR GLASS
+         ========================= -->
+
+    <path
+        android:fillColor="#53646E"
+        android:pathData="
+            M82,67
+            L96,72
+            L96,82
+            L82,89
+            Z" />
+
+    <path
+        android:fillColor="#53646E"
+        android:pathData="
+            M278,67
+            L264,72
+            L264,82
+            L278,89
+            Z" />
+
+
+    <!-- =========================
+         SIDE CAB LIGHTS
+         ========================= -->
+
+    <path
+        android:fillColor="#FFB300"
+        android:pathData="
+            M105,116
+            L112,116
+            L112,130
+            L105,130
+            Z" />
+
+    <path
+        android:fillColor="#FFB300"
+        android:pathData="
+            M255,116
+            L248,116
+            L248,130
+            L255,130
+            Z" />
+
+
+    <!-- =========================
+         FRONT BUMPER
+         ========================= -->
+
+    <path
+        android:fillColor="#252D34"
+        android:strokeColor="#111820"
+        android:strokeWidth="2"
+        android:pathData="
+            M128,187
+            L232,187
+            L239,198
+            L121,198
+            Z" />
+
+
+    <!-- =========================
+         WHEELS - FRONT
+         ========================= -->
+
+    <path
+        android:fillColor="#151B20"
+        android:pathData="
+            M104,111
+            Q94,111 94,121
+            L94,146
+            Q94,156 104,156
+            L112,156
+            L112,111
+            Z" />
+
+    <path
+        android:fillColor="#151B20"
+        android:pathData="
+            M256,111
+            Q266,111 266,121
+            L266,146
+            Q266,156 256,156
+            L248,156
+            L248,111
+            Z" />
+
+
+    <!-- =========================
+         WHEEL HUBS
+         ========================= -->
+
+    <path
+        android:fillColor="#59636B"
+        android:pathData="
+            M104,121
+            m-5,0
+            a5,8 0 1,0 10,0
+            a5,8 0 1,0 -10,0" />
+
+    <path
+        android:fillColor="#59636B"
+        android:pathData="
+            M256,121
+            m-5,0
+            a5,8 0 1,0 10,0
+            a5,8 0 1,0 -10,0" />
+
+
+    <!-- =========================
+         WHEELS - REAR
+         ========================= -->
+
+    <path
+        android:fillColor="#151B20"
+        android:pathData="
+            M104,435
+            Q94,435 94,445
+            L94,470
+            Q94,480 104,480
+            L112,480
+            L112,435
+            Z" />
+
+    <path
+        android:fillColor="#151B20"
+        android:pathData="
+            M256,435
+            Q266,435 266,445
+            L266,470
+            Q266,480 256,480
+            L248,480
+            L248,435
+            Z" />
+
+
+    <!-- =========================
+         REAR WHEEL HUBS
+         ========================= -->
+
+    <path
+        android:fillColor="#59636B"
+        android:pathData="
+            M104,447
+            m-5,0
+            a5,8 0 1,0 10,0
+            a5,8 0 1,0 -10,0" />
+
+    <path
+        android:fillColor="#59636B"
+        android:pathData="
+            M256,447
+            m-5,0
+            a5,8 0 1,0 10,0
+            a5,8 0 1,0 -10,0" />
+
+
+    <!-- =========================
+         REAR BUMPER
+         ========================= -->
+
+    <path
+        android:fillColor="#202830"
+        android:pathData="
+            M92,532
+            L268,532
+            L268,548
+            L92,548
+            Z" />
+
+
+    <!-- =========================
+         REAR LIGHTS
+         ========================= -->
+
+    <path
+        android:fillColor="#E53935"
+        android:pathData="
+            M102,531
+            L126,531
+            L126,539
+            L102,539
+            Z" />
+
+    <path
+        android:fillColor="#E53935"
+        android:pathData="
+            M234,531
+            L258,531
+            L258,539
+            L234,539
+            Z" />
+
+
+    <!-- =========================
+         YELLOW REFLECTOR
+         ========================= -->
+
+    <path
+        android:fillColor="#FFC107"
+        android:pathData="
+            M138,532
+            L222,532
+            L222,539
+            L138,539
+            Z" />
+
+</vector>

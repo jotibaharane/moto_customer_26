@@ -142,10 +142,21 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
   /* -------------------------------------------------------------------------- */
 
   const { data: currentLocationData, refetch: refetchCurrentLocation } =
-    useGetLocationByLatLngQuery({
-      latitude: currentLocation?.lat ?? 0,
-      longitude: currentLocation?.lng ?? 0,
-    });
+    useGetLocationByLatLngQuery(
+      {
+        latitude: currentLocation?.lat ?? 0,
+        longitude: currentLocation?.lng ?? 0,
+      },
+      {
+        // This sheet is the only place currentLocationData is used (the
+        // "Current Location" search result). Without this, the query was
+        // subscribed for the whole time Dashboard is mounted — since
+        // PickupModal never unmounts, only hides — and re-fired a reverse
+        // geocode request on every live GPS update, regardless of whether
+        // the sheet was even open.
+        skip: !open || !currentLocation?.lat || !currentLocation?.lng,
+      },
+    );
 
   /* -------------------------------------------------------------------------- */
   /* SAVED LOCATIONS / ADDRESS TAGS                                             */
@@ -195,11 +206,23 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
       return;
     }
 
-    formik.setFieldValue('mapboxId', location.mapboxId);
-    formik.setFieldValue('name', location.name);
-    formik.setFieldValue('fullAddress', location.fullAddress);
-    formik.setFieldValue('latitude', location.latitude);
-    formik.setFieldValue('longitude', location.longitude);
+    // A full replace, not five separate setFieldValue patches — patching
+    // only name/fullAddress/lat/lng left tag/plotBuilding/streetArea/
+    // contactMobile from whatever was PREVIOUSLY selected still sitting in
+    // the form, so re-editing to a different address could submit with a
+    // new pin but an old label/unit-number still attached to it.
+    formik.setValues({
+      mapboxId: location.mapboxId ?? '',
+      name: location.name ?? '',
+      fullAddress: location.fullAddress ?? '',
+      latitude: location.latitude ?? 0,
+      longitude: location.longitude ?? 0,
+      plotBuilding: '',
+      streetArea: '',
+      contactMobile: '',
+      tag: '',
+    });
+    setIsCustomBookmark(false);
 
     setSearch('');
     setOpenGoogleAddress(false);
@@ -222,6 +245,7 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
         contactMobile: item?.ContactMobile ?? '',
         tag: item?.Tag ?? '',
       });
+      setIsCustomBookmark(false);
 
       setSearch('');
       setOpenGoogleAddress(false);
@@ -235,11 +259,20 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
 
   const handleSelectSearchLocation = useCallback(
     (item: any) => {
-      formik.setFieldValue('mapboxId', item?.mapboxId ?? '');
-      formik.setFieldValue('name', item?.name ?? '');
-      formik.setFieldValue('fullAddress', item?.fullAddress ?? '');
-      formik.setFieldValue('latitude', item?.latitude ?? 0);
-      formik.setFieldValue('longitude', item?.longitude ?? 0);
+      // Full replace — see handleSelectCurrentLocation's comment above for
+      // why this can't be five separate setFieldValue patches.
+      formik.setValues({
+        mapboxId: item?.mapboxId ?? '',
+        name: item?.name ?? '',
+        fullAddress: item?.fullAddress ?? '',
+        latitude: item?.latitude ?? 0,
+        longitude: item?.longitude ?? 0,
+        plotBuilding: '',
+        streetArea: '',
+        contactMobile: '',
+        tag: '',
+      });
+      setIsCustomBookmark(false);
 
       setSearch('');
       setOpenGoogleAddress(false);

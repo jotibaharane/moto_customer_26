@@ -9,6 +9,7 @@ import {
 } from '@store/slices/customerSocket/customerSocketSlice';
 import { resetMap, setDrivers, setMessage } from '@store/slices/map/mapSlice';
 import { Alert } from 'react-native';
+import CustomerSocket from './CustomerSocket';
 import { SOCKET_EVENTS } from './SocketEvents';
 import SocketService from './SocketService';
 
@@ -108,11 +109,22 @@ class CustomerSocketListener {
 
     socket.on(SOCKET_EVENTS.LOAD_ACCEPTED, load => {
       console.log('LOAD_ACCEPTED =', { load });
-      // CustomerSocket.trackLoad({
-      //   loadId: load?.loadId,
-      // });
       dispatch(resetBooking());
       dispatch(setActiveTrip(load));
+      // Join the load's tracking room the instant it's accepted — without
+      // this, the customer only starts receiving 'tracking-driver-location'
+      // broadcasts once something else (e.g. ReportingScreen's own mount
+      // effect, only reliable on a fresh app start) happens to call
+      // trackLoad() first. The backend room broadcast is fire-and-forget
+      // with no replay, so any pings before that join are lost — this is
+      // why the map/polyline previously stayed frozen until an app reload.
+      if (load?.loadId) {
+        CustomerSocket.trackLoad({ loadId: load.loadId })
+          .then(response => {
+            if (response?.current) dispatch(setDrivers(response.current));
+          })
+          .catch(() => {});
+      }
       navigate('BottomNavigation', {
         screen: 'New Load',
         params: { load },
@@ -149,9 +161,23 @@ class CustomerSocketListener {
 
     // new
 
+    // Statuses that mean "the trip is over, wipe the map" — checked
+    // wherever the backend reports a status, since the value it actually
+    // sends depends on which code path fired. In practice the backend
+    // deletes its tracking cache the moment the driver marks delivery
+    // complete (see trip.socket.ts's DELIVERY_COMPLETED handler calling
+    // removeTracking() before payment/OTP even runs), so a later
+    // "TRIP_COMPLETED" status set during payment verification is set on an
+    // already-deleted record and effectively never reaches the client via
+    // tracking-driver-location again. DELIVERY_COMPLETED — sent reliably
+    // via 'load-status-changed' the instant the driver marks it — is the
+    // one signal guaranteed to actually arrive.
+    const isTripOverStatus = (status?: string) =>
+      status === 'DELIVERY_COMPLETED' || status === 'TRIP_COMPLETED';
+
     socket.on('tracking-driver-location', data => {
       console.log('Tracking Location : ', { data });
-      if (data?.tripStatus === 'TRIP_COMPLETED') {
+      if (isTripOverStatus(data?.tripStatus)) {
         dispatch(clearActiveTrip());
         dispatch(resetMap());
       } else {
@@ -161,6 +187,22 @@ class CustomerSocketListener {
 
     socket.on('load-status-changed', data => {
       console.log('Load Status Changed : ', { data });
+      if (isTripOverStatus(data?.tripStatus)) {
+        dispatch(clearActiveTrip());
+        dispatch(resetMap());
+      }
+    });
+
+    // Some status transitions (e.g. the payment-driven "TRIP_COMPLETED",
+    // when it does succeed) are broadcast here instead of via
+    // load-status-changed — see status.worker.ts's TRACKING_STATUS
+    // subscriber, which emits this to the load/customer/driver rooms.
+    socket.on('trip-status', data => {
+      console.log('Trip Status : ', { data });
+      if (isTripOverStatus(data?.status)) {
+        dispatch(clearActiveTrip());
+        dispatch(resetMap());
+      }
     });
     socket.on('driver-near-pickup', data => {
       console.log('Driver Near Pickup : ', { data });

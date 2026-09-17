@@ -31,6 +31,7 @@ import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.ImageHolder
 import com.mapbox.maps.Style
 import com.mapbox.maps.extension.style.layers.addLayer
+import com.mapbox.maps.extension.style.layers.addLayerBelow
 import com.mapbox.maps.extension.style.layers.generated.LineLayer
 import com.mapbox.maps.extension.style.layers.getLayer
 import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor
@@ -157,7 +158,14 @@ class CustomerMapView(private val reactContext: ThemedReactContext) : FrameLayou
         // convention (explicit delivery allowlist, default to pickup).
         private val DELIVERY_PHASE_STATUSES = setOf(
             "LOADING_COMPLETED",
-            "TRIP_STARTED",
+            // The literal string actually emitted at runtime (see
+            // payment.service.ts's updateTrackingStatus(loadId, "TRIP START")
+            // call) — NOT the "TRIP_STARTED" constant name from
+            // tracking-status.ts's TRACKING_STATUS enum, which that code path
+            // doesn't actually use. Matches the driver app's own
+            // TripMapView.DELIVERY_PHASE_STATUSES literally, which is the
+            // proven-working reference for this exact string.
+            "TRIP START",
             "DRIVER_NEAR_DELIVERY",
             "DRIVER_ARRIVED_DELIVERY",
             "DELIVERY_COMPLETED",
@@ -171,6 +179,17 @@ class CustomerMapView(private val reactContext: ThemedReactContext) : FrameLayou
         private const val ROUTE_LINE_SOURCE_ID = "customerRouteSource"
         private const val ROUTE_LINE_CASING_ID = "customerRouteLineCasing"
         private const val ROUTE_LINE_ID = "customerRouteLine"
+
+        // TRACKING mode's always-visible pickup->delivery reference line —
+        // separate from the Navigation SDK's own live "vehicle position ->
+        // current leg" route line (which drives the puck/progress
+        // card/camera-follow and is what actually changes as the trip
+        // progresses through pickup/delivery legs). This one only depends
+        // on the load's own two addresses, never on driver position or
+        // trip status, so it can't ever go missing because of a leg
+        // transition or a momentarily-stale driver position.
+        private const val JOURNEY_LINE_SOURCE_ID = "customerJourneySource"
+        private const val JOURNEY_LINE_ID = "customerJourneyLine"
 
         private const val EMIT_DISTANCE_THRESHOLD_METERS = 15.0
         private const val EMIT_DURATION_THRESHOLD_SECONDS = 5.0
@@ -341,8 +360,79 @@ class CustomerMapView(private val reactContext: ThemedReactContext) : FrameLayou
 
         when (mode) {
             Mode.SELECT -> updateSelectCamera()
-            Mode.TRACKING -> handleTrackingVehicleUpdate()
+            Mode.TRACKING -> {
+                if (isSetCoordinate(vehicleLat, vehicleLng)) {
+                    handleTrackingVehicleUpdate()
+
+                    // "Arrived" is the moment distance/duration-remaining
+                    // stop meaning anything useful — hide the card rather
+                    // than show a stale/zero reading. It comes back on its
+                    // own once tripStatus moves past either arrived status
+                    // (e.g. loading finishes and the delivery leg starts).
+                    binding.tripProgressCard.visibility =
+                        if (tripStatus == "DRIVER_ARRIVED_PICKUP" || tripStatus == "DRIVER_ARRIVED_DELIVERY") {
+                            View.GONE
+                        } else {
+                            View.VISIBLE
+                        }
+
+                    // Only shown once the delivery phase actually starts
+                    // (LOADING_COMPLETED, "TRIP START", and everything
+                    // after — i.e. !isPickupLeg()): while the driver is
+                    // still on their way TO pickup, a "pickup to
+                    // destination" line has nothing useful to say yet.
+                    if (isSetCoordinate(pickupLat, pickupLng) &&
+                        isSetCoordinate(deliveryLat, deliveryLng) &&
+                        !isPickupLeg()
+                    ) {
+                        maybeRequestJourneyRoute()
+                    } else if (journeyRouteKey.isNotEmpty()) {
+                        clearJourneyLine()
+                        journeyRouteKey = ""
+                        lastJourneyRouteCoordinates = emptyList()
+                    }
+                } else if (lastVehiclePoint != null) {
+                    // The trip completed/was cancelled: JS clears `driver`
+                    // back to null on TRIP_COMPLETED (see
+                    // CustomerSocketListener.ts's resetMap() call). That
+                    // clears vehicleLatitude/Longitude reliably (JS always
+                    // computes a concrete 0 fallback, so the prop diff and
+                    // this setter always fire) — but NOT necessarily
+                    // pickupLatitude/deliveryLatitude (Reporting/
+                    // MapComponent.tsx falls those back to the load's own
+                    // static address) or tripStatus (an `undefined`-valued
+                    // prop can get dropped from the diff entirely rather
+                    // than resetting the setter to null, leaving tripStatus
+                    // stuck on its last real value here). So the vehicle
+                    // coordinates disappearing is the only signal reliable
+                    // enough to hang BOTH lines' cleanup on — gating the
+                    // journey line's own clear on pickup/delivery/tripStatus
+                    // going unset, as before, left it on screen forever
+                    // once the trip ended, since those often don't.
+                    clearTrackingRoute()
+                    if (journeyRouteKey.isNotEmpty()) {
+                        clearJourneyLine()
+                        journeyRouteKey = ""
+                        lastJourneyRouteCoordinates = emptyList()
+                    }
+                }
+            }
         }
+    }
+
+    /** Clears the live Navigation SDK route and its progress card — called
+     * when the driver's reported position disappears (trip completed or
+     * cancelled), so nothing is left pointing at a trip that's over. */
+    private fun clearTrackingRoute() {
+        mapboxNavigation?.setNavigationRoutes(emptyList())
+        destinationPoint = null
+        routeRequested = false
+        routeFailureToastShown = false
+        hasActiveRoute = false
+        lastVehiclePoint = null
+        lastEmittedDistanceMeters = null
+        lastEmittedDurationSeconds = null
+        binding.tripProgressCard.visibility = View.GONE
     }
 
     private fun applyModeVisibility() {
@@ -681,6 +771,87 @@ class CustomerMapView(private val reactContext: ThemedReactContext) : FrameLayou
         existingSource?.geometry(LineString.fromLngLats(emptyList()))
     }
 
+    // ============================================================
+    // TRACKING MODE — always-visible pickup->delivery journey reference
+    // line. Deliberately independent of driver position/trip status/leg,
+    // using only the load's own two addresses — see the field's own doc
+    // comment above (JOURNEY_LINE_SOURCE_ID) for why this exists
+    // separately from the Navigation SDK's live route line.
+    // ============================================================
+
+    private var journeyRouteKey: String = ""
+    private var lastJourneyRouteCoordinates: List<Point> = emptyList()
+
+    private fun maybeRequestJourneyRoute() {
+        if (mode != Mode.TRACKING || mapDestroyed || !styleLoaded) return
+        if (!isSetCoordinate(pickupLat, pickupLng) || !isSetCoordinate(deliveryLat, deliveryLng)) return
+
+        val pickup = Point.fromLngLat(pickupLng, pickupLat)
+        val delivery = Point.fromLngLat(deliveryLng, deliveryLat)
+        val key = "${pickup.latitude()},${pickup.longitude()}:${delivery.latitude()},${delivery.longitude()}"
+        if (key == journeyRouteKey) return
+        journeyRouteKey = key
+
+        requestDirections(pickup, delivery) { result ->
+            // Same staleness guard as requestPreviewRoute() — a slow,
+            // now-superseded response must never overwrite what the
+            // CURRENT key already rendered.
+            if (mapDestroyed || mode != Mode.TRACKING || key != journeyRouteKey) return@requestDirections
+            if (result == null) return@requestDirections
+            lastJourneyRouteCoordinates = result.coordinates
+            renderJourneyLine(result.coordinates)
+        }
+    }
+
+    private fun renderJourneyLine(coordinates: List<Point>) {
+        if (mapDestroyed || !styleLoaded || coordinates.size < 2) return
+        val style = binding.mapView.mapboxMap.style ?: return
+
+        val lineString = LineString.fromLngLats(coordinates)
+        val existingSource = style.getSource(JOURNEY_LINE_SOURCE_ID) as? GeoJsonSource
+
+        if (existingSource != null) {
+            existingSource.geometry(lineString)
+            return
+        }
+
+        style.addSource(GeoJsonSource.Builder(JOURNEY_LINE_SOURCE_ID).geometry(lineString).build())
+
+        if (style.getLayer(JOURNEY_LINE_ID) == null) {
+            val journeyLayer = LineLayer(JOURNEY_LINE_ID, JOURNEY_LINE_SOURCE_ID).apply {
+                // Thin, dashed and muted — deliberately secondary to the
+                // Navigation SDK's own bold, colored live route, which
+                // stays the primary "where the driver actually is heading
+                // right now" indicator. This is just the full-journey
+                // backdrop underneath it.
+                lineColor("#9AA5B1")
+                lineWidth(4.0)
+                lineOpacity(0.8)
+                lineDasharray(listOf(1.0, 1.5))
+                lineCap(LineCap.ROUND)
+                lineJoin(LineJoin.ROUND)
+            }
+            // A plain addLayer() stacks new layers on TOP by default,
+            // which put this dashed line above the truck puck — same
+            // "road-label-navigation" anchor the Nav SDK's own live route
+            // uses (via routeLineBelowLayerId), which the puck already
+            // renders above without issue, so anchoring here too keeps
+            // the truck on top instead of getting drawn under the dashes.
+            runCatching {
+                style.addLayerBelow(journeyLayer, "road-label-navigation")
+            }.onFailure {
+                style.addLayer(journeyLayer)
+            }
+        }
+    }
+
+    private fun clearJourneyLine() {
+        if (mapDestroyed || !styleLoaded) return
+        val style = binding.mapView.mapboxMap.style ?: return
+        val existingSource = style.getSource(JOURNEY_LINE_SOURCE_ID) as? GeoJsonSource
+        existingSource?.geometry(LineString.fromLngLats(emptyList()))
+    }
+
     private data class DirectionsResult(val coordinates: List<Point>)
 
     /** SELECT mode's booking-screen preview route only — a plain Directions
@@ -825,6 +996,13 @@ class CustomerMapView(private val reactContext: ThemedReactContext) : FrameLayou
     private fun handleTrackingVehicleUpdate() {
         if (mode != Mode.TRACKING || mapDestroyed || !styleLoaded) return
         if (!isSetCoordinate(vehicleLat, vehicleLng)) return
+
+        // A fresh trip starting on the same screen instance (e.g. the
+        // customer immediately books another load) after clearTrackingRoute()
+        // hid the card for the previous one — bring it back.
+        if (lastVehiclePoint == null) {
+            binding.tripProgressCard.visibility = View.VISIBLE
+        }
 
         val point = Point.fromLngLat(vehicleLng, vehicleLat)
         lastVehiclePoint = point
@@ -1211,6 +1389,9 @@ class CustomerMapView(private val reactContext: ThemedReactContext) : FrameLayou
                         setupTrackingNavigationComponents()
                     }
                     runCatching { routeLineView.initializeLayers(style) }
+                    if (lastJourneyRouteCoordinates.isNotEmpty()) {
+                        renderJourneyLine(lastJourneyRouteCoordinates)
+                    }
                     attachNavigation()
                 }
             }

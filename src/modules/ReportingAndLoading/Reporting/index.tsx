@@ -5,7 +5,7 @@ import SocketService from '@socket/SocketService';
 import { RootState } from '@store/rootReducer';
 import { setDrivers } from '@store/slices/map/mapSlice';
 import { s, vs } from '@theme/New';
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
@@ -32,6 +32,36 @@ const ReportingScreen = () => {
    */
   const activeLoadIdRef = useRef(activeLoadId);
   activeLoadIdRef.current = activeLoadId;
+
+  /**
+   * Once a trip ends, CustomerSocketListener resets `state.map` — but the
+   * REST /load/loads list has its own independent cache and only refetches
+   * on screen focus (see the useFocusEffect below), so `currentLoad` can
+   * keep returning that same just-completed load (and its static pickup/
+   * drop address) as data[0] for a while after. Without this, the pickup/
+   * drop pins for a finished trip kept showing on the map — the live
+   * route/vehicle correctly disappeared (driven by `driver`, which IS
+   * cleared), but the markers fall back to `currentLoad`'s coordinates,
+   * which weren't. Tracks the specific loadId that just ended so its pins
+   * stay suppressed until a genuinely different load takes over — either a
+   * fresh `driver.loadId` (live) or, failing that, a refetched, different
+   * `currentLoadId` (REST catches up).
+   */
+  const [dismissedLoadId, setDismissedLoadId] = useState<string | undefined>(
+    undefined,
+  );
+  const previousDriverLoadId = useRef<string | undefined>(driver?.loadId);
+
+  useEffect(() => {
+    if (previousDriverLoadId.current && !driver?.loadId) {
+      setDismissedLoadId(previousDriverLoadId.current);
+    }
+    previousDriverLoadId.current = driver?.loadId;
+  }, [driver?.loadId]);
+
+  const isDismissedLoad = driver?.loadId
+    ? driver.loadId === dismissedLoadId
+    : !!currentLoadId && currentLoadId === dismissedLoadId;
 
   useFocusEffect(
     useCallback(() => {
@@ -98,14 +128,22 @@ const ReportingScreen = () => {
         }}
       >
         <MapComponent
-          pickup={{
-            latitude: currentLoad?.PickupLatitude,
-            longitude: currentLoad?.PickupLongitude,
-          }}
-          delivery={{
-            latitude: currentLoad?.DeliveryLatitude,
-            longitude: currentLoad?.DeliveryLongitude,
-          }}
+          pickup={
+            isDismissedLoad
+              ? null
+              : {
+                  latitude: currentLoad?.PickupLatitude,
+                  longitude: currentLoad?.PickupLongitude,
+                }
+          }
+          delivery={
+            isDismissedLoad
+              ? null
+              : {
+                  latitude: currentLoad?.DeliveryLatitude,
+                  longitude: currentLoad?.DeliveryLongitude,
+                }
+          }
         />
       </View>
 

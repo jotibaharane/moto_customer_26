@@ -167,6 +167,69 @@ const ReportingScreen = () => {
           </Text>
         </TouchableOpacity>
       )} */}
+      {/* <ShipmentStatusModal
+        driverName="john doe"
+        onClose={() => {}}
+        title="Shipment Status"
+        visible
+        delivery="road no 1, sector 2, gurgaon"
+        pickup="road no 2, sector 3, gurgaon"
+        message="as per the latest update, your shipment is on the way and will reach the destination within the estimated time frame. Please ensure that someone is available to receive the shipment at the delivery address."
+        loadId="ABC12345566"
+        driverId="abc123"
+        showRouteDetails={false}
+        showVehicleDetails={false}
+        buttonText="OK"
+        remark="as per the latest update, your shipment is on the way and will reach the destination within the estimated time frame. Please ensure that someone is available to receive the shipment at the delivery address."
+        onButtonPress={() => {}}
+      /> */}
+      {/* <LoadStatusModal
+        visible={false}
+        status={'REPORTED'}
+        // onStatusChange={setSelectedStatus}
+        onStatusChange={(newStatus: string) => {
+          console.log('Selected status:', newStatus);
+        }}
+        onClose={() => {
+          console.log('Modal closed');
+        }}
+        loadPostId="123456"
+        reportedTime="2:00 pm"
+        loadingTime="00:20"
+        packagesLoaded={1000}
+        loadingDuration="30 min : 00:20"
+        receipt={{
+          receiptNo: 'REC-10001',
+          loadPostId: '123456',
+          vehicleNo: 'MH 12 AB 1234',
+          customerName: 'ABC Transport',
+          driverName: 'Rahul Kumar',
+          freightAmount: 25000,
+          advanceAmount: 10000,
+          balanceAmount: 15000,
+          paymentMode: 'UPI',
+          paymentStatus: 'PAID',
+          paymentDate: '11 Sep 2026',
+        }}
+      /> */}
+
+      {/* <CancelBookingModal
+        visible={true}
+        delivery="road no 1, sector 2, gurgaon"
+        pickup="road no 2, sector 3, gurgaon"
+        loadId={'L123'}
+        driverId={'ABC123'}
+        title="abc"
+        showRouteDetails={true}
+        showVehicleDetails={true}
+        driverName="usman"
+        vehicleNo="MH46F5576"
+        message="cancellation charges applicable"
+        buttonText="Cancel Load"
+        distance={'1234'}
+        onClose={() => {}}
+        remark="aaaaa"
+      /> */}
     </SafeAreaView>
   );
 };

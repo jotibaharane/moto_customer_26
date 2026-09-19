@@ -3,6 +3,7 @@ import HeaderTitle from '@components/NavigationComponents/HeaderTitle';
 import ReviewBookingScreen from '@modules/BookingConfirmation/ReviewBookingScreen';
 import SelectVehicleScreen from '@modules/BookingConfirmation/SelectVehicleScreen';
 import VehicleDhalaSizeScreen from '@modules/BookingConfirmation/VehicleDhalaSizeScreen';
+import OtherDueDetailsScreen from '@modules/CanceledBookings/screens/OtherDueDetailsScreen';
 import LiveTrackingScreen from '@modules/LiveTracking/LiveTrackingScreen';
 import MpinLogin from '@modules/Mpin/MpinLogin';
 import SetMPINScreen from '@modules/Mpin/SetMPIN';
@@ -75,7 +76,13 @@ const UserNavigation = () => {
             headerTitle: () => <HeaderTitle title="Vehicle Dhala Size" />,
           }}
         />
-
+        <Stack.Screen
+          name="CalledRideScreen"
+          component={OtherDueDetailsScreen}
+          options={{
+            headerTitle: () => <HeaderTitle title="Other Due Details" />,
+          }}
+        />
         <Stack.Screen
           name="SelectVehicleScreen"
           component={SelectVehicleScreen}

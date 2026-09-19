@@ -1,3 +1,4 @@
+import CustomButton from '@components/Button';
 import { FONT_FAMILIES, fp } from '@theme/index';
 import React, { memo, useEffect } from 'react';
 import { Modal, StyleSheet, Text, View } from 'react-native';
@@ -22,7 +23,9 @@ const OverlayLoader = ({
       if (timer) clearInterval(timer);
     };
   }, [visible, timeLeft]);
-
+  const Cancelload = () => {
+    console.log('load is cancelled');
+  };
   return (
     <Modal
       transparent
@@ -38,6 +41,7 @@ const OverlayLoader = ({
           <Text style={styles.text}>Waiting for Driver’s Confirmation</Text>
         </View>
       </View>
+      <CustomButton title="Cancel Load Post" onPress={Cancelload} />
     </Modal>
   );
 };

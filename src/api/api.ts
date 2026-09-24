@@ -1,5 +1,7 @@
 import { baseApi } from './baseApi';
 import {
+  CancelLoadResponse,
+  CancellationChargeResponse,
   OnboardingRequest,
   OnboardingResponse,
   SendOtpRequest,
@@ -92,6 +94,27 @@ export const api = baseApi.injectEndpoints({
         params: body,
       }),
     }),
+
+    // Informational only — never treated as authoritative. The real
+    // charge is recalculated server-side inside cancelLoad (or the
+    // cancel-load socket event), see CancellationChargeResponse.
+    getCancellationCharge: builder.query<
+      CancellationChargeResponse,
+      { loadId: string }
+    >({
+      query: ({ loadId }) => `/loads/${loadId}/cancellation-charge`,
+    }),
+
+    cancelLoad: builder.mutation<
+      CancelLoadResponse,
+      { loadId: string; reason?: string; cancellationReasonId?: string }
+    >({
+      query: ({ loadId, ...body }) => ({
+        url: `/loads/${loadId}/cancel`,
+        method: 'POST',
+        body,
+      }),
+    }),
   }),
   overrideExisting: true,
 });
@@ -109,4 +132,6 @@ export const {
   useGetAddressLabelsQuery,
   useGetLoadsQuery,
   useGetLocationByLatLngQuery,
+  useLazyGetCancellationChargeQuery,
+  useCancelLoadMutation,
 } = api;

@@ -1,17 +1,26 @@
-import { useGetLoadsQuery } from '@api/api';
+import { useGetLoadsQuery, useLazyGetCancellationChargeQuery } from '@api/api';
 import { useFocusEffect } from '@react-navigation/native';
+import CancelBookingModal from '@components/Modal/CancelBookingModal';
 import CustomerSocket from '@socket/CustomerSocket';
 import SocketService from '@socket/SocketService';
 import { RootState } from '@store/rootReducer';
-import { setDrivers } from '@store/slices/map/mapSlice';
+import { resetMap, setDrivers } from '@store/slices/map/mapSlice';
 import { s, vs } from '@theme/New';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View } from 'react-native';
+import { Alert, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import Header from './components/Header';
 import MapComponent from './components/MapComponent';
 import { styles } from './reporting.style';
+
+const TERMINAL_LOAD_STATUSES = [
+  'CANCELLED',
+  'DELIVERED',
+  'COMPLETED',
+  'REJECTED',
+  'EXPIRED',
+];
 
 const ReportingScreen = () => {
   const dispatch = useDispatch();
@@ -62,6 +71,63 @@ const ReportingScreen = () => {
   const isDismissedLoad = driver?.loadId
     ? driver.loadId === dismissedLoadId
     : !!currentLoadId && currentLoadId === dismissedLoadId;
+
+  const isCancellable =
+    !!activeLoadId &&
+    !isDismissedLoad &&
+    !TERMINAL_LOAD_STATUSES.includes(currentLoad?.Status);
+
+  const [cancelModalVisible, setCancelModalVisible] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
+  const [fetchCancellationCharge, { data: cancellationPreview }] =
+    useLazyGetCancellationChargeQuery();
+
+  const openCancelModal = useCallback(() => {
+    if (!activeLoadId) return;
+    fetchCancellationCharge({ loadId: activeLoadId });
+    setCancelModalVisible(true);
+  }, [activeLoadId, fetchCancellationCharge]);
+
+  const handleConfirmCancel = useCallback(async () => {
+    if (!activeLoadId || cancelling) return;
+    setCancelling(true);
+    try {
+      // Same CancelLoadByCustomer stored procedure the REST endpoint
+      // calls — see services/socket-service/src/trip/cancellation.socket.ts.
+      // The preview above is never trusted; the server recalculates the
+      // stage/count/charge from scratch here.
+      const response = await CustomerSocket.cancelLoad({
+        loadId: activeLoadId,
+      });
+
+      if (response?.status === '00') {
+        dispatch(resetMap());
+        refetch();
+        setCancelModalVisible(false);
+
+        const charge = response.data?.finalChargeAmount;
+        Alert.alert(
+          'Load Cancelled',
+          response.data?.isChargeable
+            ? `Your load has been cancelled. A cancellation charge of ₹${charge} applies.`
+            : 'Your load has been cancelled.',
+        );
+      } else {
+        Alert.alert(
+          'Cancellation Failed',
+          response?.message || 'Could not cancel this load. Please try again.',
+        );
+      }
+    } catch {
+      Alert.alert('Cancellation Failed', 'Could not cancel this load. Please try again.');
+    } finally {
+      setCancelling(false);
+    }
+  }, [activeLoadId, cancelling, dispatch, refetch]);
+
+  const cancellationWarningText = cancellationPreview?.data?.isChargeable
+    ? `A cancellation charge of ₹${cancellationPreview.data.chargeAmount} may apply.`
+    : 'This load is currently free to cancel.';
 
   useFocusEffect(
     useCallback(() => {
@@ -213,23 +279,33 @@ const ReportingScreen = () => {
         }}
       /> */}
 
-      {/* <CancelBookingModal
-        visible={true}
-        delivery="road no 1, sector 2, gurgaon"
-        pickup="road no 2, sector 3, gurgaon"
-        loadId={'L123'}
-        driverId={'ABC123'}
-        title="abc"
-        showRouteDetails={true}
-        showVehicleDetails={true}
-        driverName="usman"
-        vehicleNo="MH46F5576"
-        message="cancellation charges applicable"
-        buttonText="Cancel Load"
-        distance={'1234'}
-        onClose={() => {}}
-        remark="aaaaa"
-      /> */}
+      {isCancellable && (
+        <TouchableOpacity
+          style={styles.cancelLoadButton}
+          activeOpacity={0.8}
+          onPress={openCancelModal}
+        >
+          <Text style={styles.cancelLoadButtonText}>Cancel Load</Text>
+        </TouchableOpacity>
+      )}
+
+      <CancelBookingModal
+        visible={cancelModalVisible}
+        onClose={() => !cancelling && setCancelModalVisible(false)}
+        loadId={activeLoadId}
+        title="Cancel Load"
+        pickup={currentLoad?.PickupAddress}
+        delivery={currentLoad?.DeliveryAddress}
+        weight={currentLoad?.Weight}
+        freightAmount={currentLoad?.FreightAmount}
+        driverName={currentLoad?.DriverName}
+        driverId={currentLoad?.DriverId}
+        showRouteDetails
+        showVehicleDetails={!!currentLoad?.DriverName}
+        warningText={cancellationWarningText}
+        confirming={cancelling}
+        onConfirmCancel={handleConfirmCancel}
+      />
     </SafeAreaView>
   );
 };

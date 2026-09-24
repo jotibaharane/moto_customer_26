@@ -1,4 +1,5 @@
 import { goBack, navigate } from '@navigation/NavigationService';
+import { store } from '@store/index';
 import { resetBooking } from '@store/slices/Booking/bookingSlice';
 import {
   clearActiveTrip,
@@ -111,6 +112,32 @@ class CustomerSocketListener {
       console.log('LOAD_ACCEPTED =', { load });
       dispatch(resetBooking());
       dispatch(setActiveTrip(load));
+
+      // state.map.driver is a single global "currently tracked load" slot,
+      // not scoped per-loadId. If the customer already has a DIFFERENT
+      // load actively in progress (its tracking hasn't been cleared by a
+      // completion/cancellation yet — see resetMap() calls above/below),
+      // overwriting it here with the newly-accepted load's data would rip
+      // the map/markers out from under whatever screen is currently
+      // showing that other, still-live trip (ReportingScreen's
+      // MapComponent, LiveTrackingScreen) — pins and the vehicle marker
+      // would jump between two unrelated loads' coordinates, which is
+      // exactly the "flicker" this was causing. Only auto-switch the
+      // live tracking view when there's nothing else already in progress;
+      // otherwise just notify — the customer can view the new load from
+      // their loads list once they're done with the current one.
+      const existingLoadId = store.getState().map.driver?.loadId;
+      const hasDifferentActiveLoad =
+        !!existingLoadId && existingLoadId !== load?.loadId;
+
+      if (hasDifferentActiveLoad) {
+        Alert.alert(
+          'Load Accepted',
+          'A driver has accepted your other load. You can view it from your loads list.',
+        );
+        return;
+      }
+
       // Join the load's tracking room the instant it's accepted — without
       // this, the customer only starts receiving 'tracking-driver-location'
       // broadcasts once something else (e.g. ReportingScreen's own mount
@@ -157,6 +184,25 @@ class CustomerSocketListener {
      */
     socket.on(SOCKET_EVENTS.TRIP_CANCELLED, () => {
       dispatch(clearActiveTrip());
+    });
+
+    /**
+     * Load Cancelled — fired by the backend when the DRIVER (or a runner,
+     * treated as a driver) cancels a load this customer owns (see
+     * services/socket-service/src/trip/cancellation.socket.ts). The
+     * customer's own cancel-load emit gets its result via the emitWithAck
+     * response instead, not this listener.
+     */
+    socket.on(SOCKET_EVENTS.LOAD_CANCELLED, data => {
+      console.log('LOAD_CANCELLED =', { data });
+      dispatch(clearActiveTrip());
+      dispatch(resetMap());
+      Alert.alert(
+        'Load Cancelled',
+        data?.cancelledBy === 'CUSTOMER'
+          ? 'You have cancelled this load.'
+          : 'The driver has cancelled this load.',
+      );
     });
 
     // new

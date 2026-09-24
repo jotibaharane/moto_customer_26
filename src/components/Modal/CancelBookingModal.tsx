@@ -1,5 +1,5 @@
 import { IconMapPin, IconX } from '@tabler/icons-react-native';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   Modal,
   Pressable,
@@ -32,8 +32,15 @@ interface CancelBookingModalProps {
   showRouteDetails?: boolean;
   showVehicleDetails?: boolean;
 
-  buttonText?: string;
   remark?: string;
+
+  /** Shown in the confirmation step; pass the real, server-calculated
+   * charge preview instead of relying on the old hardcoded placeholder. */
+  warningText?: string;
+
+  /** Disables the Confirm button and swaps its label while a cancel
+   * request is in flight, to prevent duplicate submits. */
+  confirming?: boolean;
 
   /**
    * Called when user clicks Confirm
@@ -62,53 +69,34 @@ const CancelBookingModal = ({
   showRouteDetails = false,
   showVehicleDetails = false,
 
-  buttonText = 'Cancel Booking',
   remark,
+  warningText = 'Cancellation charges may be applicable.',
+  confirming = false,
 
   onConfirmCancel,
 }: CancelBookingModalProps) => {
   /**
-   * Controls the confirmation section
-   *
-   * false = normal booking details
-   * true  = warning + Confirm/Skip
+   * Opening this modal at all already means the parent screen's own
+   * Cancel button was tapped — that IS the intent-to-cancel step, so
+   * this goes straight to the warning + Confirm/Skip instead of making
+   * the user tap a second, redundant "Cancel Booking" button first.
    */
-  const [isCancelConfirmation, setIsCancelConfirmation] = useState(false);
 
   /**
-   * Reset confirmation state when modal is closed.
-   *
-   * This ensures that when the modal is opened again,
-   * it starts from the normal booking details screen.
-   */
-  useEffect(() => {
-    if (!visible) {
-      setIsCancelConfirmation(false);
-    }
-  }, [visible]);
-
-  /**
-   * User clicks Cancel Booking
-   */
-  const handleCancelBookingPress = () => {
-    setIsCancelConfirmation(true);
-  };
-
-  /**
-   * User clicks Confirm
+   * User clicks Confirm — the parent owns closing the modal (via
+   * `visible`) once its async cancel call actually resolves, so a
+   * duplicate tap can't fire two cancel requests while one is in flight.
    */
   const handleConfirmCancel = () => {
     onConfirmCancel?.();
-
-    // Close the same modal
-    onClose();
   };
 
   /**
-   * User clicks Skip
+   * User clicks Skip — there's no intermediate view to fall back to
+   * anymore, so this just dismisses without cancelling.
    */
   const handleSkip = () => {
-    setIsCancelConfirmation(false);
+    onClose();
   };
 
   return (
@@ -244,58 +232,42 @@ const CancelBookingModal = ({
           )}
 
           {/* ========================================= */}
-          {/* CANCEL BOOKING BUTTON */}
-          {/* ========================================= */}
-
-          {!isCancelConfirmation && (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={styles.cancelButton}
-              onPress={handleCancelBookingPress}
-            >
-              <IconX size={16} color="#FF0000" />
-
-              <Text style={styles.cancelButtonText}>{buttonText}</Text>
-            </TouchableOpacity>
-          )}
-
-          {/* ========================================= */}
           {/* CONFIRMATION SECTION */}
           {/* ========================================= */}
 
-          {isCancelConfirmation && (
-            <View style={styles.confirmationContainer}>
-              {/* ================= WARNING ================= */}
+          <View style={styles.confirmationContainer}>
+            {/* ================= WARNING ================= */}
 
-              <Text style={styles.warningText}>
-                Cancelation Charges rs 200 Will Be Apllicable
-              </Text>
+            <Text style={styles.warningText}>{warningText}</Text>
 
-              {/* ================= BUTTONS ================= */}
+            {/* ================= BUTTONS ================= */}
 
-              <View style={styles.confirmationButtons}>
-                {/* ================= CONFIRM ================= */}
+            <View style={styles.confirmationButtons}>
+              {/* ================= CONFIRM ================= */}
 
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  style={styles.confirmButton}
-                  onPress={handleConfirmCancel}
-                >
-                  <Text style={styles.confirmButtonText}>Confirm</Text>
-                </TouchableOpacity>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={[styles.confirmButton, confirming && { opacity: 0.5 }]}
+                onPress={handleConfirmCancel}
+                disabled={confirming}
+              >
+                <Text style={styles.confirmButtonText}>
+                  {confirming ? 'Cancelling…' : 'Confirm'}
+                </Text>
+              </TouchableOpacity>
 
-                {/* ================= SKIP ================= */}
+              {/* ================= SKIP ================= */}
 
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  style={styles.skipButton}
-                  onPress={handleSkip}
-                >
-                  <Text style={styles.skipButtonText}>Skip</Text>
-                </TouchableOpacity>
-              </View>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={styles.skipButton}
+                onPress={handleSkip}
+                disabled={confirming}
+              >
+                <Text style={styles.skipButtonText}>Skip</Text>
+              </TouchableOpacity>
             </View>
-          )}
+          </View>
         </View>
       </View>
     </Modal>
@@ -474,14 +446,10 @@ const styles = StyleSheet.create({
 
   summaryRow: {
     flexDirection: 'row',
-
     justifyContent: 'space-between',
-
     marginTop: 18,
-
     paddingHorizontal: 5,
   },
-
   summaryItem: {
     minWidth: 100,
   },
@@ -516,34 +484,6 @@ const styles = StyleSheet.create({
 
   bold: {
     fontWeight: '700',
-  },
-
-  /* ========================================= */
-  /* CANCEL BUTTON */
-  /* ========================================= */
-
-  cancelButton: {
-    alignSelf: 'center',
-
-    flexDirection: 'row',
-
-    alignItems: 'center',
-    justifyContent: 'center',
-
-    marginTop: 8,
-
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-
-  cancelButtonText: {
-    color: '#FF0000',
-
-    fontSize: 13,
-
-    fontWeight: '600',
-
-    marginLeft: 5,
   },
 
   /* ========================================= */
@@ -632,7 +572,6 @@ const styles = StyleSheet.create({
 
   skipButton: {
     minWidth: 90,
-
     height: 38,
 
     borderWidth: 1,

@@ -102,6 +102,27 @@ class CustomerSocket {
   tripCompleted(callback: any) {
     SocketService.on('trip-completed', callback);
   }
+
+  /**
+   * Cancels a load the customer owns. The server recalculates stage,
+   * cancellation count and charge itself from CancelLoadByCustomer — this
+   * only sends the loadId/reason, never a trusted count/stage/amount.
+   */
+  cancelLoad(payload: {
+    loadId: string;
+    reason?: string;
+    cancellationReasonId?: string;
+  }): Promise<any> {
+    return SocketService.emitWithAck(SOCKET_EVENTS.CANCEL_LOAD, payload);
+  }
+
+  onLoadCancelled(callback: (data: any) => void) {
+    SocketService.on(SOCKET_EVENTS.LOAD_CANCELLED, callback);
+  }
+
+  removeLoadCancelled(callback: any) {
+    SocketService.off(SOCKET_EVENTS.LOAD_CANCELLED, callback);
+  }
 }
 
 export default new CustomerSocket();

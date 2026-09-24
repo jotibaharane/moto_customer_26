@@ -267,3 +267,46 @@ export interface LoadLocation {
 }
 
 export type LocationTag = 'HOME' | 'OFFICE' | 'WAREHOUSE' | 'OTHER';
+
+// Mirrors services/customer-service/src/services/cancellation.service.ts —
+// the estimate here is informational only, never trusted as the final
+// charge (the backend recalculates independently inside CancelLoadByCustomer).
+export interface CancellationChargeData {
+  loadId: string;
+  cancellationStage: string;
+  cancellationNumber: number;
+  freeCancellationLimit: number;
+  isChargeable: boolean;
+  chargeType: string | null;
+  chargeAmount: number | null;
+  currency: string;
+  freightAmount?: number;
+}
+
+export interface CancellationChargeResponse {
+  status: string;
+  message: string;
+  data: CancellationChargeData | null;
+}
+
+export interface CancelLoadData {
+  loadId: string;
+  status: string;
+  previousStatus: string;
+  cancellationStage: string;
+  cancellationNumber: number;
+  freeCancellationLimit: number;
+  isChargeable: boolean;
+  chargeType: string | null;
+  chargeAmount: number | null;
+  finalChargeAmount: number;
+  currency: string;
+  paymentStatus: string | null;
+  cancellationId: string;
+}
+
+export interface CancelLoadResponse {
+  status: string;
+  message: string;
+  data: CancelLoadData | null;
+}

@@ -41,4 +41,10 @@ export const SOCKET_EVENTS = {
   TRIP_LOCATION: 'trip-location',
   TRIP_COMPLETED: 'trip-completed',
   TRIP_CANCELLED: 'trip-cancelled',
+
+  /**
+   * Cancellation (backend: services/socket-service/src/events/socket.events.ts)
+   */
+  CANCEL_LOAD: 'cancel-load',
+  LOAD_CANCELLED: 'load-cancelled',
 } as const;

@@ -109,7 +109,12 @@ const ReviewBookingScreen = () => {
       } else {
         Alert.alert(
           'Cancellation Failed',
-          response?.message || 'Could not cancel this request. Please try again.',
+          [
+            response?.message || 'Could not cancel this request. Please try again.',
+            response?.detail,
+          ]
+            .filter(Boolean)
+            .join('\n'),
         );
       }
     } catch {

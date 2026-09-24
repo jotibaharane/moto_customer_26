@@ -80,7 +80,7 @@ const ReportingScreen = () => {
 
   const [cancelModalVisible, setCancelModalVisible] = useState(false);
   const [cancelling, setCancelling] = useState(false);
-  const [fetchCancellationCharge, { data: cancellationPreview }] =
+  const [fetchCancellationCharge, { currentData: cancellationPreview }] =
     useLazyGetCancellationChargeQuery();
 
   const openCancelModal = useCallback(() => {
@@ -128,9 +128,13 @@ const ReportingScreen = () => {
     }
   }, [activeLoadId, cancelling, dispatch, refetch]);
 
-  const cancellationWarningText = cancellationPreview?.data?.isChargeable
-    ? `A cancellation charge of ₹${cancellationPreview.data.chargeAmount} may apply.`
-    : 'This load is currently free to cancel.';
+  const cancellationWarningText = (() => {
+    const d = cancellationPreview?.data;
+    if (!d) return 'Cancellation charges may be applicable.';
+    return d.isChargeable
+      ? `Cancellation charges ₹${d.chargeAmount} will be applicable!`
+      : 'This load is currently free to cancel.';
+  })();
 
   useFocusEffect(
     useCallback(() => {

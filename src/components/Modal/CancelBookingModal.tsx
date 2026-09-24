@@ -1,5 +1,5 @@
 import { IconMapPin, IconX } from '@tabler/icons-react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Modal,
   Pressable,
@@ -76,11 +76,16 @@ const CancelBookingModal = ({
   onConfirmCancel,
 }: CancelBookingModalProps) => {
   /**
-   * Opening this modal at all already means the parent screen's own
-   * Cancel button was tapped — that IS the intent-to-cancel step, so
-   * this goes straight to the warning + Confirm/Skip instead of making
-   * the user tap a second, redundant "Cancel Booking" button first.
+   * Two steps, matching the design: the details view has a "Cancel
+   * Booking" button; tapping it disables that button and reveals the
+   * charge warning with Confirm / Skip below it. Always starts back on the
+   * details step when re-opened.
    */
+  const [step, setStep] = useState<'details' | 'confirm'>('details');
+
+  useEffect(() => {
+    if (visible) setStep('details');
+  }, [visible]);
 
   /**
    * User clicks Confirm — the parent owns closing the modal (via
@@ -91,10 +96,7 @@ const CancelBookingModal = ({
     onConfirmCancel?.();
   };
 
-  /**
-   * User clicks Skip — there's no intermediate view to fall back to
-   * anymore, so this just dismisses without cancelling.
-   */
+  /** Skip abandons the cancellation and dismisses the modal. */
   const handleSkip = () => {
     onClose();
   };
@@ -232,42 +234,62 @@ const CancelBookingModal = ({
           )}
 
           {/* ========================================= */}
-          {/* CONFIRMATION SECTION */}
+          {/* CANCEL BOOKING (step 1) */}
           {/* ========================================= */}
 
-          <View style={styles.confirmationContainer}>
-            {/* ================= WARNING ================= */}
-
-            <Text style={styles.warningText}>{warningText}</Text>
-
-            {/* ================= BUTTONS ================= */}
-
-            <View style={styles.confirmationButtons}>
-              {/* ================= CONFIRM ================= */}
-
-              <TouchableOpacity
-                activeOpacity={0.8}
-                style={[styles.confirmButton, confirming && { opacity: 0.5 }]}
-                onPress={handleConfirmCancel}
-                disabled={confirming}
+          <View style={styles.cancelBookingRow}>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={styles.cancelBookingButton}
+              onPress={() => setStep('confirm')}
+              disabled={step === 'confirm'}
+            >
+              <IconX
+                size={16}
+                color={step === 'confirm' ? '#9E9E9E' : '#FF0000'}
+              />
+              <Text
+                style={[
+                  styles.cancelBookingText,
+                  step === 'confirm' && styles.cancelBookingTextDisabled,
+                ]}
               >
-                <Text style={styles.confirmButtonText}>
-                  {confirming ? 'Cancelling…' : 'Confirm'}
-                </Text>
-              </TouchableOpacity>
-
-              {/* ================= SKIP ================= */}
-
-              <TouchableOpacity
-                activeOpacity={0.8}
-                style={styles.skipButton}
-                onPress={handleSkip}
-                disabled={confirming}
-              >
-                <Text style={styles.skipButtonText}>Skip</Text>
-              </TouchableOpacity>
-            </View>
+                Cancel Booking
+              </Text>
+            </TouchableOpacity>
           </View>
+
+          {/* ========================================= */}
+          {/* CHARGES + CONFIRM / SKIP (step 2) */}
+          {/* ========================================= */}
+
+          {step === 'confirm' && (
+            <View style={styles.confirmationContainer}>
+              <Text style={styles.warningText}>{warningText}</Text>
+
+              <View style={styles.confirmationButtons}>
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  style={[styles.confirmButton, confirming && { opacity: 0.5 }]}
+                  onPress={handleConfirmCancel}
+                  disabled={confirming}
+                >
+                  <Text style={styles.confirmButtonText}>
+                    {confirming ? 'Cancelling…' : 'Confirm'}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  style={styles.skipButton}
+                  onPress={handleSkip}
+                  disabled={confirming}
+                >
+                  <Text style={styles.skipButtonText}>Skip</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
         </View>
       </View>
     </Modal>
@@ -484,6 +506,33 @@ const styles = StyleSheet.create({
 
   bold: {
     fontWeight: '700',
+  },
+
+  /* ========================================= */
+  /* CANCEL BOOKING BUTTON */
+  /* ========================================= */
+
+  cancelBookingRow: {
+    alignItems: 'flex-end',
+    marginTop: 8,
+  },
+
+  cancelBookingButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 6,
+    paddingHorizontal: 4,
+    gap: 4,
+  },
+
+  cancelBookingText: {
+    color: '#FF0000',
+    fontSize: 13,
+    fontWeight: '600',
+  },
+
+  cancelBookingTextDisabled: {
+    color: '#9E9E9E',
   },
 
   /* ========================================= */

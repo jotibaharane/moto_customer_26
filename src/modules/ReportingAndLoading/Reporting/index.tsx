@@ -4,6 +4,7 @@ import CancelBookingModal from '@components/Modal/CancelBookingModal';
 import CustomerSocket from '@socket/CustomerSocket';
 import SocketService from '@socket/SocketService';
 import { RootState } from '@store/rootReducer';
+import { clearActiveTrip } from '@store/slices/customerSocket/customerSocketSlice';
 import { resetMap, setDrivers } from '@store/slices/map/mapSlice';
 import { s, vs } from '@theme/New';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -102,6 +103,8 @@ const ReportingScreen = () => {
 
       if (response?.status === '00') {
         dispatch(resetMap());
+        dispatch(clearActiveTrip());
+        setDismissedLoadId(activeLoadId);
         refetch();
         setCancelModalVisible(false);
 

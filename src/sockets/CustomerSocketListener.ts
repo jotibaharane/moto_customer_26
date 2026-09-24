@@ -1,4 +1,7 @@
-import { goBack, navigate } from '@navigation/NavigationService';
+import { api } from '@api/api';
+import EventBus from '../events/EventBus';
+import { EVENTS } from '../events/events';
+import { navigate } from '@navigation/NavigationService';
 import { store } from '@store/index';
 import { resetBooking } from '@store/slices/Booking/bookingSlice';
 import {
@@ -13,6 +16,25 @@ import { Alert } from 'react-native';
 import CustomerSocket from './CustomerSocket';
 import { SOCKET_EVENTS } from './SocketEvents';
 import SocketService from './SocketService';
+
+/**
+ * Tears down local state for a load that ended without completing
+ * (cancelled by either side). state.map / activeTrip are single global
+ * "currently tracked load" slots, so a cancel for some OTHER load must not
+ * wipe the one actually being tracked. The REST loads list is force-
+ * refetched because it's cached and only refreshes on screen focus, which
+ * would otherwise keep offering a Cancel button for a dead load.
+ */
+const endLoadLocally = (dispatch: any, loadId?: string) => {
+  const trackedLoadId = store.getState().map.driver?.loadId;
+  if (!loadId || !trackedLoadId || trackedLoadId === loadId) {
+    dispatch(clearActiveTrip());
+    dispatch(resetMap());
+  }
+  dispatch(
+    api.endpoints.getLoads.initiate(undefined, { forceRefetch: true }),
+  );
+};
 
 class CustomerSocketListener {
   initialize(dispatch: any) {
@@ -163,12 +185,18 @@ class CustomerSocketListener {
 
       load => {
         console.log('LOAD_REJECTED =', { load });
+        EventBus.emit(EVENTS.OFFER_ENDED, {
+          loadId: load?.loadId,
+          reason: 'REJECTED',
+        });
       },
     );
     socket.on(SOCKET_EVENTS.OFFER_EXPIRED, load => {
-      goBack();
-      // navigate('SelectVehicleScreen');
-      console.log(load);
+      console.log('OFFER_EXPIRED =', { load });
+      EventBus.emit(EVENTS.OFFER_ENDED, {
+        loadId: load?.loadId,
+        reason: 'EXPIRED',
+      });
     });
 
     /**
@@ -182,8 +210,8 @@ class CustomerSocketListener {
     /**
      * Trip Cancelled
      */
-    socket.on(SOCKET_EVENTS.TRIP_CANCELLED, () => {
-      dispatch(clearActiveTrip());
+    socket.on(SOCKET_EVENTS.TRIP_CANCELLED, data => {
+      endLoadLocally(dispatch, data?.loadId);
     });
 
     /**
@@ -195,14 +223,13 @@ class CustomerSocketListener {
      */
     socket.on(SOCKET_EVENTS.LOAD_CANCELLED, data => {
       console.log('LOAD_CANCELLED =', { data });
-      dispatch(clearActiveTrip());
-      dispatch(resetMap());
-      Alert.alert(
-        'Load Cancelled',
-        data?.cancelledBy === 'CUSTOMER'
-          ? 'You have cancelled this load.'
-          : 'The driver has cancelled this load.',
-      );
+      endLoadLocally(dispatch, data?.loadId);
+      // The customer's own cancel already alerts from its ack callback;
+      // this event echoes back to the load room, so only alert when the
+      // other party cancelled.
+      if (data?.cancelledBy !== 'CUSTOMER') {
+        Alert.alert('Load Cancelled', 'The driver has cancelled this load.');
+      }
     });
 
     // new

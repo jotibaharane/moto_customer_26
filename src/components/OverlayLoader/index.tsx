@@ -6,32 +6,33 @@ import CircularLoader from '../CircularLoader';
 
 const OverlayLoader = ({
   visible = false,
-  onClose, // ✅ add this
+  onClose,
+  onCancel,
+  cancelling = false,
+  canCancel = true,
 }: any) => {
-  if (!visible) return null;
   const [timeLeft, setTimeLeft] = React.useState(150);
 
   useEffect(() => {
-    let timer: any;
-    if (visible && timeLeft > 0) {
-      timer = setInterval(() => {
-        setTimeLeft(prev => prev - 1);
-      }, 1000);
-    }
+    if (visible) setTimeLeft(150);
+  }, [visible]);
 
-    return () => {
-      if (timer) clearInterval(timer);
-    };
+  useEffect(() => {
+    if (!visible || timeLeft <= 0) return;
+    const timer = setInterval(() => {
+      setTimeLeft(prev => prev - 1);
+    }, 1000);
+    return () => clearInterval(timer);
   }, [visible, timeLeft]);
-  const Cancelload = () => {
-    console.log('load is cancelled');
-  };
+
+  if (!visible) return null;
+
   return (
     <Modal
       transparent
       animationType="fade"
       visible={visible}
-      onRequestClose={onClose} // ✅ handle back
+      onRequestClose={onClose}
     >
       <View style={styles.container}>
         <View style={styles.overlay} />
@@ -39,9 +40,16 @@ const OverlayLoader = ({
         <View style={styles.card}>
           <CircularLoader duration={timeLeft} showTimer={true} />
           <Text style={styles.text}>Waiting for Driver’s Confirmation</Text>
+          {onCancel ? (
+            <CustomButton
+              title={cancelling ? 'Cancelling…' : 'Cancel Load Post'}
+              onPress={onCancel}
+              disbled={cancelling || !canCancel}
+              style={styles.cancelButton}
+            />
+          ) : null}
         </View>
       </View>
-      <CustomButton title="Cancel Load Post" onPress={Cancelload} />
     </Modal>
   );
 };
@@ -66,6 +74,11 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 20,
     alignItems: 'center',
+  },
+
+  cancelButton: {
+    marginTop: 24,
+    alignSelf: 'stretch',
   },
 
   text: {

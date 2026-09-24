@@ -1,12 +1,15 @@
+import { useLazyGetCancellationChargeQuery } from '@api/api';
 import CustomButton from '@components/Button';
 import OverlayLoader from '@components/OverlayLoader';
 import { useDistance } from '@hooks/useDistance';
+import { goBack } from '@navigation/NavigationService';
 import CustomerSocket from '@socket/CustomerSocket';
 import { RootState } from '@store/rootReducer';
 import { IconMapPinFilled } from '@tabler/icons-react-native';
 import { vs } from '@theme/index';
 import React from 'react';
 import {
+  Alert,
   Image,
   Pressable,
   ScrollView,
@@ -15,10 +18,18 @@ import {
   View,
 } from 'react-native';
 import { useSelector } from 'react-redux';
+import EventBus from '../../../events/EventBus';
+import { EVENTS } from '../../../events/events';
 import { styles } from './ReviewBooking.style';
 
 const ReviewBookingScreen = () => {
   const [watingDriver, setWaitingDriver] = React.useState(false);
+  const [cancellingOffer, setCancellingOffer] = React.useState(false);
+  // Known only once the server acks the offer (it creates the load then);
+  // cancelling needs it, and the offer-ended events are matched against it.
+  const pendingLoadId = React.useRef<string | null>(null);
+  const [offerLoadId, setOfferLoadId] = React.useState<string | null>(null);
+  const [fetchCancellationCharge] = useLazyGetCancellationChargeQuery();
   const { userId } = useSelector((state: RootState) => state.auth);
   const {
     delivery,
@@ -42,10 +53,12 @@ const ReviewBookingScreen = () => {
     { lat: delivery?.latitude!, lng: delivery?.longitude! },
   );
   const handleBook = async () => {
-    try {
-      setWaitingDriver(true);
+    setWaitingDriver(true);
+    pendingLoadId.current = null;
+    setOfferLoadId(null);
 
-      CustomerSocket.sendLoadOffer({
+    try {
+      const response = await CustomerSocket.sendLoadOffer({
         driverId: selectedDriverId,
         customerId: userId,
         pickup,
@@ -61,11 +74,110 @@ const ReviewBookingScreen = () => {
         vehicleImage,
         weightRange,
       });
+
+      if (response?.status !== '00') {
+        setWaitingDriver(false);
+        Alert.alert(
+          'Could not send request',
+          response?.message || 'Please try again.',
+        );
+        return;
+      }
+      pendingLoadId.current = response?.data?.loadId ?? null;
+      setOfferLoadId(pendingLoadId.current);
     } catch (error) {
       console.log(error);
       setWaitingDriver(false);
+      Alert.alert('Could not send request', 'Please try again.');
     }
   };
+
+  const confirmCancelOffer = async (loadId: string) => {
+    setCancellingOffer(true);
+    try {
+      const response = await CustomerSocket.cancelLoad({ loadId });
+      if (response?.status === '00') {
+        pendingLoadId.current = null;
+        setOfferLoadId(null);
+        setWaitingDriver(false);
+        if (response.data?.isChargeable) {
+          Alert.alert(
+            'Request Cancelled',
+            `A cancellation charge of ₹${response.data.finalChargeAmount} applies.`,
+          );
+        }
+      } else {
+        Alert.alert(
+          'Cancellation Failed',
+          response?.message || 'Could not cancel this request. Please try again.',
+        );
+      }
+    } catch {
+      Alert.alert(
+        'Cancellation Failed',
+        'Could not cancel this request. Please try again.',
+      );
+    } finally {
+      setCancellingOffer(false);
+    }
+  };
+
+  // Cancelling before any driver accepts is free twice, then charged
+  // (rule lives in CancelLoadByCustomer; this preview is informational and
+  // the server recalculates on the real cancel) — so show the customer
+  // which side of that line this cancellation falls on before confirming.
+  const handleCancelOffer = async () => {
+    const loadId = pendingLoadId.current;
+    if (!loadId || cancellingOffer) return;
+
+    let message = 'Do you want to cancel this request?';
+    try {
+      const preview = await fetchCancellationCharge(
+        { loadId },
+        false,
+      ).unwrap();
+      const d = preview?.data;
+      if (d) {
+        message = d.isChargeable
+          ? `You have used your ${d.freeCancellationLimit} free cancellations. A charge of ₹${d.chargeAmount} applies if you cancel now.`
+          : `Free cancellation ${d.cancellationNumber} of ${d.freeCancellationLimit}. Further cancellations are charged.`;
+      }
+    } catch {
+      // Preview is best-effort — the real cancel still enforces the rule.
+    }
+
+    Alert.alert('Cancel request?', message, [
+      { text: 'Keep waiting', style: 'cancel' },
+      {
+        text: 'Cancel request',
+        style: 'destructive',
+        onPress: () => confirmCancelOffer(loadId),
+      },
+    ]);
+  };
+
+  // The driver declined or never answered — CustomerSocketListener has no
+  // access to this screen's local overlay state, so it signals via EventBus.
+  React.useEffect(() => {
+    const onOfferEnded = (payload?: { loadId?: string; reason?: string }) => {
+      const pending = pendingLoadId.current;
+      if (payload?.loadId && pending && payload.loadId !== pending) return;
+      pendingLoadId.current = null;
+      setOfferLoadId(null);
+      setWaitingDriver(false);
+      Alert.alert(
+        payload?.reason === 'REJECTED'
+          ? 'Request Declined'
+          : 'No Response',
+        payload?.reason === 'REJECTED'
+          ? 'The driver declined your request. Please choose another vehicle.'
+          : 'The driver did not respond in time. Please choose another vehicle.',
+      );
+      goBack();
+    };
+    EventBus.on(EVENTS.OFFER_ENDED, onOfferEnded);
+    return () => EventBus.off(EVENTS.OFFER_ENDED, onOfferEnded);
+  }, []);
   return (
     <View style={styles.container}>
       <ScrollView style={{ flex: 1 }}>
@@ -138,9 +250,10 @@ const ReviewBookingScreen = () => {
         </Text>
         <OverlayLoader
           visible={watingDriver}
-          onClose={() => {
-            setWaitingDriver(false);
-          }}
+          onClose={() => {}}
+          onCancel={handleCancelOffer}
+          cancelling={cancellingOffer}
+          canCancel={!!offerLoadId}
         />
         <CustomButton
           title="Confirm Booking"

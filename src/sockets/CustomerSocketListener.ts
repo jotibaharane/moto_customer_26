@@ -13,7 +13,6 @@ import {
 } from '@store/slices/customerSocket/customerSocketSlice';
 import { resetMap, setDrivers, setMessage } from '@store/slices/map/mapSlice';
 import { Alert } from 'react-native';
-import CustomerSocket from './CustomerSocket';
 import { SOCKET_EVENTS } from './SocketEvents';
 import SocketService from './SocketService';
 
@@ -135,45 +134,25 @@ class CustomerSocketListener {
       dispatch(resetBooking());
       dispatch(setActiveTrip(load));
 
-      // state.map.driver is a single global "currently tracked load" slot,
-      // not scoped per-loadId. If the customer already has a DIFFERENT
-      // load actively in progress (its tracking hasn't been cleared by a
-      // completion/cancellation yet — see resetMap() calls above/below),
-      // overwriting it here with the newly-accepted load's data would rip
-      // the map/markers out from under whatever screen is currently
-      // showing that other, still-live trip (ReportingScreen's
-      // MapComponent, LiveTrackingScreen) — pins and the vehicle marker
-      // would jump between two unrelated loads' coordinates, which is
-      // exactly the "flicker" this was causing. Only auto-switch the
-      // live tracking view when there's nothing else already in progress;
-      // otherwise just notify — the customer can view the new load from
-      // their loads list once they're done with the current one.
-      const existingLoadId = store.getState().map.driver?.loadId;
-      const hasDifferentActiveLoad =
-        !!existingLoadId && existingLoadId !== load?.loadId;
-
-      if (hasDifferentActiveLoad) {
-        Alert.alert(
-          'Load Accepted',
-          'A driver has accepted your other load. You can view it from your loads list.',
-        );
-        return;
-      }
-
-      // Join the load's tracking room the instant it's accepted — without
-      // this, the customer only starts receiving 'tracking-driver-location'
-      // broadcasts once something else (e.g. ReportingScreen's own mount
-      // effect, only reliable on a fresh app start) happens to call
-      // trackLoad() first. The backend room broadcast is fire-and-forget
-      // with no replay, so any pings before that join are lost — this is
-      // why the map/polyline previously stayed frozen until an app reload.
+      // The latest accepted load always becomes the tracked one (a second
+      // load accepted while another is in progress takes over the screen).
+      // Point the tracking screen at this load. The screen's own effect is
+      // the ONLY place that joins a tracking room (it derives the load from
+      // state.map.driver.loadId, joins, and seeds the map from the ack) —
+      // this used to also emit track-load itself, and the two overlapping
+      // joins for different loads fought over state.map.driver.
       if (load?.loadId) {
-        CustomerSocket.trackLoad({ loadId: load.loadId })
-          .then(response => {
-            if (response?.current) dispatch(setDrivers(response.current));
-          })
-          .catch(() => {});
+        dispatch(
+          setDrivers({
+            loadId: load.loadId,
+            driverId: load.driverId,
+          } as any),
+        );
       }
+      // Make sure the REST loads list (cached) includes the new load.
+      dispatch(
+        api.endpoints.getLoads.initiate(undefined, { forceRefetch: true }),
+      );
       navigate('BottomNavigation', {
         screen: 'New Load',
         params: { load },

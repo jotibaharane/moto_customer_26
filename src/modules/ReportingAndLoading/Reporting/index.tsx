@@ -31,9 +31,18 @@ const ReportingScreen = () => {
   });
 
   const { driver } = useSelector((state: RootState) => state.map);
-  const currentLoad = loads?.data?.[0];
-  const currentLoadId = currentLoad?.LoadId;
+  const newestLoad = loads?.data?.[0];
+  const currentLoadId = newestLoad?.LoadId;
   const activeLoadId = driver?.loadId ?? currentLoadId;
+  // The list's first entry isn't necessarily the load being tracked (e.g.
+  // a second load was just accepted) — use the tracked load's own row for
+  // its addresses/status so the pins and cancel details match the trip.
+  const currentLoad =
+    loads?.data?.find(
+      (l: any) =>
+        !!activeLoadId &&
+        String(l?.LoadId).toLowerCase() === String(activeLoadId).toLowerCase(),
+    ) ?? newestLoad;
 
   /**
    * Kept in a ref so the reconnect listener below always re-joins the
@@ -143,19 +152,45 @@ const ReportingScreen = () => {
   );
 
   /**
+   * Last load this screen asked the server to join. The server only keeps
+   * the socket in ONE load room at a time, so re-requesting the load it's
+   * already in is pure churn.
+   */
+  const joinedLoadIdRef = useRef<string | null>(null);
+
+  /**
    * Joins the tracking room for `loadId` and immediately seeds the map
    * with the live snapshot the ack returns, instead of waiting for the
    * next GPS ping from the driver.
+   *
+   * The ack is only applied if `loadId` is still the load this screen wants
+   * (activeLoadIdRef). The ack overwrites `state.map.driver`, and
+   * `activeLoadId` is derived from that — so when two overlapping requests
+   * for different loads (e.g. two accepted loads) answered out of turn,
+   * each answer flipped `driver.loadId`, re-triggering a request for the
+   * other load, which flipped it back, forever.
    */
   const startTracking = useCallback(
-    (loadId: string) => {
+    (loadId: string, force = false) => {
+      if (!force && joinedLoadIdRef.current === loadId) return;
+      joinedLoadIdRef.current = loadId;
+
       CustomerSocket.trackLoad({ loadId })
         .then(response => {
+          if (response?.status !== '00' && joinedLoadIdRef.current === loadId) {
+            // Not joinable (e.g. tracking not created yet) — allow a retry.
+            joinedLoadIdRef.current = null;
+          }
+          if (loadId !== activeLoadIdRef.current) return;
           if (response?.current) {
             dispatch(setDrivers(response.current));
           }
         })
-        .catch(() => {});
+        .catch(() => {
+          if (joinedLoadIdRef.current === loadId) {
+            joinedLoadIdRef.current = null;
+          }
+        });
     },
     [dispatch],
   );
@@ -178,7 +213,8 @@ const ReportingScreen = () => {
 
     const handleConnect = () => {
       if (activeLoadIdRef.current) {
-        startTracking(activeLoadIdRef.current);
+        // A new connection has no rooms — force the re-join.
+        startTracking(activeLoadIdRef.current, true);
       }
     };
 

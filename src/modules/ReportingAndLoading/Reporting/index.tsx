@@ -14,6 +14,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import Header from './components/Header';
 import MapComponent from './components/MapComponent';
 import { styles } from './reporting.style';
+import DashboardAppHeader from './components/DashboardAppheader';
+import DashboardQuickActions from './components/DashboardQuickActions';
 
 const TERMINAL_LOAD_STATUSES = [
   'CANCELLED',
@@ -227,6 +229,8 @@ const ReportingScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+            <DashboardAppHeader ClientName='MOTOHELP' CompanyName='ABC'/>
+              <DashboardQuickActions  />
       <Header />
       <View
         style={{

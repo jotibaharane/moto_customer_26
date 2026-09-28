@@ -5,6 +5,9 @@ import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { useSelector } from 'react-redux';
 import { styles } from '../reporting.style';
+import DashboardAppHeader from './DashboardAppheader';
+import DashboardQuickActions from './DashboardQuickActions';
+
 
 const Header = () => {
   const { message } = useSelector(
@@ -13,7 +16,8 @@ const Header = () => {
 
   return (
     <>
-      <View style={styles.header}>
+      <View style={[styles.header,{backgroundColor:'#2E5A99'}]}>
+  
         <Menu size={24} />
 
         <View style={styles.messageContainer}>

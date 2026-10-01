@@ -13,7 +13,7 @@ const Header = () => {
 
   return (
     <>
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: '#2E5A99' }]}>
         <Menu size={24} />
 
         <View style={styles.messageContainer}>

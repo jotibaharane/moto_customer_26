@@ -11,6 +11,8 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
+import DashboardAppHeader from './components/DashboardAppheader';
+import DashboardQuickActions from './components/DashboardQuickActions';
 import Header from './components/Header';
 import MapComponent from './components/MapComponent';
 import { styles } from './reporting.style';
@@ -227,6 +229,8 @@ const ReportingScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <DashboardAppHeader ClientName="MOTOHELP" CompanyName="ABC" />
+      <DashboardQuickActions />
       <Header />
       <View
         style={{

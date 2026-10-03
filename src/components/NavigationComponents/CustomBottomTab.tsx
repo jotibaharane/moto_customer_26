@@ -1,3 +1,4 @@
+import CustomModal from '@components/Modals/CustumModal';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import {
   IconCube,
@@ -7,20 +8,32 @@ import {
   IconUserCircle,
 } from '@tabler/icons-react-native';
 import { COLORS, FONT_FAMILIES, fp, hp, wp } from '@theme/index';
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+// OPS has no screen built yet (registered as a blank placeholder in
+// BottomNavigation.tsx) — rather than navigating there and showing an
+// empty screen, tapping it opens a modal in place and leaves the
+// currently active tab as-is.
+const MODAL_ONLY_ROUTES = new Set(['OPS']);
 
 const MyTabBar: React.FC<BottomTabBarProps> = ({
   state,
   descriptors,
   navigation,
 }) => {
+  const [modalRoute, setModalRoute] = useState<string | null>(null);
+
   const renderTab = (route: any, index: number) => {
     const { options } = descriptors[route.key];
     const label = options.tabBarLabel ?? options.title ?? route.name;
     const isFocused = state.index === index;
 
     const onPress = () => {
+      if (MODAL_ONLY_ROUTES.has(route.name)) {
+        setModalRoute(route.name);
+        return;
+      }
       if (!isFocused) navigation.navigate(route.name);
     };
 
@@ -65,7 +78,21 @@ const MyTabBar: React.FC<BottomTabBarProps> = ({
     );
   };
 
-  return <View style={styles.container}>{state.routes.map(renderTab)}</View>;
+  return (
+    <>
+      <View style={styles.container}>{state.routes.map(renderTab)}</View>
+
+      <CustomModal
+        visible={modalRoute === 'OPS'}
+        onClose={() => setModalRoute(null)}
+      >
+        <Text style={styles.modalTitle}>Coming Soon</Text>
+        <Text style={styles.modalMessage}>
+          This section isn't available yet — check back soon.
+        </Text>
+      </CustomModal>
+    </>
+  );
 };
 
 export default MyTabBar;
@@ -93,6 +120,21 @@ const styles = StyleSheet.create({
 
   label: {
     fontSize: fp(11),
+  },
+
+  modalTitle: {
+    fontFamily: FONT_FAMILIES.semiBold,
+    fontSize: fp(16),
+    color: COLORS.black[500],
+    textAlign: 'center',
+  },
+
+  modalMessage: {
+    fontFamily: FONT_FAMILIES.regular,
+    fontSize: fp(13),
+    color: COLORS.black[500],
+    textAlign: 'center',
+    marginTop: hp(8),
   },
 
   /* 🔥 Floating Wrapper */

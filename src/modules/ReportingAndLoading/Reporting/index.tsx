@@ -1,6 +1,6 @@
 import { useGetLoadsQuery, useLazyGetCancellationChargeQuery } from '@api/api';
-import { useFocusEffect } from '@react-navigation/native';
 import CancelBookingModal from '@components/Modal/CancelBookingModal';
+import { useFocusEffect } from '@react-navigation/native';
 import CustomerSocket from '@socket/CustomerSocket';
 import SocketService from '@socket/SocketService';
 import { RootState } from '@store/rootReducer';
@@ -9,11 +9,9 @@ import { resetMap, setDrivers } from '@store/slices/map/mapSlice';
 import { s, vs } from '@theme/New';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import DashboardAppHeader from './components/DashboardAppheader';
 import DashboardQuickActions from './components/DashboardQuickActions';
-import Header from './components/Header';
 import MapComponent from './components/MapComponent';
 import { styles } from './reporting.style';
 
@@ -133,7 +131,10 @@ const ReportingScreen = () => {
         );
       }
     } catch {
-      Alert.alert('Cancellation Failed', 'Could not cancel this load. Please try again.');
+      Alert.alert(
+        'Cancellation Failed',
+        'Could not cancel this load. Please try again.',
+      );
     } finally {
       setCancelling(false);
     }
@@ -228,10 +229,10 @@ const ReportingScreen = () => {
   }, [startTracking]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <DashboardAppHeader ClientName="MOTOHELP" CompanyName="ABC" />
       <DashboardQuickActions />
-      <Header />
+      {/* <Header /> */}
       <View
         style={{
           padding: vs(16),
@@ -353,7 +354,7 @@ const ReportingScreen = () => {
         confirming={cancelling}
         onConfirmCancel={handleConfirmCancel}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 

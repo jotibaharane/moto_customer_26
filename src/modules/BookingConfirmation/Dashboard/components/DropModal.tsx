@@ -1,8 +1,11 @@
+
 import RBSheet from '@components/BottomUpModal';
 import CustomButton from '@components/Button';
-import { InputOutline } from '@components/Input';
+import {InputOutline} from '@components/Input';
 import SearchField from '@components/SearchField';
-import { COLORS, FONT_FAMILIES, ms, s, vs } from '@theme/index';
+
+import {COLORS, FONT_FAMILIES, ms, s, vs} from '@theme/index';
+
 import React, {
   memo,
   useCallback,
@@ -11,6 +14,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+
 import {
   ActivityIndicator,
   FlatList,
@@ -20,11 +24,12 @@ import {
   View,
 } from 'react-native';
 
-import { useGetSearchLocationQuery } from '@api/api';
-import { LoadLocation } from '@api/type';
-import { useDebounce } from '@hooks/useDebounce';
-import { RootState } from '@store/rootReducer';
-import { setDelivery } from '@store/slices/Booking/bookingSlice';
+import {LoadLocation} from '@api/type';
+
+import {useGooglePlacesSearch} from '../../../../features/maps/useGooglePlacesSearch';
+
+import {RootState} from '@store/rootReducer';
+import {setDelivery} from '@store/slices/Booking/bookingSlice';
 
 import {
   IconClockHour4,
@@ -32,9 +37,10 @@ import {
   IconPencil,
 } from '@tabler/icons-react-native';
 
-import { useFormik } from 'formik';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
-import { useDispatch, useSelector } from 'react-redux';
+import {useFormik} from 'formik';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-controller';
+
+import {useDispatch, useSelector} from 'react-redux';
 
 interface Props {
   open?: boolean;
@@ -46,23 +52,46 @@ interface Props {
 /* CONFIG                                                                     */
 /* -------------------------------------------------------------------------- */
 
-const SEARCH_DEBOUNCE_DELAY = 500;
 const MIN_SEARCH_LENGTH = 2;
 
-const DropModal: React.FC<Props> = ({ onOpen, open }) => {
+const DropModal: React.FC<Props> = ({onOpen, open}) => {
   const dispatch = useDispatch();
 
-  const { currentLocation } = useSelector((state: RootState) => state.auth);
-
-  const { delivery } = useSelector((state: RootState) => state.booking);
+  const {delivery} = useSelector(
+    (state: RootState) => state.booking,
+  );
 
   const refScrollable = useRef<any>(null);
+
+  /* ------------------------------------------------------------------------ */
+  /* GOOGLE PLACES SEARCH                                                     */
+  /* ------------------------------------------------------------------------ */
+
+  const {
+    searchText,
+    setSearchText,
+    suggestions,
+    loading: isSearching,
+    detailsLoading,
+    error: searchError,
+    selectPlace,
+    clearSearch,
+  } = useGooglePlacesSearch({
+    debounceMs: 500,
+    country: 'IN',
+  });
+
+  const normalizedSearch = useMemo(
+    () => searchText.trim(),
+    [searchText],
+  );
+
+  const canSearch = normalizedSearch.length >= MIN_SEARCH_LENGTH;
 
   /* ------------------------------------------------------------------------ */
   /* STATE                                                                    */
   /* ------------------------------------------------------------------------ */
 
-  const [search, setSearch] = useState('');
   const [openGoogleAddress, setOpenGoogleAddress] = useState(false);
 
   /* ------------------------------------------------------------------------ */
@@ -94,67 +123,7 @@ const DropModal: React.FC<Props> = ({ onOpen, open }) => {
   });
 
   /* ------------------------------------------------------------------------ */
-  /* SEARCH                                                                    */
-  /* ------------------------------------------------------------------------ */
-
-  /**
-   * Normalize the search text before debounce.
-   *
-   * Example:
-   *
-   * "  Mumbai  " -> "Mumbai"
-   */
-  const normalizedSearch = useMemo(() => search.trim(), [search]);
-
-  /**
-   * Debounce API search.
-   *
-   * API will NOT be called for every keystroke.
-   *
-   * User:
-   *
-   * M
-   * Mu
-   * Mum
-   * Mumb
-   * Mumba
-   * Mumbai
-   *
-   * API request:
-   *
-   * Mumbai -> after 500ms
-   */
-  const debouncedSearch = useDebounce(normalizedSearch, SEARCH_DEBOUNCE_DELAY);
-
-  /**
-   * Only allow API search when:
-   *
-   * 1. Search has minimum 2 characters
-   * 2. Latitude exists
-   * 3. Longitude exists
-   */
-  const canSearch =
-    debouncedSearch.length >= MIN_SEARCH_LENGTH &&
-    currentLocation?.lat != null &&
-    currentLocation?.lng != null;
-
-  const {
-    data: locationData,
-    isLoading: isSearchLoading,
-    isFetching: isSearchFetching,
-  } = useGetSearchLocationQuery(
-    {
-      search: debouncedSearch,
-      latitude: currentLocation?.lat ?? 0,
-      longitude: currentLocation?.lng ?? 0,
-    },
-    {
-      skip: !canSearch,
-    },
-  );
-
-  /* ------------------------------------------------------------------------ */
-  /* SEARCH RESULTS                                                            */
+  /* SEARCH RESULTS                                                           */
   /* ------------------------------------------------------------------------ */
 
   const searchResults = useMemo(() => {
@@ -162,84 +131,93 @@ const DropModal: React.FC<Props> = ({ onOpen, open }) => {
       return [];
     }
 
-    return locationData?.data ?? [];
-  }, [canSearch, locationData]);
-
-  const isSearching = canSearch && (isSearchLoading || isSearchFetching);
+    return suggestions;
+  }, [canSearch, suggestions]);
 
   /* ------------------------------------------------------------------------ */
-  /* SEARCH INPUT HANDLER                                                      */
+  /* SEARCH INPUT HANDLER                                                     */
   /* ------------------------------------------------------------------------ */
 
-  const handleSearchChange = useCallback((text: string) => {
-    setSearch(text);
-  }, []);
-
-  /* ------------------------------------------------------------------------ */
-  /* SELECT SEARCH RESULT                                                      */
-  /* ------------------------------------------------------------------------ */
-
-  const handleSelectLocation = useCallback(
-    (item: any) => {
-      // A full replace, not five separate setFieldValue patches — patching
-      // only name/fullAddress/lat/lng left plotBuilding/streetArea/
-      // contactName/contactMobile from whatever was PREVIOUSLY selected
-      // still sitting in the form, so re-editing to a different delivery
-      // address could submit with a new pin but an old unit/contact still
-      // attached to it.
-      formik.setValues({
-        mapboxId: item?.mapboxId ?? '',
-        name: item?.name ?? '',
-        fullAddress: item?.fullAddress ?? '',
-        latitude: item?.latitude ?? 0,
-        longitude: item?.longitude ?? 0,
-        plotBuilding: '',
-        streetArea: '',
-        contactName: '',
-        contactMobile: '',
-      });
-
-      /**
-       * Clear search after selecting location.
-       *
-       * This also prevents another unnecessary
-       * API request after selecting the location.
-       */
-      setSearch('');
-
-      setOpenGoogleAddress(false);
+  const handleSearchChange = useCallback(
+    (text: string) => {
+      setSearchText(text);
     },
-    [formik],
+    [setSearchText],
   );
 
   /* ------------------------------------------------------------------------ */
-  /* OPEN EDIT ADDRESS                                                        */
+  /* RESET SEARCH                                                             */
+  /* ------------------------------------------------------------------------ */
+
+  const handleClearSearch = useCallback(() => {
+    clearSearch();
+  }, [clearSearch]);
+
+  /* ------------------------------------------------------------------------ */
+  /* SELECT GOOGLE PLACE                                                      */
+  /* ------------------------------------------------------------------------ */
+
+  const handleSelectLocation = useCallback(
+    async (item: (typeof suggestions)[number]) => {
+      try {
+        const place = await selectPlace(item);
+
+        if (!place) {
+          return;
+        }
+
+        formik.setValues({
+          // Google Place ID stored temporarily in the old field.
+          mapboxId: place.placeId,
+
+          name: place.placeName,
+
+          fullAddress: place.formattedAddress,
+
+          latitude: place.latitude,
+
+          longitude: place.longitude,
+
+          plotBuilding: '',
+          streetArea: '',
+          contactName: '',
+          contactMobile: '',
+        });
+
+        setSearchText('');
+        setOpenGoogleAddress(false);
+      } catch (error) {
+        console.log('Google Places selection error:', error);
+      }
+    },
+    [selectPlace, formik, setSearchText],
+  );
+
+  /* ------------------------------------------------------------------------ */
+  /* EDIT ADDRESS                                                             */
   /* ------------------------------------------------------------------------ */
 
   const handleEditAddress = useCallback(() => {
-    setSearch('');
+    clearSearch();
     setOpenGoogleAddress(true);
-  }, []);
+  }, [clearSearch]);
 
   /* ------------------------------------------------------------------------ */
-  /* MODAL                                                                     */
+  /* MODAL OPEN / CLOSE                                                       */
   /* ------------------------------------------------------------------------ */
 
   useEffect(() => {
     if (open) {
-      refScrollable?.current?.open();
+      refScrollable.current?.open();
     } else {
-      refScrollable?.current?.close();
-
-      /**
-       * Reset search when modal closes.
-       */
-      setSearch('');
+      refScrollable.current?.close();
+      clearSearch();
+      setOpenGoogleAddress(false);
     }
-  }, [open]);
+  }, [open, clearSearch]);
 
   /* ------------------------------------------------------------------------ */
-  /* RENDER                                                                    */
+  /* RENDER                                                                   */
   /* ------------------------------------------------------------------------ */
 
   return (
@@ -260,7 +238,7 @@ const DropModal: React.FC<Props> = ({ onOpen, open }) => {
       onOpen={() => onOpen?.(true)}
       onClose={() => onOpen?.(false)}
     >
-      {!formik?.values?.fullAddress || openGoogleAddress ? (
+      {!formik.values.fullAddress || openGoogleAddress ? (
         /* ================================================================== */
         /* SEARCH SCREEN                                                       */
         /* ================================================================== */
@@ -269,7 +247,7 @@ const DropModal: React.FC<Props> = ({ onOpen, open }) => {
           <SearchField
             iconType="location"
             placeholder="Delivery Address"
-            value={search}
+            value={searchText}
             onChangeText={handleSearchChange}
             iconColor="#FF0A0A"
             containerStyle={{
@@ -277,23 +255,29 @@ const DropModal: React.FC<Props> = ({ onOpen, open }) => {
             }}
           />
 
-          {/* ================================================================ */}
-          {/* SEARCHING                                                        */}
-          {/* ================================================================ */}
+          {/* SEARCH LOADING */}
 
-          {isSearching && (
+          {(isSearching || detailsLoading) && (
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="small" color="#FF0A0A" />
 
-              <Text style={styles.loadingText}>Searching...</Text>
+              <Text style={styles.loadingText}>
+                {detailsLoading ? 'Getting location...' : 'Searching...'}
+              </Text>
             </View>
           )}
 
-          {/* ================================================================ */}
-          {/* MINIMUM SEARCH MESSAGE                                           */}
-          {/* ================================================================ */}
+          {/* GOOGLE API ERROR */}
 
-          {normalizedSearch.length === 1 && !isSearching && (
+          {!!searchError && (
+            <View style={styles.messageContainer}>
+              <Text style={styles.errorText}>{searchError}</Text>
+            </View>
+          )}
+
+          {/* MINIMUM SEARCH MESSAGE */}
+
+          {normalizedSearch.length === 1 && (
             <View style={styles.messageContainer}>
               <Text style={styles.subtitle}>
                 Type at least 2 characters to search
@@ -301,20 +285,17 @@ const DropModal: React.FC<Props> = ({ onOpen, open }) => {
             </View>
           )}
 
-          {/* ================================================================ */}
-          {/* SEARCH RESULTS                                                    */}
-          {/* ================================================================ */}
+          {/* GOOGLE PLACES RESULTS */}
 
           <FlatList
             data={searchResults}
-            keyExtractor={(item, index) =>
-              item?.mapboxId ?? `location-${index}`
-            }
+            keyExtractor={item => item.placeId}
             keyboardShouldPersistTaps="handled"
             keyboardDismissMode="on-drag"
             showsVerticalScrollIndicator={false}
-            renderItem={({ item }) => (
+            renderItem={({item}) => (
               <Pressable
+                disabled={detailsLoading}
                 onPress={() => handleSelectLocation(item)}
                 style={styles.listItem}
               >
@@ -322,21 +303,26 @@ const DropModal: React.FC<Props> = ({ onOpen, open }) => {
 
                 <View style={styles.locationContent}>
                   <Text style={styles.title} numberOfLines={1}>
-                    {item?.name}
+                    {item.placeName}
                   </Text>
 
                   <Text style={styles.subtitle} numberOfLines={2}>
-                    {item?.fullAddress}
+                    {item.description}
                   </Text>
                 </View>
               </Pressable>
             )}
             ListEmptyComponent={
-              canSearch && !isSearching ? (
+              canSearch &&
+              !isSearching &&
+              !detailsLoading &&
+              !searchError ? (
                 <View style={styles.messageContainer}>
                   <IconClockHour4 size={22} />
 
-                  <Text style={styles.subtitle}>No locations found</Text>
+                  <Text style={styles.subtitle}>
+                    No locations found
+                  </Text>
                 </View>
               ) : null
             }
@@ -352,9 +338,7 @@ const DropModal: React.FC<Props> = ({ onOpen, open }) => {
         /* ================================================================== */
 
         <View style={styles.gridContainer}>
-          {/* ================================================================ */}
-          {/* SELECTED LOCATION                                                */}
-          {/* ================================================================ */}
+          {/* SELECTED LOCATION */}
 
           <View style={styles.headerRow}>
             <IconMapPinFilled size={32} fill="#FF0A0A" />
@@ -374,9 +358,7 @@ const DropModal: React.FC<Props> = ({ onOpen, open }) => {
             </Pressable>
           </View>
 
-          {/* ================================================================ */}
-          {/* DELIVERY FORM                                                    */}
-          {/* ================================================================ */}
+          {/* DELIVERY FORM */}
 
           <KeyboardAwareScrollView
             scrollEnabled
@@ -410,6 +392,8 @@ const DropModal: React.FC<Props> = ({ onOpen, open }) => {
                 characterCount={10}
               />
 
+              {/* CONFIRM DELIVERY */}
+
               <View style={styles.buttonContainer}>
                 <CustomButton
                   title="Confirm Delivery Address"
@@ -441,10 +425,6 @@ const styles = StyleSheet.create({
     marginBottom: vs(20),
   },
 
-  /* ----------------------------------------------------------------------- */
-  /* LIST                                                                     */
-  /* ----------------------------------------------------------------------- */
-
   listItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -469,19 +449,11 @@ const styles = StyleSheet.create({
     color: COLORS.gray[500],
   },
 
-  /* ----------------------------------------------------------------------- */
-  /* HEADER                                                                   */
-  /* ----------------------------------------------------------------------- */
-
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: s(19),
   },
-
-  /* ----------------------------------------------------------------------- */
-  /* FORM                                                                     */
-  /* ----------------------------------------------------------------------- */
 
   formContainer: {
     marginTop: vs(32),
@@ -492,10 +464,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-
-  /* ----------------------------------------------------------------------- */
-  /* LOADING                                                                  */
-  /* ----------------------------------------------------------------------- */
 
   loadingContainer: {
     flexDirection: 'row',
@@ -511,15 +479,18 @@ const styles = StyleSheet.create({
     color: COLORS.gray[500],
   },
 
-  /* ----------------------------------------------------------------------- */
-  /* EMPTY / MESSAGE                                                          */
-  /* ----------------------------------------------------------------------- */
-
   messageContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     gap: s(8),
     paddingVertical: vs(30),
+  },
+
+  errorText: {
+    fontSize: ms(13),
+    color: '#FF0A0A',
+    fontFamily: FONT_FAMILIES.regular,
+    textAlign: 'center',
   },
 });

@@ -1,8 +1,10 @@
+
 import RBSheet from '@components/BottomUpModal';
 import CustomButton from '@components/Button';
-import { InputOutline } from '@components/Input';
+import {InputOutline} from '@components/Input';
 import SearchField from '@components/SearchField';
-import { COLORS, s, vs } from '@theme/index';
+
+import {COLORS, s, vs} from '@theme/index';
 import React, {
   memo,
   useCallback,
@@ -11,6 +13,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+
 import {
   ActivityIndicator,
   FlatList,
@@ -24,13 +27,12 @@ import {
   useGetAddressLabelsQuery,
   useGetLocationByLatLngQuery,
   useGetSavedLocationQuery,
-  useGetSearchLocationQuery,
 } from '@api/api';
 
-import { LoadLocation } from '@api/type';
-import { useDebounce } from '@hooks/useDebounce';
-import { RootState } from '@store/rootReducer';
-import { setPickup } from '@store/slices/Booking/bookingSlice';
+import {LoadLocation} from '@api/type';
+import {useGooglePlacesSearch} from './../../../../features/maps/useGooglePlacesSearch';
+import {RootState} from '@store/rootReducer';
+import {setPickup} from '@store/slices/Booking/bookingSlice';
 
 import {
   IconBookmarkFilled,
@@ -39,31 +41,59 @@ import {
   IconPencil,
 } from '@tabler/icons-react-native';
 
-import { useFormik } from 'formik';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
-import { useDispatch, useSelector } from 'react-redux';
+import {useFormik} from 'formik';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-controller';
+import {useDispatch, useSelector} from 'react-redux';
 
-import { styles } from './pickupModal.style';
+import {styles} from './pickupModal.style';
 
 interface Props {
   open?: boolean;
   onOpen?: (open: boolean) => void;
 }
 
-const SEARCH_DEBOUNCE_MS = 500;
 const MIN_SEARCH_LENGTH = 2;
 
-const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
-  const { pickup } = useSelector((state: RootState) => state?.booking);
-  const { currentLocation } = useSelector((state: RootState) => state?.auth);
+const PickupModal: React.FC<Props> = ({onOpen, open}) => {
+  const {pickup} = useSelector(
+    (state: RootState) => state?.booking,
+  );
+
+  const {currentLocation} = useSelector(
+    (state: RootState) => state?.auth,
+  );
 
   const dispatch = useDispatch();
 
   const refScrollable = useRef<any>(null);
 
-  const [search, setSearch] = useState('');
   const [isCustomBookmark, setIsCustomBookmark] = useState(false);
   const [openGoogleAddress, setOpenGoogleAddress] = useState(false);
+
+  /* -------------------------------------------------------------------------- */
+  /* GOOGLE PLACES SEARCH                                                       */
+  /* -------------------------------------------------------------------------- */
+
+  const {
+    searchText,
+    setSearchText,
+    suggestions,
+    loading: isSearching,
+    detailsLoading,
+    error: searchError,
+    selectPlace,
+    clearSearch,
+  } = useGooglePlacesSearch({
+    debounceMs: 500,
+    country: 'IN',
+  });
+
+  const normalizedSearch = useMemo(
+    () => searchText.trim(),
+    [searchText],
+  );
+
+  const canSearch = normalizedSearch.length >= MIN_SEARCH_LENGTH;
 
   /* -------------------------------------------------------------------------- */
   /* FORM                                                                       */
@@ -83,89 +113,42 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
     },
 
     onSubmit: async values => {
-      dispatch(setPickup({ pickup: values }));
+      dispatch(setPickup({pickup: values}));
       onOpen?.(false);
     },
   });
 
   /* -------------------------------------------------------------------------- */
-  /* DEBOUNCED SEARCH                                                           */
+  /* CURRENT LOCATION                                                           */
   /* -------------------------------------------------------------------------- */
 
-  /**
-   * Raw search entered by the user.
-   *
-   * Example:
-   *
-   * User types:
-   * M
-   * Mu
-   * Mum
-   * Mumb
-   * Mumbai
-   *
-   * Only the final value after 500ms is sent to the API.
-   */
-  const normalizedSearch = useMemo(() => {
-    return search.trim();
-  }, [search]);
-
-  const debouncedSearch = useDebounce(normalizedSearch, SEARCH_DEBOUNCE_MS);
-
-  /**
-   * Only search when:
-   * - user entered at least 2 characters
-   * - current location is available
-   */
-  const canSearch =
-    debouncedSearch.length >= MIN_SEARCH_LENGTH &&
-    currentLocation?.lat != null &&
-    currentLocation?.lng != null;
-
   const {
-    data: locationData,
-    isFetching: isSearching,
-    isLoading: isSearchLoading,
-  } = useGetSearchLocationQuery(
+    data: currentLocationData,
+    refetch: refetchCurrentLocation,
+  } = useGetLocationByLatLngQuery(
     {
-      search: debouncedSearch,
       latitude: currentLocation?.lat ?? 0,
       longitude: currentLocation?.lng ?? 0,
     },
     {
-      skip: !canSearch,
+      skip:
+        !open ||
+        currentLocation?.lat == null ||
+        currentLocation?.lng == null,
     },
   );
-
-  /* -------------------------------------------------------------------------- */
-  /* CURRENT LOCATION                                                           */
-  /* -------------------------------------------------------------------------- */
-
-  const { data: currentLocationData, refetch: refetchCurrentLocation } =
-    useGetLocationByLatLngQuery(
-      {
-        latitude: currentLocation?.lat ?? 0,
-        longitude: currentLocation?.lng ?? 0,
-      },
-      {
-        // This sheet is the only place currentLocationData is used (the
-        // "Current Location" search result). Without this, the query was
-        // subscribed for the whole time Dashboard is mounted — since
-        // PickupModal never unmounts, only hides — and re-fired a reverse
-        // geocode request on every live GPS update, regardless of whether
-        // the sheet was even open.
-        skip: !open || !currentLocation?.lat || !currentLocation?.lng,
-      },
-    );
 
   /* -------------------------------------------------------------------------- */
   /* SAVED LOCATIONS / ADDRESS TAGS                                             */
   /* -------------------------------------------------------------------------- */
 
-  const { data: savedLocationData, refetch: refetchSavedLocations } =
-    useGetSavedLocationQuery();
+  const {
+    data: savedLocationData,
+    refetch: refetchSavedLocations,
+  } = useGetSavedLocationQuery();
 
-  const { data: addressTag, refetch: refetchTags } = useGetAddressLabelsQuery();
+  const {data: addressTag, refetch: refetchTags} =
+    useGetAddressLabelsQuery();
 
   /* -------------------------------------------------------------------------- */
   /* MODAL OPEN / CLOSE                                                         */
@@ -173,27 +156,45 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
 
   useEffect(() => {
     if (open) {
-      refScrollable?.current?.open();
+      refScrollable.current?.open();
 
       refetchSavedLocations();
       refetchCurrentLocation();
       refetchTags();
     } else {
-      refScrollable?.current?.close();
+      refScrollable.current?.close();
     }
-  }, [open, refetchSavedLocations, refetchCurrentLocation, refetchTags]);
+  }, [
+    open,
+    refetchSavedLocations,
+    refetchCurrentLocation,
+    refetchTags,
+  ]);
 
   /* -------------------------------------------------------------------------- */
-  /* SEARCH HANDLER                                                             */
+  /* SEARCH HANDLERS                                                            */
   /* -------------------------------------------------------------------------- */
 
-  const handleSearchChange = useCallback((text: string) => {
-    setSearch(text);
-  }, []);
+  const handleSearchChange = useCallback(
+    (text: string) => {
+      setSearchText(text);
+    },
+    [setSearchText],
+  );
 
   const handleClearSearch = useCallback(() => {
-    setSearch('');
-  }, []);
+    clearSearch();
+  }, [clearSearch]);
+
+  /* -------------------------------------------------------------------------- */
+  /* RESET ADDRESS FIELDS                                                       */
+  /* -------------------------------------------------------------------------- */
+
+  const resetAddressFields = useCallback(() => {
+    setIsCustomBookmark(false);
+    setSearchText('');
+    setOpenGoogleAddress(false);
+  }, [setSearchText]);
 
   /* -------------------------------------------------------------------------- */
   /* SELECT CURRENT LOCATION                                                    */
@@ -206,11 +207,6 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
       return;
     }
 
-    // A full replace, not five separate setFieldValue patches — patching
-    // only name/fullAddress/lat/lng left tag/plotBuilding/streetArea/
-    // contactMobile from whatever was PREVIOUSLY selected still sitting in
-    // the form, so re-editing to a different address could submit with a
-    // new pin but an old label/unit-number still attached to it.
     formik.setValues({
       mapboxId: location.mapboxId ?? '',
       name: location.name ?? '',
@@ -222,11 +218,9 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
       contactMobile: '',
       tag: '',
     });
-    setIsCustomBookmark(false);
 
-    setSearch('');
-    setOpenGoogleAddress(false);
-  }, [currentLocationData, formik]);
+    resetAddressFields();
+  }, [currentLocationData, formik, resetAddressFields]);
 
   /* -------------------------------------------------------------------------- */
   /* SELECT SAVED LOCATION                                                      */
@@ -245,39 +239,50 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
         contactMobile: item?.ContactMobile ?? '',
         tag: item?.Tag ?? '',
       });
-      setIsCustomBookmark(false);
 
-      setSearch('');
-      setOpenGoogleAddress(false);
+      resetAddressFields();
     },
-    [formik],
+    [formik, resetAddressFields],
   );
 
   /* -------------------------------------------------------------------------- */
-  /* SELECT SEARCH RESULT                                                       */
+  /* SELECT GOOGLE PLACES RESULT                                                */
   /* -------------------------------------------------------------------------- */
 
   const handleSelectSearchLocation = useCallback(
-    (item: any) => {
-      // Full replace — see handleSelectCurrentLocation's comment above for
-      // why this can't be five separate setFieldValue patches.
-      formik.setValues({
-        mapboxId: item?.mapboxId ?? '',
-        name: item?.name ?? '',
-        fullAddress: item?.fullAddress ?? '',
-        latitude: item?.latitude ?? 0,
-        longitude: item?.longitude ?? 0,
-        plotBuilding: '',
-        streetArea: '',
-        contactMobile: '',
-        tag: '',
-      });
-      setIsCustomBookmark(false);
+    async (item: any) => {
+      try {
+        const place = await selectPlace(item);
 
-      setSearch('');
-      setOpenGoogleAddress(false);
+        if (!place) {
+          return;
+        }
+
+        formik.setValues({
+          // Temporary backward-compatible mapping.
+          // This is a Google Place ID, not a Mapbox ID.
+          mapboxId: place.placeId,
+
+          name: place.placeName,
+
+          fullAddress: place.formattedAddress,
+
+          latitude: place.latitude,
+
+          longitude: place.longitude,
+
+          plotBuilding: '',
+          streetArea: '',
+          contactMobile: '',
+          tag: '',
+        });
+
+        resetAddressFields();
+      } catch (error) {
+        console.log('Google Place selection error:', error);
+      }
     },
-    [formik],
+    [selectPlace, formik, resetAddressFields],
   );
 
   /* -------------------------------------------------------------------------- */
@@ -293,7 +298,7 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
   );
 
   /* -------------------------------------------------------------------------- */
-  /* ENABLE CUSTOM TAG                                                          */
+  /* CUSTOM TAG HANDLERS                                                        */
   /* -------------------------------------------------------------------------- */
 
   const handleAddCustomBookmark = useCallback(() => {
@@ -301,17 +306,13 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
     setIsCustomBookmark(true);
   }, [formik]);
 
-  /* -------------------------------------------------------------------------- */
-  /* DISABLE CUSTOM TAG                                                         */
-  /* -------------------------------------------------------------------------- */
-
   const handleRemoveCustomBookmark = useCallback(() => {
     setIsCustomBookmark(false);
     formik.setFieldValue('tag', '');
   }, [formik]);
 
   /* -------------------------------------------------------------------------- */
-  /* SEARCH RESULTS                                                             */
+  /* GOOGLE SEARCH RESULTS                                                      */
   /* -------------------------------------------------------------------------- */
 
   const searchResults = useMemo(() => {
@@ -319,8 +320,8 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
       return [];
     }
 
-    return locationData?.data ?? [];
-  }, [canSearch, locationData]);
+    return suggestions;
+  }, [canSearch, suggestions]);
 
   /* -------------------------------------------------------------------------- */
   /* SAVED LOCATIONS                                                            */
@@ -359,16 +360,14 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
       onOpen={() => onOpen?.(true)}
       onClose={() => onOpen?.(false)}
     >
-      {!formik?.values?.fullAddress || openGoogleAddress ? (
-        /* -------------------------------------------------------------------- */
-        /* SEARCH SCREEN                                                        */
-        /* -------------------------------------------------------------------- */
-
+      {!formik.values.fullAddress || openGoogleAddress ? (
         <View style={styles.gridContainer}>
+          {/* SEARCH INPUT */}
+
           <SearchField
             iconType="location"
             placeholder="Pick up Address"
-            value={search}
+            value={searchText}
             onChangeText={handleSearchChange}
             iconColor="#4CAF50"
             containerStyle={{
@@ -377,75 +376,93 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
             }}
           />
 
-          {/* --------------------------------------------------------------- */}
-          {/* SEARCHING INDICATOR                                             */}
-          {/* --------------------------------------------------------------- */}
+          {/* SEARCH LOADING */}
 
-          {normalizedSearch.length >= MIN_SEARCH_LENGTH &&
-            (isSearching || isSearchLoading) && (
-              <View
-                style={{
-                  paddingVertical: vs(12),
-                  alignItems: 'center',
-                }}
-              >
-                <ActivityIndicator size="small" color={COLORS.primary[500]} />
-              </View>
-            )}
-
-          <View style={{ height: 10 }} />
-
-          {/* --------------------------------------------------------------- */}
-          {/* CURRENT LOCATION                                                */}
-          {/* --------------------------------------------------------------- */}
-
-          {normalizedSearch.length === 0 && currentLocationData?.data && (
-            <Pressable
-              onPress={handleSelectCurrentLocation}
-              style={styles.currentLoactionButton}
+          {(isSearching || detailsLoading) && canSearch && (
+            <View
+              style={{
+                paddingVertical: vs(12),
+                alignItems: 'center',
+              }}
             >
-              <Text style={styles.listLabel}>Current Location</Text>
-
-              <View style={styles.listContainer}>
-                <IconCurrentLocation size={20} />
-
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.title}>
-                    {currentLocationData?.data?.name}
-                  </Text>
-
-                  <Text style={styles.subtitle}>
-                    {currentLocationData?.data?.fullAddress}
-                  </Text>
-                </View>
-              </View>
-            </Pressable>
+              <ActivityIndicator
+                size="small"
+                color={COLORS.primary[500]}
+              />
+            </View>
           )}
 
-          {/* --------------------------------------------------------------- */}
-          {/* SAVED LOCATIONS                                                 */}
-          {/* --------------------------------------------------------------- */}
+          {/* SEARCH ERROR */}
+
+          {!!searchError && (
+            <Text
+              style={{
+                color: 'red',
+                marginBottom: vs(10),
+              }}
+            >
+              {searchError}
+            </Text>
+          )}
+
+          <View style={{height: 10}} />
+
+          {/* CURRENT LOCATION */}
+
+          {normalizedSearch.length === 0 &&
+            currentLocationData?.data && (
+              <Pressable
+                onPress={handleSelectCurrentLocation}
+                style={styles.currentLoactionButton}
+              >
+                <Text style={styles.listLabel}>
+                  Current Location
+                </Text>
+
+                <View style={styles.listContainer}>
+                  <IconCurrentLocation size={20} />
+
+                  <View style={{flex: 1}}>
+                    <Text style={styles.title}>
+                      {currentLocationData?.data?.name}
+                    </Text>
+
+                    <Text style={styles.subtitle}>
+                      {currentLocationData?.data?.fullAddress}
+                    </Text>
+                  </View>
+                </View>
+              </Pressable>
+            )}
+
+          {/* SAVED LOCATIONS */}
 
           {savedLocations.length > 0 && (
             <FlatList
               data={savedLocations}
               keyExtractor={(item, index) =>
-                item?.mapboxId || item?.PlaceName || index.toString()
+                item?.mapboxId ||
+                item?.PlaceName ||
+                index.toString()
               }
-              renderItem={({ item }) => (
-                <Pressable onPress={() => handleSelectSavedLocation(item)}>
+              renderItem={({item}) => (
+                <Pressable
+                  onPress={() => handleSelectSavedLocation(item)}
+                >
                   <View style={styles.bookmarkListContiner}>
-                    <Text style={styles.listLabel}>{item?.Tag}</Text>
+                    <Text style={styles.listLabel}>
+                      {item?.Tag}
+                    </Text>
 
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                      }}
-                    >
-                      <View style={{ flex: 1 }}>
-                        <Text style={styles.title}>{item?.PlaceName}</Text>
+                    <View style={{flexDirection: 'row'}}>
+                      <View style={{flex: 1}}>
+                        <Text style={styles.title}>
+                          {item?.PlaceName}
+                        </Text>
 
-                        <Text style={styles.subtitle}>{item?.FullAddress}</Text>
+                        <Text style={styles.subtitle}>
+                          {item?.FullAddress}
+                        </Text>
                       </View>
 
                       <IconBookmarkFilled
@@ -456,7 +473,7 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
                   </View>
                 </Pressable>
               )}
-              style={{ flex: 1 }}
+              style={{flex: 1}}
               contentContainerStyle={{
                 paddingBottom: vs(100),
               }}
@@ -464,33 +481,34 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
             />
           )}
 
-          {/* --------------------------------------------------------------- */}
-          {/* SEARCH RESULTS                                                  */}
-          {/* --------------------------------------------------------------- */}
+          {/* GOOGLE PLACES SEARCH RESULTS */}
 
-          {normalizedSearch.length >= MIN_SEARCH_LENGTH &&
+          {canSearch &&
             !isSearching &&
             searchResults.length > 0 && (
               <FlatList
                 data={searchResults}
-                keyExtractor={(item, index) =>
-                  item?.mapboxId || index.toString()
-                }
-                renderItem={({ item }) => (
+                keyExtractor={item => item.placeId}
+                renderItem={({item}) => (
                   <Pressable
+                    disabled={detailsLoading}
                     onPress={() => handleSelectSearchLocation(item)}
                     style={styles.listItem}
                   >
                     <IconMapPinFilled size={20} />
 
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.title}>{item?.name}</Text>
+                    <View style={{flex: 1}}>
+                      <Text style={styles.title}>
+                        {item.placeName}
+                      </Text>
 
-                      <Text style={styles.subtitle}>{item?.fullAddress}</Text>
+                      <Text style={styles.subtitle}>
+                        {item.description}
+                      </Text>
                     </View>
                   </Pressable>
                 )}
-                style={{ flex: 1 }}
+                style={{flex: 1}}
                 contentContainerStyle={{
                   paddingBottom: vs(100),
                 }}
@@ -498,27 +516,26 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
               />
             )}
 
-          {/* --------------------------------------------------------------- */}
-          {/* NO RESULTS                                                      */}
-          {/* --------------------------------------------------------------- */}
+          {/* NO RESULTS */}
 
           {canSearch &&
             !isSearching &&
-            !isSearchLoading &&
-            searchResults.length === 0 && (
+            !detailsLoading &&
+            searchResults.length === 0 &&
+            !searchError && (
               <View
                 style={{
                   paddingVertical: vs(30),
                   alignItems: 'center',
                 }}
               >
-                <Text style={styles.subtitle}>No locations found</Text>
+                <Text style={styles.subtitle}>
+                  No locations found
+                </Text>
               </View>
             )}
 
-          {/* --------------------------------------------------------------- */}
-          {/* MINIMUM CHARACTERS                                              */}
-          {/* --------------------------------------------------------------- */}
+          {/* MINIMUM CHARACTERS */}
 
           {normalizedSearch.length === 1 && (
             <View
@@ -534,28 +551,29 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
           )}
         </View>
       ) : (
-        /* ------------------------------------------------------------------ */
-        /* SELECTED LOCATION SCREEN                                           */
-        /* ------------------------------------------------------------------ */
+        /* SELECTED LOCATION SCREEN */
 
         <View style={styles.gridContainer}>
           <View style={styles.headerRow}>
-            <IconMapPinFilled size={32} fill="#4CAF50" />
+            <IconMapPinFilled
+              size={32}
+              fill="#4CAF50"
+            />
 
-            <View style={{ flex: 1 }}>
+            <View style={{flex: 1}}>
               <Text style={styles.title}>
-                {formik?.values?.name || 'No location'}
+                {formik.values.name || 'No location'}
               </Text>
 
               <Text style={styles.subtitle}>
-                {formik?.values?.fullAddress || 'No address'}
+                {formik.values.fullAddress || 'No address'}
               </Text>
             </View>
 
             <Pressable
               onPress={() => {
                 setOpenGoogleAddress(true);
-                setSearch('');
+                setSearchText('');
               }}
             >
               <IconPencil size={24} />
@@ -589,52 +607,57 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
                 characterCount={10}
               />
 
-              <Text style={styles.sectionTitle}>Save Address As</Text>
+              <Text style={styles.sectionTitle}>
+                Save Address As
+              </Text>
 
-              {/* ------------------------------------------------------------ */}
-              {/* BOOKMARKS                                                     */}
-              {/* ------------------------------------------------------------ */}
+              {/* ADDRESS TAGS */}
 
               <View style={styles.bookmarkContainer}>
-                {addressTag?.data?.map((item: any, index: number) => {
-                  const isSelected = formik?.values?.tag === item?.Tag;
+                {addressTag?.data?.map(
+                  (item: any, index: number) => {
+                    const isSelected =
+                      formik.values.tag === item?.Tag;
 
-                  return (
-                    <Pressable
-                      key={`${item?.Tag}-${index}`}
-                      onPress={() => handleSelectTag(item?.Tag)}
-                      style={[
-                        styles.gridButtonContainer,
-                        {
-                          borderColor: isSelected
-                            ? COLORS.primary[500]
-                            : '#ccc',
-
-                          backgroundColor: isSelected ? '#E8F5E9' : 'white',
-                        },
-                      ]}
-                    >
-                      <Text
+                    return (
+                      <Pressable
+                        key={`${item?.Tag}-${index}`}
+                        onPress={() =>
+                          handleSelectTag(item?.Tag)
+                        }
                         style={[
-                          styles.gridLabel,
+                          styles.gridButtonContainer,
                           {
-                            color: isSelected ? COLORS.primary[500] : '#333',
-
-                            width: '100%',
-                            textAlign: 'center',
+                            borderColor: isSelected
+                              ? COLORS.primary[500]
+                              : '#ccc',
+                            backgroundColor: isSelected
+                              ? '#E8F5E9'
+                              : 'white',
                           },
                         ]}
-                        numberOfLines={1}
                       >
-                        {item?.Tag}
-                      </Text>
-                    </Pressable>
-                  );
-                })}
+                        <Text
+                          style={[
+                            styles.gridLabel,
+                            {
+                              color: isSelected
+                                ? COLORS.primary[500]
+                                : '#333',
+                              width: '100%',
+                              textAlign: 'center',
+                            },
+                          ]}
+                          numberOfLines={1}
+                        >
+                          {item?.Tag}
+                        </Text>
+                      </Pressable>
+                    );
+                  },
+                )}
 
-                {/* ---------------------------------------------------------- */}
-                {/* CUSTOM BOOKMARK                                             */}
-                {/* ---------------------------------------------------------- */}
+                {/* CUSTOM BOOKMARK */}
 
                 {!isCustomBookmark ? (
                   <Pressable
@@ -662,26 +685,30 @@ const PickupModal: React.FC<Props> = ({ onOpen, open }) => {
                     </Text>
                   </Pressable>
                 ) : (
-                  <View style={styles.customeBookmarkFieldContiner}>
+                  <View
+                    style={styles.customeBookmarkFieldContiner}
+                  >
                     <TextInput
                       placeholder="Enter custom label (e.g. Shop, Office 2)"
-                      value={formik?.values?.tag}
-                      onChangeText={text => {
-                        formik.setFieldValue('tag', text);
-                      }}
+                      value={formik.values.tag}
+                      onChangeText={text =>
+                        formik.setFieldValue('tag', text)
+                      }
                       style={styles.bookmarkField}
                     />
 
-                    <Pressable onPress={handleRemoveCustomBookmark}>
-                      <Text style={styles.closeButton}>✕</Text>
+                    <Pressable
+                      onPress={handleRemoveCustomBookmark}
+                    >
+                      <Text style={styles.closeButton}>
+                        ✕
+                      </Text>
                     </Pressable>
                   </View>
                 )}
               </View>
 
-              {/* ------------------------------------------------------------ */}
-              {/* CONFIRM                                                       */}
-              {/* ------------------------------------------------------------ */}
+              {/* CONFIRM PICKUP */}
 
               <CustomButton
                 title="Confirm Pickup Address"

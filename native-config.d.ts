@@ -8,6 +8,7 @@ declare module 'react-native-config' {
     SERVICE_TOKEN?: string;
     MAPBOX_ACCESS_TOKEN?: string;
     PAYMENT_API_URL?: string;
+    GOOGLE_MAPS_API_KEY?: string;
   }
 
   export const Config: NativeConfig;

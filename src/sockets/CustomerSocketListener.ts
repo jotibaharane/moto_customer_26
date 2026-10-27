@@ -35,6 +35,35 @@ const endLoadLocally = (dispatch: any, loadId?: string) => {
   );
 };
 
+/**
+ * Loads whose trip has finished in this app session. Any late
+ * tracking-driver-location for one of them (in flight when the trip ended)
+ * must not re-populate the map with the driver and a route to the
+ * destination.
+ */
+const endedLoadIds = new Set<string>();
+
+export const isLoadEnded = (loadId?: string) =>
+  !!loadId && endedLoadIds.has(String(loadId));
+
+/** Clears the map for a trip that just finished and leaves its room. */
+export const endTrackedTrip = (dispatch: any, loadId?: string) => {
+  const trackedLoadId = store.getState().map.driver?.loadId;
+  const endedLoadId = loadId ?? trackedLoadId;
+  if (endedLoadId) {
+    endedLoadIds.add(String(endedLoadId));
+    SocketService.getSocket()?.emit('stop-tracking', { loadId: endedLoadId });
+  }
+  // A completion for some OTHER load must not wipe the one being tracked.
+  if (!loadId || !trackedLoadId || trackedLoadId === loadId) {
+    dispatch(clearActiveTrip());
+    dispatch(resetMap());
+  }
+  dispatch(
+    api.endpoints.getLoads.initiate(undefined, { forceRefetch: true }),
+  );
+};
+
 class CustomerSocketListener {
   initialize(dispatch: any) {
     const socket = SocketService.getSocket();
@@ -181,9 +210,9 @@ class CustomerSocketListener {
     /**
      * Trip Completed
      */
-    socket.on(SOCKET_EVENTS.TRIP_COMPLETED, () => {
-      dispatch(clearActiveTrip());
-      dispatch(resetMap());
+    socket.on(SOCKET_EVENTS.TRIP_COMPLETED, data => {
+      endTrackedTrip(dispatch, data?.loadId);
+      dispatch(setMessage(''));
     });
 
     /**
@@ -229,9 +258,11 @@ class CustomerSocketListener {
 
     socket.on('tracking-driver-location', data => {
       console.log('Tracking Location : ', { data });
+      if (isLoadEnded(data?.loadId)) {
+        return;
+      }
       if (isTripOverStatus(data?.tripStatus)) {
-        dispatch(clearActiveTrip());
-        dispatch(resetMap());
+        endTrackedTrip(dispatch, data?.loadId);
       } else {
         dispatch(setDrivers(data));
       }
@@ -240,8 +271,7 @@ class CustomerSocketListener {
     socket.on('load-status-changed', data => {
       console.log('Load Status Changed : ', { data });
       if (isTripOverStatus(data?.tripStatus)) {
-        dispatch(clearActiveTrip());
-        dispatch(resetMap());
+        endTrackedTrip(dispatch, data?.loadId);
       }
     });
 
@@ -252,8 +282,7 @@ class CustomerSocketListener {
     socket.on('trip-status', data => {
       console.log('Trip Status : ', { data });
       if (isTripOverStatus(data?.status)) {
-        dispatch(clearActiveTrip());
-        dispatch(resetMap());
+        endTrackedTrip(dispatch, data?.loadId);
       }
     });
     socket.on('driver-near-pickup', data => {
@@ -271,10 +300,6 @@ class CustomerSocketListener {
     socket.on('driver-arrived-delivery', data => {
       console.log('Driver Arrived at Delivery : ', { data });
       dispatch(setMessage('Driver Arrived at Delivery Location.'));
-    });
-    socket.on('trip-completed', data => {
-      console.log('Trip Completed : ', { data });
-      dispatch(setMessage(''));
     });
 
     socket.on('payment-notification', data => {

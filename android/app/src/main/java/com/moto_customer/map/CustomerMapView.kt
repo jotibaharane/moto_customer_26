@@ -166,6 +166,9 @@ class CustomerMapView(private val reactContext: ThemedReactContext) : FrameLayou
             // TripMapView.DELIVERY_PHASE_STATUSES literally, which is the
             // proven-working reference for this exact string.
             "TRIP START",
+            // DB-normalised spelling, seen when the backend rebuilds its
+            // tracking cache from MSSQL.
+            "TRIP_STARTED",
             "DRIVER_NEAR_DELIVERY",
             "DRIVER_ARRIVED_DELIVERY",
             "DELIVERY_COMPLETED",

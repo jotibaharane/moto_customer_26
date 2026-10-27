@@ -2,11 +2,12 @@ import CustomButton from '@components/Button';
 import { useDistance } from '@hooks/useDistance';
 import { navigate } from '@navigation/NavigationService';
 import CustomerSocket from '@socket/CustomerSocket';
+import SocketService from '@socket/SocketService';
 import { RootState } from '@store/rootReducer';
 import { setSelectedDriver } from '@store/slices/Booking/bookingSlice';
 import { IconMapPinFilled } from '@tabler/icons-react-native';
 import { COLORS } from '@theme/index';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -36,39 +37,62 @@ const SelectVehicleScreen = () => {
   const [loadingDrivers, setLoadingDrivers] = useState(false);
 
   console.log('_drivers', { drivers });
-  useEffect(() => {
-    if (!pickup?.latitude || !pickup?.longitude) {
+  const hasValidWeight = Number(weight) > 0;
+
+  /**
+   * Registers this pickup/weight as the customer's "watch" and loads the
+   * eligible nearby drivers. Re-runs whenever pickup OR weight changes —
+   * weight decides which vehicles are eligible, and it starts at 0, which
+   * the server rejects, so the list used to stay empty ("No Vehicles
+   * Available") after the customer entered a weight on this screen.
+   */
+  const watchDrivers = useCallback(async () => {
+    if (!pickup?.latitude || !pickup?.longitude || !hasValidWeight) {
+      setDrivers([]);
       return;
     }
+    try {
+      setLoadingDrivers(true);
+      const response = await CustomerSocket.watchDrivers(
+        pickup.latitude,
+        pickup.longitude,
+        5,
+        Number(weight),
+      );
+      setDrivers(response);
+      console.log('Drivers', response);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoadingDrivers(false);
+    }
+  }, [pickup?.latitude, pickup?.longitude, weight, hasValidWeight]);
 
-    const fetchDrivers = async () => {
-      try {
-        setLoadingDrivers(true);
+  useEffect(() => {
+    watchDrivers();
+  }, [watchDrivers]);
 
-        const response = await CustomerSocket.watchDrivers(
-          pickup.latitude!,
-          pickup.longitude!,
-          5,
-          weight,
-        );
-        setDrivers(response);
-        console.log('Drivers', response);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoadingDrivers(false);
-      }
+  /**
+   * The server drops the watch when the socket disconnects, and a new
+   * connection has no watch — re-register so live driver updates resume.
+   */
+  useEffect(() => {
+    const socket = SocketService.getSocket();
+    if (!socket) return;
+    socket.on('connect', watchDrivers);
+    return () => {
+      socket.off('connect', watchDrivers);
     };
-
-    fetchDrivers();
-  }, [pickup?.latitude, pickup?.longitude]);
+  }, [watchDrivers]);
 
   useEffect(() => {
     const handleDriverOnline = (driver: any) => {
       setDrivers(prev => {
         const exists = prev.some(x => x.driverId === driver.driverId);
         if (exists) {
-          return prev;
+          return prev.map(item =>
+            item.driverId === driver.driverId ? { ...item, ...driver } : item,
+          );
         }
         return [...prev, driver];
       });
@@ -169,10 +193,16 @@ const SelectVehicleScreen = () => {
           ) : (
             <View style={styles.emptyContainer}>
               <View style={styles.emptyCard}>
-                <Text style={styles.emptyTitle}>No Vehicles Available 🚚</Text>
+                <Text style={styles.emptyTitle}>
+                  {hasValidWeight
+                    ? 'No Vehicles Available 🚚'
+                    : 'Enter Approx Weight'}
+                </Text>
 
                 <Text style={styles.emptySubText}>
-                  Try changing pickup location or weight.
+                  {hasValidWeight
+                    ? 'Try changing pickup location or weight.'
+                    : 'Nearby vehicles are shown once the load weight is set.'}
                 </Text>
               </View>
             </View>
@@ -194,8 +224,8 @@ const SelectVehicleScreen = () => {
                   freightAmount: item.freightAmount,
                   expectedVehicleAvailability: item.expectedVehicleAvailability,
                   distance: item.distance,
-                  vehicleImage: item.vehicle.cardImage,
-                  weightRange: `${item.vehicle.minLoadingCapacity}-${item.vehicle.maxLoadingCapacity} ${item.vehicle.capacityUnit}`,
+                  vehicleImage: item?.vehicle?.cardImage,
+                  weightRange: `${item?.vehicle?.minLoadingCapacity}-${item?.vehicle?.maxLoadingCapacity} ${item?.vehicle?.capacityUnit}`,
                 }),
               )
             }

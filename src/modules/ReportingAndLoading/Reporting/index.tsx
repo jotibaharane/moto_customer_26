@@ -2,6 +2,10 @@ import { useGetLoadsQuery, useLazyGetCancellationChargeQuery } from '@api/api';
 import CancelBookingModal from '@components/Modal/CancelBookingModal';
 import { useFocusEffect } from '@react-navigation/native';
 import CustomerSocket from '@socket/CustomerSocket';
+import {
+  endTrackedTrip,
+  isLoadEnded,
+} from '@socket/CustomerSocketListener';
 import SocketService from '@socket/SocketService';
 import { RootState } from '@store/rootReducer';
 import { clearActiveTrip } from '@store/slices/customerSocket/customerSocketSlice';
@@ -32,7 +36,14 @@ const ReportingScreen = () => {
 
   const { driver } = useSelector((state: RootState) => state.map);
   const newestLoad = loads?.data?.[0];
-  const currentLoadId = newestLoad?.LoadId;
+  // A finished/cancelled load is never something to track. Falling back to
+  // it here used to re-join its tracking room right after the trip ended
+  // (driver.loadId is cleared on completion), which brought the driver's
+  // live location and the route to the destination back onto the map.
+  const isNewestLoadOver =
+    TERMINAL_LOAD_STATUSES.includes(newestLoad?.Status) ||
+    isLoadEnded(newestLoad?.LoadId);
+  const currentLoadId = isNewestLoadOver ? undefined : newestLoad?.LoadId;
   const activeLoadId = driver?.loadId ?? currentLoadId;
   // The list's first entry isn't necessarily the load being tracked (e.g.
   // a second load was just accepted) — use the tracked load's own row for
@@ -80,7 +91,7 @@ const ReportingScreen = () => {
 
   const isDismissedLoad = driver?.loadId
     ? driver.loadId === dismissedLoadId
-    : !!currentLoadId && currentLoadId === dismissedLoadId;
+    : !currentLoadId || currentLoadId === dismissedLoadId;
 
   const isCancellable =
     !!activeLoadId &&
@@ -180,11 +191,18 @@ const ReportingScreen = () => {
 
       CustomerSocket.trackLoad({ loadId })
         .then(response => {
+          if (response?.status === '02') {
+            // Server says this load's tracking has ended — clear it
+            // instead of retrying.
+            endTrackedTrip(dispatch, loadId);
+            return;
+          }
           if (response?.status !== '00' && joinedLoadIdRef.current === loadId) {
             // Not joinable (e.g. tracking not created yet) — allow a retry.
             joinedLoadIdRef.current = null;
           }
           if (loadId !== activeLoadIdRef.current) return;
+          if (isLoadEnded(loadId)) return;
           if (response?.current) {
             dispatch(setDrivers(response.current));
           }
@@ -200,7 +218,12 @@ const ReportingScreen = () => {
 
   useEffect(() => {
     const socket = SocketService.getSocket();
-    if (!socket || !activeLoadId) return;
+    if (!socket || !activeLoadId) {
+      // Nothing to track any more — let the next load join fresh.
+      joinedLoadIdRef.current = null;
+      return;
+    }
+    if (isLoadEnded(activeLoadId)) return;
     startTracking(activeLoadId);
   }, [activeLoadId, startTracking]);
 
@@ -215,7 +238,7 @@ const ReportingScreen = () => {
     if (!socket) return;
 
     const handleConnect = () => {
-      if (activeLoadIdRef.current) {
+      if (activeLoadIdRef.current && !isLoadEnded(activeLoadIdRef.current)) {
         // A new connection has no rooms — force the re-join.
         startTracking(activeLoadIdRef.current, true);
       }

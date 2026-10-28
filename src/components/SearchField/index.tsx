@@ -38,13 +38,15 @@ const SearchField: React.FC<Props> = ({
     >
       <Icon size={32} color={iconColor} />
 
-      <TextInput
-        {...props}
-        editable={editable}
-        value={value}
-        placeholderTextColor="#4C002E"
-        style={styles.input}
-      />
+  <TextInput
+  {...props}
+  editable={editable}
+  value={value}
+  placeholderTextColor="#4C002E"
+  style={styles.input}
+  numberOfLines={2}
+  multiline
+/>
       {/* {value ? (
         <TouchableOpacity
           onPress={() => props.onChangeText?.('')}
@@ -64,32 +66,29 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
+container: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  width: '100%',
+  minHeight: s(55),
+  paddingHorizontal: s(4),
+  paddingVertical: s(4),
+  borderRadius: s(16),
+  backgroundColor: Colors.white,
+  overflow: 'hidden',
+},
 
-    width: '100%',
-
-    padding: s(8),
-    borderRadius: s(16),
-
-    backgroundColor: Colors.white,
-    overflow: 'hidden',
-  },
-
-  input: {
-    flex: 1,
-
-    fontSize: ms(16), // Figma size same
-    color: '#6D4C5B',
-    fontFamily: FONT_FAMILIES.medium,
-
-    borderRadius: s(16),
-  },
-
-  clearBtn: {
-    padding: s(6),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+input: {
+  flex: 1,
+  minWidth: 0,
+  fontSize: ms(14),
+  color: '#6D4C5B',
+  fontFamily: FONT_FAMILIES.medium,
+  textAlign: 'center',
+  textAlignVertical: 'center',
+  includeFontPadding: false,
+  paddingVertical: s(2),
+  paddingHorizontal: s(2),
+  borderRadius: s(16),
+},
 });

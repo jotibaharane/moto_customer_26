@@ -192,6 +192,9 @@ const DropModal: React.FC<Props> = ({onOpen, open}) => {
     },
     [selectPlace, formik, setSearchText],
   );
+  const isMobileValid = /^[0-9]{10}$/.test(
+    formik.values.contactMobile || '',
+  );
 
   /* ------------------------------------------------------------------------ */
   /* EDIT ADDRESS                                                             */
@@ -390,6 +393,7 @@ const DropModal: React.FC<Props> = ({onOpen, open}) => {
                 onChangeText={formik.handleChange('contactMobile')}
                 keyboardType="phone-pad"
                 characterCount={10}
+                borderColor={isMobileValid ? '#4CAF50' : '#FF0000'}
               />
 
               {/* CONFIRM DELIVERY */}

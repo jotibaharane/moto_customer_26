@@ -252,6 +252,8 @@ export interface CreateLoadRequest {
   // Locations
   pickup: LoadLocation;
   delivery: LoadLocation;
+  declareValue: boolean;
+  declaredValueAmount: number;
 }
 export interface LoadLocation {
   mapboxId?: string;

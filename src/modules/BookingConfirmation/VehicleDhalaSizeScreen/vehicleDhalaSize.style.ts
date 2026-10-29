@@ -1,155 +1,166 @@
-/* ========================================================================== */
-/* vehicleDhalaSize.style.ts                                                  */
-/* ========================================================================== */
-
-import { COLORS, FONT_FAMILIES, ms, s, vs } from '@theme/index';
 
 import { StyleSheet } from 'react-native';
+import { vs } from '@theme/New';
 
 export const styles = StyleSheet.create({
-  /* ======================================================================== */
-  /* CONTAINER                                                                */
-  /* ======================================================================== */
-
   container: {
     flex: 1,
-    backgroundColor: COLORS.white[100],
-    paddingHorizontal: s(16),
-    paddingTop: vs(16),
+    backgroundColor: '#FFFFFF',
   },
-
-  /* ======================================================================== */
-  /* VEHICLE TYPE IMAGES                                                      */
-  /* ======================================================================== */
-
-  imageRow: {
-    width: '100%',
+  header: {
+    height: vs(56),
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: s(16),
+    paddingHorizontal: 14,
   },
-
-  vehicleImageContainer: {
-    flex: 1,
-    height: vs(150),
+  backButton: {
+    width: 35,
+    height: 35,
+    borderRadius: 20,
+    backgroundColor: '#E4E4E4',
     alignItems: 'center',
     justifyContent: 'center',
-    overflow: 'hidden',
   },
-
+  headerTitle: {
+    marginLeft: 15,
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#365582',
+    textDecorationLine: 'underline',
+  },
+  scrollContent: {
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+    flexGrow: 1,
+  },
+  vehicleNumber: {
+    marginTop: 12,
+    marginBottom: 16,
+    textAlign: 'center',
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#111111',
+  },
+  imageRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 22,
+  },
+  vehicleImageContainer: {
+    width: '48%',
+    height: vs(112),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   vehicleImage: {
     width: '100%',
     height: '100%',
   },
-
-  vehicleImageMirror: {
-    width: '100%',
-    height: '100%',
-    transform: [{ scaleX: -1 }],
-  },
-
-  /* ======================================================================== */
-  /* VEHICLE INFORMATION                                                      */
-  /* ======================================================================== */
-
-  infoContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: vs(4),
-    marginTop: vs(8),
-  },
-
-  vehicleName: {
-    fontSize: ms(16),
-    fontFamily: FONT_FAMILIES.semiBold,
-    color: COLORS.black[500],
-    textAlign: 'center',
-  },
-
-  vehicleDetails: {
-    fontSize: ms(16),
-    fontFamily: FONT_FAMILIES.regular,
-    color: COLORS.gray[500],
-    textAlign: 'center',
-
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.gray[250],
-
-    paddingBottom: vs(24),
-  },
-
-  /* ======================================================================== */
-  /* TITLE                                                                    */
-  /* ======================================================================== */
-
-  sectionTitle: {
-    marginTop: vs(20),
-    marginBottom: vs(12),
-
-    fontSize: ms(20),
-    fontFamily: FONT_FAMILIES.semiBold,
-    color: COLORS.primary[500],
-  },
-
-  /* ======================================================================== */
-  /* FLATLIST                                                                 */
-  /* ======================================================================== */
-
-  list: {
+  imagePlaceholder: {
     flex: 1,
     width: '100%',
-  },
-
-  listContentContainer: {
-    width: '100%',
-    paddingBottom: vs(20),
-  },
-
-  /* ======================================================================== */
-  /* REAL IMAGE CARD                                                          */
-  /* ======================================================================== */
-
-  listItem: {
-    width: '100%',
-    height: vs(180),
-
-    borderRadius: s(10),
-
-    overflow: 'hidden',
-
-    backgroundColor: COLORS.gray[100],
-  },
-
-  listImage: {
-    width: '100%',
-    height: '100%',
-  },
-
-  /* ======================================================================== */
-  /* EMPTY STATE                                                              */
-  /* ======================================================================== */
-
-  emptyContainer: {
-    width: '100%',
-    height: vs(150),
-
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#F7F7F7',
+    borderRadius: 8,
   },
-
+  placeholderText: {
+    color: '#777777',
+    fontSize: 12,
+  },
+  detailsTable: {
+    borderWidth: 1,
+    borderColor: '#E1E1E1',
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    overflow: 'hidden',
+  },
+  tableRow: {
+    minHeight: vs(38),
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: '#C8C8C8',
+  },
+  lastTableRow: {
+    borderBottomWidth: 0,
+  },
+  tableLabel: {
+    width: '39%',
+    justifyContent: 'center',
+    paddingRight: 5,
+    borderRightWidth: 1,
+    borderRightColor: '#C8C8C8',
+  },
+  tableValue: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingLeft: 12,
+  },
+  tableText: {
+    fontSize: 12,
+    color: '#292929',
+  },
+  dimensionsContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  dimensionColumn: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRightWidth: 1,
+    borderRightColor: '#C8C8C8',
+  },
+  dimensionHeading: {
+    fontSize: 11,
+    color: '#333333',
+    marginBottom: 4,
+  },
+  dimensionValue: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#111111',
+  },
+  sectionTitle: {
+    marginTop: 20,
+    marginBottom: 12,
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#222222',
+  },
+  list: {
+    flex: 1,
+  },
+  listContentContainer: {
+    paddingBottom: 12,
+  },
+  listItem: {
+    width: '100%',
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  listImage: {
+    width: '100%',
+    height: vs(200),
+    backgroundColor: '#F7F7F7',
+  },
+  emptyContainer: {
+    paddingVertical: 20,
+    alignItems: 'center',
+  },
   emptyText: {
-    fontSize: ms(14),
-    fontFamily: FONT_FAMILIES.regular,
-    color: COLORS.gray[500],
+    fontSize: 12,
+    color: '#777777',
   },
-
-  /* ======================================================================== */
-  /* BUTTON                                                                   */
-  /* ======================================================================== */
-
+  buttonContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 12,
+    backgroundColor: '#FFFFFF',
+  },
   button: {
-    marginTop: vs(12),
-    marginBottom: vs(8),
+    width: '100%',
   },
 });

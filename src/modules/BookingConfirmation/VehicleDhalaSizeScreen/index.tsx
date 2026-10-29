@@ -1,11 +1,16 @@
-/* ========================================================================== */
-/* VehicleDhalaSizeScreen.tsx                                                 */
-/* ========================================================================== */
-
 import CustomButton from '@components/Button';
 import { goBack } from '@navigation/NavigationService';
+import { IconChevronLeft } from '@tabler/icons-react-native';
 import React, { useMemo } from 'react';
-import { FlatList, Image, Text, View } from 'react-native';
+import {
+  FlatList,
+  Image,
+  SafeAreaView,
+  StatusBar,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 import { vs } from '@theme/New';
 import { styles } from './vehicleDhalaSize.style';
@@ -13,11 +18,20 @@ import { styles } from './vehicleDhalaSize.style';
 const API_BASE_URL = 'https://stag.motohelpindia.com';
 
 const VehicleDhalaSizeScreen = ({ route }: any) => {
-  const vehicle = route?.params?.item?.vehicle;
+  const item = route?.params?.item;
+  const vehicle = item?.vehicle ?? {};
 
-  /* ------------------------------------------------------------------------ */
-  /* VEHICLE IMAGES                                                           */
-  /* ------------------------------------------------------------------------ */
+  const getImageUrl = (image?: string | null) => {
+    if (!image) {
+      return undefined;
+    }
+
+    if (image.startsWith('http://') || image.startsWith('https://')) {
+      return image;
+    }
+
+    return `${API_BASE_URL}${image.startsWith('/') ? '' : '/'}${image}`;
+  };
 
   const vehicleImages = useMemo(() => {
     if (!vehicle?.images) {
@@ -32,35 +46,38 @@ const VehicleDhalaSizeScreen = ({ route }: any) => {
       }));
   }, [vehicle?.images]);
 
-  /* ------------------------------------------------------------------------ */
-  /* IMAGE URL                                                                 */
-  /* ------------------------------------------------------------------------ */
+  const frontImage = getImageUrl(vehicle?.vehicleTypeImages?.front);
+  const backImage = getImageUrl(vehicle?.vehicleTypeImages?.back);
 
-  const getImageUrl = (image?: string | null) => {
-    if (!image) {
-      return '';
-    }
+  const vehicleNumber =
+    vehicle?.vehicleNumber ??
+    item?.vehicleNumber ??
+    vehicle?.registrationNumber ??
+    vehicle?.vehicleNo ??
+    'N/A';
 
-    if (image.startsWith('http://') || image.startsWith('https://')) {
-      return image;
-    }
+  const loadingCapacity =
+    vehicle?.loadingCapacity ??
+    vehicle?.maxLoadingCapacity ??
+    vehicle?.minLoadingCapacity ??
+    '-';
 
-    return `${API_BASE_URL}${image}`;
-  };
+  const make = vehicle?.make ?? vehicle?.vehicleMake ?? 'N/A';
+  const segment = vehicle?.segment ?? vehicle?.vehicleSegment ?? '';
+  const bodyType =
+    vehicle?.bodyType ?? vehicle?.vehicleBodyType ?? 'N/A';
 
-  /* ------------------------------------------------------------------------ */
-  /* RENDER REAL VEHICLE IMAGE                                                */
-  /* ------------------------------------------------------------------------ */
+  const length = vehicle?.dhalaLength;
+  const width = vehicle?.dhalaWidth;
+  const height = vehicle?.dhalaHeight;
 
-  const renderVehicleImage = ({
-    item,
-  }: {
-    item: {
-      photo_url: string;
-      photo_id: string;
-    };
-  }) => {
-    const imageUrl = getImageUrl(item?.photo_url);
+  const displayDimension = (value: any) =>
+    value !== null && value !== undefined && value !== ''
+      ? value
+      : '-';
+
+  const renderVehicleImage = ({ item: imageItem }: any) => {
+    const imageUrl = getImageUrl(imageItem.photo_url);
 
     if (!imageUrl) {
       return null;
@@ -69,9 +86,7 @@ const VehicleDhalaSizeScreen = ({ route }: any) => {
     return (
       <View style={styles.listItem}>
         <Image
-          source={{
-            uri: imageUrl,
-          }}
+          source={{ uri: imageUrl }}
           style={styles.listImage}
           resizeMode="cover"
         />
@@ -79,90 +94,138 @@ const VehicleDhalaSizeScreen = ({ route }: any) => {
     );
   };
 
+  const renderTableRow = (label: string, value: React.ReactNode) => (
+    <View style={styles.tableRow}>
+      <View style={styles.tableLabel}>
+        <Text style={styles.tableText}>{label}</Text>
+      </View>
+      <View style={styles.tableValue}>{value}</View>
+    </View>
+  );
+
   return (
-    <View style={styles.container}>
-      {/* ================================================================== */}
-      {/* VEHICLE TYPE IMAGES                                                 */}
-      {/* ================================================================== */}
-
-      <View style={styles.imageRow}>
-        <View style={styles.vehicleImageContainer}>
-          <Image
-            source={{
-              uri: getImageUrl(vehicle?.vehicleTypeImages?.front),
-            }}
-            style={styles.vehicleImage}
-            resizeMode="contain"
-          />
-        </View>
-
-        <View style={styles.vehicleImageContainer}>
-          <Image
-            source={{
-              uri: getImageUrl(vehicle?.vehicleTypeImages?.back),
-            }}
-            style={styles.vehicleImage}
-            resizeMode="contain"
-          />
-        </View>
-      </View>
-
-      {/* ================================================================== */}
-      {/* VEHICLE INFORMATION                                                 */}
-      {/* ================================================================== */}
-
-      <View style={styles.infoContainer}>
-        <Text style={styles.vehicleName}>
-          {vehicle?.vehicleType || 'Vehicle'}
-        </Text>
-
-        <Text style={styles.vehicleDetails}>
-          {vehicle?.loadingCapacity ?? 0} kg ,{' '}
-          {vehicle?.vehicleGrossWeight ?? 0} Ton
-          {'\n'}
-          Body Length: ~{vehicle?.dhalaLength ?? 0} ft , Body Height: ~
-          {vehicle?.dhalaHeight ?? 0} ft
-          {'\n'}
-          Body Width: ~{vehicle?.dhalaWidth ?? 0} ft
-        </Text>
-      </View>
-
-      {/* ================================================================== */}
-      {/* REAL VEHICLE IMAGES TITLE                                           */}
-      {/* ================================================================== */}
-
-      <Text style={styles.sectionTitle}>Real Image Of Vehicle</Text>
-
-      {/* ================================================================== */}
-      {/* REAL VEHICLE IMAGES                                                 */}
-      {/* ================================================================== */}
+    <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
 
       <FlatList
         data={vehicleImages}
-        keyExtractor={item => item.photo_id}
+        keyExtractor={imageItem => imageItem.photo_id}
         renderItem={renderVehicleImage}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.listContentContainer}
-        style={styles.list}
-        ItemSeparatorComponent={() => <View style={{ height: vs(16) }} />}
+        contentContainerStyle={styles.scrollContent}
+        ListHeaderComponent={
+          <>
+            {/* Vehicle number */}
+            <Text style={styles.vehicleNumber}>
+              Vehicle No : {vehicleNumber}
+            </Text>
+
+            {/* Backend vehicle type images */}
+            <View style={styles.imageRow}>
+              <View style={styles.vehicleImageContainer}>
+                {frontImage ? (
+                  <Image
+                    source={{ uri: frontImage }}
+                    style={styles.vehicleImage}
+                    resizeMode="contain"
+                  />
+                ) : (
+                  <View style={styles.imagePlaceholder}>
+                    <Text style={styles.placeholderText}>Front view</Text>
+                  </View>
+                )}
+              </View>
+
+              <View style={styles.vehicleImageContainer}>
+                {backImage ? (
+                  <Image
+                    source={{ uri: backImage }}
+                    style={styles.vehicleImage}
+                    resizeMode="contain"
+                  />
+                ) : (
+                  <View style={styles.imagePlaceholder}>
+                    <Text style={styles.placeholderText}>Rear view</Text>
+                  </View>
+                )}
+              </View>
+            </View>
+
+            {/* Vehicle details table */}
+            <View style={styles.detailsTable}>
+              {renderTableRow(
+                'Loading Capacity',
+                <Text style={styles.tableText}>
+                  {loadingCapacity}
+                  {typeof loadingCapacity === 'number' ? ' kg' : ''}
+                </Text>,
+              )}
+
+              {renderTableRow(
+                'Make & Segment',
+                <Text style={styles.tableText}>
+                  {[make, segment].filter(Boolean).join(' / ')}
+                </Text>,
+              )}
+
+              {renderTableRow(
+                'Body Type',
+                <Text style={styles.tableText}>{bodyType}</Text>,
+              )}
+
+              <View style={[styles.tableRow, styles.lastTableRow]}>
+                <View style={styles.tableLabel}>
+                  <Text style={styles.tableText}>Dhala Size</Text>
+                </View>
+
+                <View style={styles.dimensionsContainer}>
+                  <View style={styles.dimensionColumn}>
+                    <Text style={styles.dimensionHeading}>Length</Text>
+                    <Text style={styles.dimensionValue}>
+                      {displayDimension(length)} ft
+                    </Text>
+                  </View>
+
+                  <View style={styles.dimensionColumn}>
+                    <Text style={styles.dimensionHeading}>Width</Text>
+                    <Text style={styles.dimensionValue}>
+                      {displayDimension(width)} ft
+                    </Text>
+                  </View>
+
+                  <View style={styles.dimensionColumn}>
+                    <Text style={styles.dimensionHeading}>Height</Text>
+                    <Text style={styles.dimensionValue}>
+                      {displayDimension(height)} ft
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+
+            {/* Real vehicle images */}
+            <Text style={styles.sectionTitle}>Real Image Of Vehicle</Text>
+          </>
+        }
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>No vehicle images available</Text>
           </View>
         }
+        ItemSeparatorComponent={() => <View style={{ height: vs(16) }} />}
+        ListFooterComponent={<View style={{ height: vs(16) }} />}
       />
 
-      {/* ================================================================== */}
-      {/* DONE BUTTON                                                         */}
-      {/* ================================================================== */}
-
-      <CustomButton
-        title="Done"
-        variant="filled"
-        style={styles.button}
-        onPress={() => goBack()}
-      />
-    </View>
+      {/* Done button */}
+      <View style={styles.buttonContainer}>
+        <CustomButton
+          title="Done"
+          variant="filled"
+          style={styles.button}
+          onPress={() => goBack()}
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 

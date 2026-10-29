@@ -183,94 +183,117 @@ const ReviewBookingScreen = () => {
     EventBus.on(EVENTS.OFFER_ENDED, onOfferEnded);
     return () => EventBus.off(EVENTS.OFFER_ENDED, onOfferEnded);
   }, []);
-  return (
-    <View style={styles.container}>
-      <ScrollView style={{ flex: 1 }}>
-        <TouchableOpacity activeOpacity={0.9} style={[styles.card]}>
-          <Pressable style={styles.imageContainer}>
-            <View style={styles.circle} />
+ return (
+  <View style={styles.container}>
+  
 
-            <Image
-              source={{
-                uri: `https://stag.motohelpindia.com/assets${vehicleImage}`,
-              }}
-              resizeMode="contain"
-              style={styles.truckImage}
-            />
-          </Pressable>
-
-          <View style={styles.cardContent}>
-            <View style={styles.detailRow}>
-              <Text style={styles.vehicleName}>{vehicleType}</Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.vehicleDetails} numberOfLines={1}>
-                Loading Capacity - {weightRange}
-              </Text>
-            </View>
-
-            <View style={styles.detailRow}>
-              <Text style={styles.vehicleDetails}>Length - {length}ft</Text>
-            </View>
-
-            <View style={styles.detailRow}>
-              <Text style={styles.vehicleDetails}>width - {width} ft </Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.vehicleDetails}>Height - {height} ft </Text>
-            </View>
-          </View>
-        </TouchableOpacity>
-        <View style={styles.cardRow}>
-          <Text style={styles.cardText}>Total Weight</Text>
-          <Text style={styles.cardText}>{weight} KG</Text>
+    <ScrollView
+      style={styles.scrollView}
+      contentContainerStyle={styles.scrollContent}
+      showsVerticalScrollIndicator={false}
+    >
+      {/* Vehicle Card */}
+      <View style={styles.vehicleCard}>
+        <View style={styles.imageContainer}>
+          <Image
+            source={{
+              uri: `https://stag.motohelpindia.com/assets${vehicleImage}`,
+            }}
+            resizeMode="contain"
+            style={styles.truckImage}
+          />
         </View>
-        <View style={styles.cardRow}>
-          <Text style={styles.cardText}>Total Freight</Text>
-          <Text style={styles.cardText}>{freightAmount} ₹</Text>
-        </View>
-        <View style={styles?.addressContainer}>
-          <View style={styles.row}>
-            <IconMapPinFilled size={30} fill={'#4CAF50'} />
-            <View>
-              <Text style={styles.addressTitle}>Pick up Address</Text>
-              <Text style={styles.addressSubtitle}>{pickup?.name}</Text>
-            </View>
-          </View>
-          <View style={styles.divider}>
-            <Text style={styles.distanceText}>
-              {distance?.distanceKm || 0} km
+
+        <View style={styles.vehicleDivider} />
+
+        <View style={styles.cardContent}>
+          <Text style={styles.vehicleName}>{vehicleType}({weightRange})</Text>
+
+          <View style={styles.vehicleInfoRow}>
+            <Text style={styles.infoIcon}>◷</Text>
+            <Text style={styles.vehicleDetails}>
+              {expectedVehicleAvailability} Away
             </Text>
           </View>
-          <View style={styles.row}>
-            <IconMapPinFilled size={30} fill={'#FF0A0A'} />
-            <View>
-              <Text style={styles.addressTitle}>Delivery Address</Text>
-              <Text style={styles.addressSubtitle}>{delivery?.name}</Text>
-            </View>
+
+          <View style={styles.vehicleInfoRow}>
+            <Text style={styles.infoIcon}>₹</Text>
+            <Text style={styles.vehicleDetails}>
+              Freight - ₹ {Number(freightAmount).toLocaleString('en-IN')}
+            </Text>
           </View>
         </View>
-        <Text style={styles.etaText}>
-          Expated Arrival Time - {expectedVehicleAvailability}
+      </View>
+
+      {/* Weight */}
+      <View style={styles.summaryCard}>
+        <Text style={styles.cardText}>Total Weight</Text>
+        <Text style={styles.cardText}>{weight} KG</Text>
+      </View>
+
+      {/* Freight */}
+      <View style={styles.summaryCard}>
+        <Text style={styles.cardText}>Total Freight</Text>
+        <Text style={styles.cardText}>
+          {Number(freightAmount).toLocaleString('en-IN')} ₹
         </Text>
-        <OverlayLoader
-          visible={watingDriver}
-          onClose={() => {}}
-          onCancel={handleCancelOffer}
-          cancelling={cancellingOffer}
-          canCancel={!!offerLoadId}
-        />
-        <CustomButton
-          title="Confirm Booking"
-          variant="filled"
-          style={{
-            marginTop: vs(49),
-          }}
-          onPress={handleBook}
-        />
-      </ScrollView>
+      </View>
+
+      {/* Pickup and Delivery */}
+      <View style={styles.addressContainer}>
+        <View style={styles.addressRow}>
+          <IconMapPinFilled size={30} color="#4CAF50" />
+          <View style={styles.addressContent}>
+            <Text style={styles.addressTitle}>Pick up Address</Text>
+            <Text style={styles.addressSubtitle} numberOfLines={1}>
+              {pickup?.name}
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.routeDivider}>
+          <View style={styles.dashedLine} />
+          <Text style={styles.distanceText}>
+            {distance?.distanceKm || 0} km
+          </Text>
+        </View>
+
+        <View style={styles.addressRow}>
+          <IconMapPinFilled size={30} color="#FF0A0A" />
+          <View style={styles.addressContent}>
+            <Text style={styles.addressTitle}>Delivery Address</Text>
+            <Text style={styles.addressSubtitle} numberOfLines={1}>
+              {delivery?.name}
+            </Text>
+          </View>
+        </View>
+      </View>
+
+      {/* ETA */}
+      <Text style={styles.etaText}>
+        Expected Arrival Time - {expectedVehicleAvailability}
+      </Text>
+    </ScrollView>
+
+    {/* Bottom Button */}
+    <View style={styles.bottomContainer}>
+      <CustomButton
+        title="Confirm Booking"
+        variant="filled"
+        style={styles.confirmButton}
+        onPress={handleBook}
+      />
     </View>
-  );
+
+    <OverlayLoader
+      visible={watingDriver}
+      onClose={() => {}}
+      onCancel={handleCancelOffer}
+      cancelling={cancellingOffer}
+      canCancel={!!offerLoadId}
+    />
+  </View>
+);
 };
 
 export default ReviewBookingScreen;

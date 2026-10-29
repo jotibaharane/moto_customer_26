@@ -55,6 +55,7 @@ export interface InputOutlineMethods {
    * Removes all text from the TextInput.
    */
   clear: () => void;
+  borderColor?: string;
 }
 
 export interface InputOutlineProps extends TextInputProps {
@@ -81,6 +82,7 @@ export interface InputOutlineProps extends TextInputProps {
    * @default undefined
    * @type string
    */
+    borderColor?: string;
   fontFamily?: string;
   /**
    * Vertical padding for TextInput Container. Used to calculate animations.
@@ -205,6 +207,7 @@ const InputOutlineComponent = forwardRef<InputOutline, InputOutlineProps>(
       activeColor = COLORS.primary[500],
       errorColor = 'red',
       backgroundColor = 'white',
+      borderColor,
 
       fontSize = moderateScale(16),
       fontColor = COLORS.black[500],
@@ -340,16 +343,29 @@ const InputOutlineComponent = forwardRef<InputOutline, InputOutlineProps>(
       ),
     }));
 
+    // const animatedContainerStyle = useAnimatedStyle(() => ({
+    //   borderColor:
+    //     placeholderSize.value > 0
+    //       ? interpolateColor(
+    //           colorMap.value,
+    //           [0, 1, 2],
+    //           [inactiveColor, activeColor, errorColor],
+    //         )
+    //       : inactiveColor,
+    // }));
+
+    // this has changed by abhishek
     const animatedContainerStyle = useAnimatedStyle(() => ({
-      borderColor:
-        placeholderSize.value > 0
-          ? interpolateColor(
-              colorMap.value,
-              [0, 1, 2],
-              [inactiveColor, activeColor, errorColor],
-            )
-          : inactiveColor,
-    }));
+  borderColor:
+    borderColor ||
+    (placeholderSize.value > 0
+      ? interpolateColor(
+          colorMap.value,
+          [0, 1, 2],
+          [inactiveColor, activeColor, errorColor],
+        )
+      : inactiveColor),
+}));
 
     useImperativeHandle(ref, () => ({
       focus: handleFocus,

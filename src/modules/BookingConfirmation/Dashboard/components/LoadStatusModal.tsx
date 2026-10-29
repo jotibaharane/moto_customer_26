@@ -32,10 +32,8 @@ interface LoadStatusModalProps {
   loadPostId?: string;
   reportedTime?: string;
   loadingTime?: string;
-
   packagesLoaded?: number;
   loadingDuration?: string;
-
   receipt?: PaymentReceipt;
 }
 
@@ -54,6 +52,9 @@ const LoadStatusModal = ({
   const isLoading = status === 'LOADING' || status === 'LOADED';
 
   const isPayment = status === 'PAYMENT' || status === 'COMPLETED';
+
+  const isReported = status === 'REPORTED';
+  
 
   return (
     <Modal
@@ -82,6 +83,8 @@ const LoadStatusModal = ({
                   ? 'Loading Complete'
                   : status === 'PAYMENT'
                   ? 'Payment Pending'
+                  :status === 'COMPLETED'
+                  ? 'Payment Complete'
                   : 'REPORTED'}
               </Text>
             </View>

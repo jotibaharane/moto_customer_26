@@ -273,12 +273,12 @@ receiptCard: {
   marginBottom: 16,
 },
 download: {
-  width: 362,
-  height: 50,
+  width: 100,
+  height: 40,
   borderRadius:10,
   justifyContent: 'center',
   alignItems: 'center',
-  backgroundColor:'#2E5A99'
+  backgroundColor:'#E1E1E1'
 },
  sectionTitle: {
     fontSize: 16,
@@ -304,6 +304,7 @@ download: {
     flex: 1,
     fontSize: 14,
     color: '#000000',
+    fontWeight:'bold'
   },
 
   receiptValue: {
@@ -317,7 +318,7 @@ download: {
   },
 
   boldText: {
-    fontWeight: '700',
+    fontWeight:'bold',
     color: '#000000',
   },
 

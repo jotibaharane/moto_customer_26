@@ -1,66 +1,157 @@
-import CustomModal from '@components/Modals/CustumModal';
-import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
-import {
-  IconCube,
-  IconHistory,
-  IconHome,
-  IconTarget,
-  IconUserCircle,
-} from '@tabler/icons-react-native';
-import { COLORS, FONT_FAMILIES, fp, hp, wp } from '@theme/index';
-import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-// OPS has no screen built yet (registered as a blank placeholder in
-// BottomNavigation.tsx) — rather than navigating there and showing an
-// empty screen, tapping it opens a modal in place and leaves the
-// currently active tab as-is.
-const MODAL_ONLY_ROUTES = new Set(['OPS']);
+import React, { useEffect, useState } from 'react';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+
+import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+
+import {
+  IconAt,
+  IconChevronDown,
+  IconChevronUp,
+  IconHome,
+  IconHistory,
+  IconUserCircle,
+  IconTruck,
+  IconCreditCard,
+  IconTruckDelivery,
+  IconReportAnalytics,
+} from '@tabler/icons-react-native';
+
+import {
+  COLORS,
+  FONT_FAMILIES,
+  fp,
+  hp,
+  wp,
+} from '@theme/index';
+
+const OPS_OPTIONS = [
+  {
+    id: 'booking',
+    title: 'Veh Booking',
+    icon: IconTruck,
+  },
+  {
+    id: 'payment',
+    title: 'Pay & Delivery',
+    icon: IconCreditCard,
+  },
+  {
+    id: 'cancel',
+    title: 'Cancel Ship',
+    icon: IconTruckDelivery,
+  },
+  {
+    id: 'reports',
+    title: 'Reports',
+    icon: IconReportAnalytics,
+  },
+];
 
 const MyTabBar: React.FC<BottomTabBarProps> = ({
   state,
   descriptors,
   navigation,
 }) => {
-  const [modalRoute, setModalRoute] = useState<string | null>(null);
+  const [opsVisible, setOpsVisible] = useState(false);
+
+  const currentRoute = state.routes[state.index];
+  const isHomeScreen = currentRoute?.name === 'Home';
+
+  // Close OPS menu whenever user leaves Home.
+  useEffect(() => {
+    if (!isHomeScreen) {
+      setOpsVisible(false);
+    }
+  }, [isHomeScreen]);
+
+  const handleTabPress = (route: any, isFocused: boolean) => {
+    if (route.name === 'OPS') {
+      // OPS menu is available only on Home.
+      if (!isHomeScreen) {
+        return;
+      }
+
+      setOpsVisible(prev => !prev);
+      return;
+    }
+
+    setOpsVisible(false);
+
+    if (!isFocused) {
+      navigation.navigate(route.name);
+    }
+  };
+
+  const handleOpsOption = (option: string) => {
+    setOpsVisible(false);
+
+    // Add your navigation or API actions here.
+    // Example:
+    // if (option === 'booking') {
+    //   navigation.navigate('VehicleBooking');
+    // }
+  };
 
   const renderTab = (route: any, index: number) => {
     const { options } = descriptors[route.key];
-    const label = options.tabBarLabel ?? options.title ?? route.name;
+
+    const label =
+      options.tabBarLabel ?? options.title ?? route.name;
+
     const isFocused = state.index === index;
+    const isOps = route.name === 'OPS';
+    const isNewLoad = route.name === 'Find Veh';
 
-    const onPress = () => {
-      if (MODAL_ONLY_ROUTES.has(route.name)) {
-        setModalRoute(route.name);
-        return;
-      }
-      if (!isFocused) navigation.navigate(route.name);
-    };
+    const color = isFocused
+      ? COLORS.primary[500]
+      : '#21104D';
 
-    const getIcon = () => {
-      const color = isFocused ? COLORS.primary[500] : COLORS.black[500];
-
+    const renderIcon = () => {
       switch (route.name) {
         case 'Home':
-          return <IconHome size={24} color={color} />;
+          return <IconHome size={27} color={color} />;
+
         case 'OPS':
-          return <IconTarget size={24} color={color} />;
-        case 'New Load':
-          return <IconCube size={35} color={COLORS.white[100]} />;
+          return <IconAt size={30} color={color} />;
+
+        case 'Find Veh':
+          return (
+            <View style={styles.centerButton}>
+              <View style={styles.centerIcon}>
+                <IconTruck
+                  size={35}
+                  color={COLORS.white[100]}
+                />
+              </View>
+            </View>
+          );
+
         case 'History':
-          return <IconHistory size={24} color={color} />;
+          return <IconHistory size={30} color={color} />;
+
         case 'Profile':
-          return <IconUserCircle size={24} color={color} />;
+          return <IconUserCircle size={30} color={color} />;
+
         default:
           return null;
       }
     };
 
     return (
-      <TouchableOpacity key={route.key} style={styles.tab} onPress={onPress}>
-        <View style={[route?.name === 'New Load' && styles.centerButton]}>
-          {getIcon()}
-        </View>
+      <TouchableOpacity
+        key={route.key}
+        activeOpacity={0.8}
+        style={styles.tab}
+        onPress={() => handleTabPress(route, isFocused)}
+      >
+        {renderIcon()}
+
         <Text
           style={[
             styles.label,
@@ -68,7 +159,7 @@ const MyTabBar: React.FC<BottomTabBarProps> = ({
               fontFamily: isFocused
                 ? FONT_FAMILIES.semiBold
                 : FONT_FAMILIES.regular,
-              color: isFocused ? COLORS.primary[500] : COLORS.black[500],
+              color,
             },
           ]}
         >
@@ -79,74 +170,157 @@ const MyTabBar: React.FC<BottomTabBarProps> = ({
   };
 
   return (
-    <>
-      <View style={styles.container}>{state.routes.map(renderTab)}</View>
+    <View style={styles.wrapper}>
 
-      <CustomModal
-        visible={modalRoute === 'OPS'}
-        onClose={() => setModalRoute(null)}
-      >
-        <Text style={styles.modalTitle}>Coming Soon</Text>
-        <Text style={styles.modalMessage}>
-          This section isn't available yet — check back soon.
-        </Text>
-      </CustomModal>
-    </>
+      {/* OPS EXPANDED MENU */}
+      {opsVisible && isHomeScreen && (
+        <View style={styles.opsContainer}>
+
+          {/* OPS HEADER */}
+          <View style={styles.opsHeader}>
+            <View style={styles.opsHeaderLeft}>
+              <IconAt
+                size={30}
+                color={COLORS.primary[500]}
+              />
+
+              <Text style={styles.opsTitle}>OPS</Text>
+            </View>
+
+            <TouchableOpacity
+              onPress={() => setOpsVisible(false)}
+              hitSlop={12}
+            >
+              <IconChevronDown
+                size={29}
+                color={COLORS.primary[500]}
+              />
+            </TouchableOpacity>
+          </View>
+
+          {/* OPS MENU GRID */}
+          <View style={styles.opsGrid}>
+            {OPS_OPTIONS.map(item => (
+              <TouchableOpacity
+                key={item.id}
+                activeOpacity={0.7}
+                style={styles.opsButton}
+                onPress={() => handleOpsOption(item.id)}
+              >
+                <Text style={styles.opsButtonText}>
+                  {item.title}
+                </Text>
+              </TouchableOpacity>
+            ))}
+
+            {/* Empty spaces to maintain screenshot layout */}
+            <View style={styles.emptyButton} />
+            <View style={styles.emptyButton} />
+          </View>
+        </View>
+      )}
+
+      {/* BOTTOM NAVIGATION */}
+      <View style={styles.container}>
+        {state.routes.map(renderTab)}
+      </View>
+
+    </View>
   );
 };
 
 export default MyTabBar;
 
 const styles = StyleSheet.create({
+  wrapper: {
+    backgroundColor: '#FFFFFF',
+  },
+
+  // OPS MENU
+  opsContainer: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: wp(20),
+    paddingTop: hp(12),
+    paddingBottom: hp(15),
+    borderTopWidth: 0.5,
+    borderTopColor: '#EEEEEE',
+  },
+
+  opsHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: hp(25),
+    paddingHorizontal: wp(2),
+  },
+
+  opsHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: wp(25),
+  },
+
+  opsTitle: {
+    fontFamily: FONT_FAMILIES.semiBold,
+    fontSize: fp(19),
+    color: COLORS.primary[500],
+  },
+
+  opsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    rowGap: hp(12),
+  },
+
+  opsButton: {
+    width: '31.5%',
+    height: hp(52),
+    borderRadius: hp(18),
+    backgroundColor: '#E2E2E2',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  opsButtonText: {
+    fontFamily: FONT_FAMILIES.medium,
+    fontSize: fp(14),
+    color: '#000000',
+    textAlign: 'center',
+  },
+
+  emptyButton: {
+    width: '31.5%',
+    height: hp(52),
+    borderRadius: hp(18),
+    backgroundColor: '#E2E2E2',
+  },
+
+  // BOTTOM TAB BAR
   container: {
     flexDirection: 'row',
     height: hp(80),
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
     elevation: 10,
     justifyContent: 'space-between',
-    paddingHorizontal: wp(20),
+    paddingHorizontal: wp(15),
     alignItems: 'center',
-  },
-
-  side: {
-    flexDirection: 'row',
-    gap: wp(30),
+    borderTopWidth: 0.5,
+    borderTopColor: '#EEEEEE',
   },
 
   tab: {
+    flex: 1,
     alignItems: 'center',
-    gap: 4,
+    justifyContent: 'center',
+    gap: hp(4),
   },
 
   label: {
-    fontSize: fp(11),
+    fontSize: fp(14),
   },
 
-  modalTitle: {
-    fontFamily: FONT_FAMILIES.semiBold,
-    fontSize: fp(16),
-    color: COLORS.black[500],
-    textAlign: 'center',
-  },
-
-  modalMessage: {
-    fontFamily: FONT_FAMILIES.regular,
-    fontSize: fp(13),
-    color: COLORS.black[500],
-    textAlign: 'center',
-    marginTop: hp(8),
-  },
-
-  /* 🔥 Floating Wrapper */
-  centerWrapper: {
-    position: 'absolute',
-    top: -hp(45),
-    left: '50%',
-    right: '50%',
-    transform: [{ translateX: -wp(32.5) }],
-  },
-
-  /* 🔷 Diamond Button */
+  // CENTER FLOATING BUTTON
   centerButton: {
     width: wp(70),
     height: wp(70),
@@ -154,24 +328,14 @@ const styles = StyleSheet.create({
     borderRadius: fp(18),
     justifyContent: 'center',
     alignItems: 'center',
-
     transform: [{ rotate: '45deg' }],
-    padding: 10,
-    marginTop: -hp(50),
+    marginTop: -hp(45),
     marginBottom: hp(5),
   },
 
-  /* 🔁 Fix content rotation */
-  innerContent: {
-    alignItems: 'center',
-    justifyContent: 'center',
+  centerIcon: {
     transform: [{ rotate: '-45deg' }],
-  },
-
-  centerText: {
-    color: '#fff',
-    fontSize: fp(10),
-    marginTop: 2,
-    fontFamily: FONT_FAMILIES.bold,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

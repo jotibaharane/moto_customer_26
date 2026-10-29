@@ -36,6 +36,8 @@ const initialState: CreateLoadRequest = {
   },
   vehicleType: '',
   weight: 0,
+  declareValue: false,
+  declaredValueAmount: 0
 };
 
 const bookingSlice = createSlice({
@@ -59,6 +61,19 @@ const bookingSlice = createSlice({
     setWeight: (state, action: PayloadAction<{ weight: string }>) => {
       state.weight = Number(action.payload.weight);
     },
+setDeclareValue: (state, action: PayloadAction<boolean>) => {
+  state.declareValue = action.payload;
+  if (!action.payload) {
+    state.declaredValueAmount = 0;
+  }
+},
+
+setDeclaredValueAmount: (
+  state,
+  action: PayloadAction<number>,
+) => {
+  state.declaredValueAmount = action.payload;
+},
     setSelectedDriver: (
       state,
       action: PayloadAction<{
@@ -108,6 +123,8 @@ export const {
   resetBooking,
   setDistance,
   setSelectedDriver,
+  setDeclareValue,
+  setDeclaredValueAmount
 } = bookingSlice.actions;
 
 export default bookingSlice.reducer;

@@ -124,7 +124,7 @@ const PickupModal: React.FC<Props> = ({onOpen, open}) => {
 
   const {
     data: currentLocationData,
-    refetch: refetchCurrentLocation,
+    // refetch: refetchCurrentLocation,
   } = useGetLocationByLatLngQuery(
     {
       latitude: currentLocation?.lat ?? 0,
@@ -159,7 +159,7 @@ const PickupModal: React.FC<Props> = ({onOpen, open}) => {
       refScrollable.current?.open();
 
       refetchSavedLocations();
-      refetchCurrentLocation();
+      // refetchCurrentLocation();
       refetchTags();
     } else {
       refScrollable.current?.close();
@@ -167,7 +167,7 @@ const PickupModal: React.FC<Props> = ({onOpen, open}) => {
   }, [
     open,
     refetchSavedLocations,
-    refetchCurrentLocation,
+    // refetchCurrentLocation,
     refetchTags,
   ]);
 
@@ -297,6 +297,10 @@ const PickupModal: React.FC<Props> = ({onOpen, open}) => {
     [formik],
   );
 
+const isMobileValid = /^[0-9]{10}$/.test(
+  formik.values.contactMobile || '',
+);
+
   /* -------------------------------------------------------------------------- */
   /* CUSTOM TAG HANDLERS                                                        */
   /* -------------------------------------------------------------------------- */
@@ -369,6 +373,7 @@ const PickupModal: React.FC<Props> = ({onOpen, open}) => {
             placeholder="Pick up Address"
             value={searchText}
             onChangeText={handleSearchChange}
+            numberOfLines={2}
             iconColor="#4CAF50"
             containerStyle={{
               borderWidth: 1,
@@ -599,14 +604,26 @@ const PickupModal: React.FC<Props> = ({onOpen, open}) => {
                 onChangeText={formik.handleChange('streetArea')}
               />
 
-              <InputOutline
+              {/* <InputOutline
                 placeholder="Alternative Phone Number"
                 value={formik.values.contactMobile}
                 onChangeText={formik.handleChange('contactMobile')}
                 keyboardType="phone-pad"
                 characterCount={10}
-              />
-
+              /> */}
+<InputOutline
+  placeholder="Alternative Phone Number"
+  value={formik.values.contactMobile}
+  onChangeText={text =>
+    formik.setFieldValue(
+      'contactMobile',
+      text.replace(/\D/g, '').slice(0, 10),
+    )
+  }
+  keyboardType="phone-pad"
+  characterCount={10}
+  borderColor={isMobileValid ? '#4CAF50' : '#FF0000'}
+/>
               <Text style={styles.sectionTitle}>
                 Save Address As
               </Text>

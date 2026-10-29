@@ -48,33 +48,39 @@ export const styles = StyleSheet.create({
     borderRadius: s(20),
     elevation: 6,
   },
+declare_weight_container: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  width: '100%',
+  gap: s(8),
+},
 
-  declare_weight_container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: s(10),
-  },
+declare_weight: {
+  width: s(112),
+  flexShrink: 0,
+  fontSize: ms(14),
+  fontFamily: FONT_FAMILIES.medium,
+  lineHeight: vs(26),
+  letterSpacing: -0.5,
+},
 
-  declare_weight: {
-    fontSize: ms(18), // Figma size same
-    fontFamily: FONT_FAMILIES.medium,
-    lineHeight: 25,
-    letterSpacing: -0.5,
-  },
+weight_input: {
+  backgroundColor: COLORS.white[100],
+  width: s(87),
+  height: vs(26),
+  borderRadius: s(6),
+  fontFamily: FONT_FAMILIES.bold,
+  fontSize: ms(14),
+  color: Colors.primary,
+  paddingVertical: 0,
+  paddingHorizontal: s(5),
+  textAlign: 'center',
+  includeFontPadding: false,
+},
 
-  weight_input: {
-    backgroundColor: COLORS.white[100],
-    width: s(103),
-    borderRadius: s(8),
-    fontFamily: FONT_FAMILIES.bold,
-    fontSize: ms(20), // Figma size same
-    color: Colors.primary,
-  },
-
-  kg: {
-    fontFamily: FONT_FAMILIES.semiBold,
-    fontSize: ms(16), // Figma size same
-    color: Colors.primary,
-  },
+kg: {
+  fontFamily: FONT_FAMILIES.semiBold,
+  fontSize: ms(14),
+  color: Colors.primary,
+},
 });

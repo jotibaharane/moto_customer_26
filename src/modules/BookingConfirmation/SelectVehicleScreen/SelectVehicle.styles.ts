@@ -169,7 +169,8 @@ export const styles = StyleSheet.create({
   },
 
   vehicleName: {
-    fontSize: fs(16),
+    fontSize: fs(12),
+    color:'#6C7278 ',
     fontFamily: FONT_FAMILIES.bold,
     marginTop: 8,
     textAlign: 'center',

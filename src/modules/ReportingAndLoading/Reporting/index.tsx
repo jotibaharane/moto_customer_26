@@ -18,6 +18,7 @@ import DashboardAppHeader from './components/DashboardAppheader';
 import DashboardQuickActions from './components/DashboardQuickActions';
 import MapComponent from './components/MapComponent';
 import { styles } from './reporting.style';
+import NotificationBell from '@components/NotificationBell';
 
 const TERMINAL_LOAD_STATUSES = [
   'CANCELLED',
@@ -282,6 +283,7 @@ const ReportingScreen = () => {
                 }
           }
         />
+          <NotificationBell />
       </View>
 
       {/* {driver?.loadId && (

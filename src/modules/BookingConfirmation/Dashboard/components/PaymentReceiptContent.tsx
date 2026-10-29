@@ -2,7 +2,6 @@ import { IconMapPin } from '@tabler/icons-react-native';
 import { Download } from 'lucide-react-native';
 import React from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { Rating } from 'react-native-ratings';
 import { styles } from './../Loadingstatus.style';
 import { ReceiptRow } from './ReceiptRow';
 
@@ -13,13 +12,12 @@ interface PaymentReceiptContentProps {
 export const PaymentReceiptContent = ({
   receipt,
 }: PaymentReceiptContentProps) => {
-  const tripFare = receipt?.tripFare ?? 996.28;
-  const fareWithoutTax = receipt?.fareWithoutTax ?? 996.28;
-  const cgstTax = receipt?.cgstTax ?? 0;
-  const sgstTax = receipt?.sgstTax ?? 0;
-  const rounding = receipt?.rounding ?? -0.28;
-  const totalOrderFare = receipt?.totalOrderFare ?? 996;
-  const cashPaid = receipt?.cashPaid ?? 996;
+  const declareweight = receipt?.declareweight ?? 500;
+  const vehicleReportedAt = receipt?.vehicleReportedAt ?? '01:00';
+  const LoadingAt = receipt?.LoadingAt ?? '02:00';
+  const Numberofpackages = receipt?.Numberofpackages ?? 100;
+  const isdelivered = false; 
+  const paymentStatus = 'Paid'; // Assuming the payment status is paid for demonstration purposes
 
   return (
     <ScrollView
@@ -27,33 +25,7 @@ export const PaymentReceiptContent = ({
       contentContainerStyle={styles.receiptContainer}
       showsVerticalScrollIndicator={false}
     >
-      <View style={styles.container}>
-        {/* Row 1 */}
-        <View style={styles.row}>
-          <View style={styles.column}>
-            <Text style={styles.label}>Trip No :{'ABC123'}</Text>
-            {/* <Text style={styles.value}></Text> */}
-          </View>
 
-          <View style={styles.column}>
-            <Text style={styles.label}>Driver Name:{'RASHID'}</Text>
-            {/* <Text style={styles.value}></Text> */}
-          </View>
-        </View>
-
-        {/* Row 2 */}
-        <View style={styles.row}>
-          <View style={styles.column}>
-            <Text style={styles.label}>Vehicle No:{'MH0346F5574'}</Text>
-            {/* <Text style={styles.value}></Text> */}
-          </View>
-
-          <View style={styles.column}>
-            <Text style={styles.label}>Mobile No:{'7506122183'}</Text>
-            {/* <Text style={styles.value}></Text> */}
-          </View>
-        </View>
-      </View>
 
       {/* Route Details */}
       <View style={styles.receiptCard}>
@@ -94,69 +66,117 @@ export const PaymentReceiptContent = ({
 
       {/* Freight Details */}
       <View style={styles.receiptCard}>
-        <Text style={styles.sectionTitle}>Freight Details</Text>
 
-        <ReceiptRow label="Trip Fare" value={`₹ ${tripFare}`} />
+        <ReceiptRow label="Declare Weight" value={`${declareweight}`} />
 
-        <ReceiptRow label="Fare Without Tax" value={`₹ ${fareWithoutTax}`} />
+        <ReceiptRow label="Vehicle Reported At" value={`${vehicleReportedAt}`} />
 
-        <ReceiptRow label="CGST Tax" value={`₹ ${cgstTax}`} />
+        <ReceiptRow label="Loading At" value={`${LoadingAt}`} />
 
-        <ReceiptRow label="SGST Tax" value={`₹ ${sgstTax}`} />
+        <ReceiptRow label="Number of Packages Loaded" value={`${Numberofpackages}`} />
+        {isdelivered && (
+          <ReceiptRow label="Payment Status" value={paymentStatus} bold />
+        )}
 
-        <ReceiptRow label="Rounding" value={`₹ ${rounding}`} />
-
-        <View style={styles.divider} />
-
-        <ReceiptRow
-          label="Total Order Fare"
-          value={`₹ ${totalOrderFare}`}
-          bold
-        />
       </View>
 
       {/* Payment Details */}
-      <View style={styles.receiptCard}>
-        <Text style={styles.sectionTitle}>Payment Details</Text>
 
-        <ReceiptRow
-          label={receipt?.paymentMode || 'Cash'}
-          value={`₹ ${cashPaid}`}
-          bold
-        />
+
+      {/* Rate Driver */}
+      {/* Rate Driver */}
+
+      <View
+        style={{
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: '#E1E1E1',
+          height: 30,
+          paddingHorizontal: 12,
+          alignSelf: 'center',
+          borderRadius: 5,
+          marginTop: 10,
+        }}
+      >
+        <Text style={{ fontSize: 14, color: '#000000', textAlign: 'center' }}>
+          Freight Payment
+        </Text>
       </View>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingVertical: 12,
+          gap: 8,
+        }}
+      >
+        {/* Payment Status / E-POD */}
+        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          {isdelivered ? (
+            <>
+              <Text style={{ fontSize: 14, color: '#333333', fontWeight: 'bold' }}>
+                E-POD
+              </Text>
 
-      {/* Rate Driver */}
-      {/* Rate Driver */}
-      <View style={styles.receiptCard}>
-        <Text style={styles.sectionTitle}>Rate your Driver</Text>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: '#2196F3',
+                  paddingVertical: 7,
+                  paddingHorizontal: 12,
+                  borderRadius: 5,
+                }}
+                onPress={() => {
+                  // E-POD view logic
+                }}
+              >
+                <Text style={{ color: '#FFFFFF', fontSize: 12, fontWeight: 'bold' }}>
+                  View
+                </Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <Text style={{ fontSize: 14, color: '#333333', fontWeight: 'bold' }}>
+              Payment Status: {paymentStatus}
+            </Text>
+          )}
+        </View>
 
-        <View style={styles.ratingContainer}>
-          <Rating
-            type="star"
-            ratingCount={5}
-            imageSize={28}
-            startingValue={receipt?.rating || 0}
-            ratingColor="#315E9F"
-            ratingBackgroundColor="#FFFFFF"
-            tintColor="#FFFFFF"
-            readonly={false}
-            showRating={false}
-            onFinishRating={(rating: any) => {
-              console.log('Driver Rating:', rating);
+        {/* Payment Receipt */}
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+          <Text style={{ fontSize: 14, color: '#333333', fontWeight: 'bold' }}>
+            Payment Receipt
+          </Text>
+
+          {/* View Button */}
+          <TouchableOpacity
+            style={{
+              backgroundColor: '#2196F3',
+              padding: 7,
+              borderRadius: 5,
             }}
-          />
-
-          <Text style={styles.ratingText}>{receipt?.rating || 0} / 5</Text>
+            onPress={() => {
+              // View receipt logic
+            }}
+          >
+            <Text style={{ color: '#FFFFFF', fontSize: 11 }}>View</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              backgroundColor: '#4CAF50',
+              padding: 7,
+              borderRadius: 5,
+            }}
+            onPress={() => {
+              // Download receipt logic
+            }}
+          >
+            <Download size={16} color="#FFFFFF" />
+          </TouchableOpacity>
         </View>
       </View>
 
-      {/* Footer */}
-      <View style={styles.receiptFooter}>
-        <TouchableOpacity style={styles.download}>
-          <Download size={22} color={'#ffffff'} />
-        </TouchableOpacity>
-      </View>
     </ScrollView>
   );
 };
+

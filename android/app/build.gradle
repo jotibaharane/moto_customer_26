@@ -93,6 +93,15 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+
+        // The Mapbox Maps/Navigation SDKs (and CustomerMapView.kt) read the
+        // `mapbox_access_token` string resource. Generate it from the env file
+        // loaded by react-native-config (ENVFILE) instead of committing it.
+        def mapboxAccessToken = project.env.get("MAPBOX_ACCESS_TOKEN") ?: ""
+        if (!mapboxAccessToken) {
+            logger.warn("MAPBOX_ACCESS_TOKEN is not set in the selected env file; Mapbox maps will not load.")
+        }
+        resValue "string", "mapbox_access_token", "\"${mapboxAccessToken}\""
     }
     //   splits {
     //     abi {
